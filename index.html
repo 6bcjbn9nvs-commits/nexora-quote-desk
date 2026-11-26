@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nexora Quote Desk — 인테리어 견적 도구 웹 버전</title>
+<meta name="description" content="인테리어·시공 업체를 위한 견적 계산기. 설치 없이 링크 하나로 바로 열리는 웹 버전. 무료 Lite는 즉시 사용, Business Kit은 구매자 액세스 코드로 열람합니다.">
+<meta name="author" content="Nexora Labs">
+<meta name="theme-color" content="#0e2a47">
+<meta property="og:title" content="Nexora Quote Desk — 인테리어 견적 도구 웹 버전">
+<meta property="og:description" content="링크 하나로 바로 쓰는 견적 도구. 무료 Lite 즉시 사용 · Business Kit은 액세스 코드로 열람.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230e2a47'/%3E%3Ctext x='32' y='44' font-family='Arial,Helvetica,sans-serif' font-size='34' font-weight='800' fill='%23ffffff' text-anchor='middle'%3EN%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --ink:#0b1220; --text:#1f2937; --muted:#5d6775; --faint:#8a95a3;
+  --line:#e6e9ef; --line-strong:#d4dae3; --bg:#f5f7fa; --card:#fff;
+  --brand:#0e2a47; --brand2:#173f63; --brand-soft:#eaf0f6;
+  --teal:#0d7f75; --teal-soft:#e6f4f1; --teal-line:#bfe3db;
+  --amber:#b45309; --amber-soft:#fdf4e7; --amber-line:#f0dcc0;
+  --radius:18px;
+  --shadow:0 1px 2px rgba(16,24,40,.04),0 1px 3px rgba(16,24,40,.03);
+  --shadow-lg:0 24px 60px -32px rgba(11,18,32,.35);
+}
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  font-size:15px;line-height:1.6;-webkit-text-size-adjust:100%;
+  font-feature-settings:"tnum";
+  padding-bottom:env(safe-area-inset-bottom);
+}
+h1,h2,h3,h4{margin:0;font-weight:780;letter-spacing:-.03em;color:var(--ink);line-height:1.2}
+p{margin:0}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+.skip{position:absolute;left:-9999px;top:0;background:#fff;padding:10px 14px;border-radius:0 0 10px 0;z-index:100}
+.skip:focus{left:0}
+.i18n{display:contents}
+body[data-lang="ko"] .en{display:none !important}
+body[data-lang="en"] .ko{display:none !important}
+
+/* ---------- header ---------- */
+.hd{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.86);border-bottom:1px solid var(--line);backdrop-filter:saturate(180%) blur(14px);-webkit-backdrop-filter:saturate(180%) blur(14px)}
+.hd-in{max-width:1120px;margin:0 auto;padding:11px 22px;display:flex;align-items:center;gap:18px}
+.brand{display:flex;align-items:center;gap:9px;white-space:nowrap}
+.mark{width:30px;height:30px;border-radius:10px;background:linear-gradient(158deg,#1b4a73,#0b2036);color:#fff;display:grid;place-items:center;font-size:13.5px;font-weight:800;box-shadow:0 1px 2px rgba(16,24,40,.3)}
+.bname{font-size:15px;font-weight:800;letter-spacing:-.03em;color:var(--ink)}
+.btag{font-size:9.5px;font-weight:800;letter-spacing:.11em;padding:3px 6px;border-radius:6px;background:var(--teal-soft);color:var(--teal);border:1px solid var(--teal-line)}
+.hd-nav{display:flex;gap:2px;margin-left:8px}
+.hd-nav a{font-size:13px;font-weight:650;color:#5b6472;padding:7px 10px;border-radius:8px}
+.hd-nav a:hover{background:#eef2f7;color:var(--ink)}
+.hd-sp{flex:1}
+.langbtn{appearance:none;font-family:inherit;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-strong);background:#fff;color:var(--ink);font-size:12.5px;font-weight:700;padding:7px 11px;border-radius:9px;cursor:pointer}
+.langbtn:hover{border-color:#c3ccd7}
+.langbtn:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+
+/* ---------- hero ---------- */
+.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line);
+  background:
+    radial-gradient(900px 380px at 12% -12%,#e7effa 0%,rgba(245,247,250,0) 68%),
+    radial-gradient(700px 320px at 92% 0%,#e6f4f1 0%,rgba(245,247,250,0) 70%),
+    #fff;
+}
+.hero::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(14,42,71,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(14,42,71,.045) 1px,transparent 1px);background-size:36px 36px;mask-image:radial-gradient(700px 320px at 50% 10%,#000 20%,transparent 78%);-webkit-mask-image:radial-gradient(700px 320px at 50% 10%,#000 20%,transparent 78%)}
+.hero-in{position:relative;z-index:1;max-width:1120px;margin:0 auto;padding:64px 22px 58px;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:44px;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:16px}
+.eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--teal)}
+.hero h1{font-size:clamp(29px,4.2vw,44px);letter-spacing:-.045em;line-height:1.12}
+.hero .lede{margin-top:16px;font-size:15.5px;color:var(--muted);max-width:520px;line-height:1.7}
+.cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+.btn{appearance:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line-strong);background:#fff;color:var(--text);padding:13px 19px;border-radius:12px;font-size:14.5px;font-weight:720;font-family:inherit;cursor:pointer;transition:background .15s,border-color .15s,transform .05s,box-shadow .15s}
+.btn:hover{background:#fafbfc;border-color:#c3ccd7}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:linear-gradient(180deg,#173f63,#0e2a47);border-color:#0e2a47;color:#fff;box-shadow:0 2px 10px -2px rgba(14,42,71,.5),inset 0 1px 0 rgba(255,255,255,.1)}
+.btn.primary:hover{background:linear-gradient(180deg,#1b4a73,#10314f)}
+.btn.teal{background:linear-gradient(180deg,#0f9187,#0b6b63);border-color:#0b6b63;color:#fff;box-shadow:0 2px 10px -2px rgba(13,127,117,.45),inset 0 1px 0 rgba(255,255,255,.12)}
+.btn.teal:hover{background:linear-gradient(180deg,#12a196,#0c766d)}
+.btn.lg{padding:15px 22px;font-size:15px;border-radius:13px}
+.btn:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:24px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:650;color:#475569;background:rgba(255,255,255,.85);border:1px solid var(--line);padding:5px 10px;border-radius:999px;box-shadow:var(--shadow)}
+.chip svg{width:13px;height:13px;stroke:var(--teal);stroke-width:2.1;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+/* preview mock */
+.mock{position:relative;border-radius:20px;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-lg);overflow:hidden;transform:rotate(-.4deg)}
+.mock-bar{display:flex;align-items:center;gap:6px;padding:10px 13px;border-bottom:1px solid var(--line);background:#fcfdfe}
+.mock-bar i{width:8px;height:8px;border-radius:50%;background:#e2e8f0}
+.mock-bar .url{margin-left:8px;flex:1;font-size:10.5px;color:var(--faint);background:#f2f5f9;border-radius:6px;padding:4px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mock-b{padding:14px}
+.mock-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.mock-title{font-size:12.5px;font-weight:800;color:var(--ink)}
+.mock-pill{font-size:9.5px;font-weight:800;letter-spacing:.08em;color:var(--teal);background:var(--teal-soft);border:1px solid var(--teal-line);padding:2px 7px;border-radius:5px}
+.mock-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.mock-field{background:#f7f9fc;border:1px solid #edf1f6;border-radius:8px;padding:7px 9px}
+.mock-field b{display:block;font-size:8.5px;font-weight:700;color:var(--faint);letter-spacing:.03em;margin-bottom:3px}
+.mock-field span{font-size:11.5px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+.mock-rows{margin-top:9px;border-top:1px dashed var(--line);padding-top:9px}
+.mock-row{display:flex;justify-content:space-between;font-size:10.5px;color:#5b6472;padding:3.5px 0}
+.mock-row b{color:var(--ink);font-variant-numeric:tabular-nums}
+.mock-total{display:flex;justify-content:space-between;align-items:center;margin-top:9px;background:linear-gradient(180deg,#f3f8fd,#eaf1f8);border:1px solid #dfe9f3;border-radius:9px;padding:8px 10px}
+.mock-total span{font-size:9.5px;font-weight:800;letter-spacing:.06em;color:#3a5876}
+.mock-total b{font-size:15px;font-weight:800;color:var(--brand);font-variant-numeric:tabular-nums}
+.mock-foot{display:flex;gap:5px;margin-top:10px}
+.mock-tag{font-size:9px;font-weight:700;padding:3px 6px;border-radius:5px;background:var(--amber-soft);color:var(--amber);border:1px solid var(--amber-line)}
+
+/* ---------- sections ---------- */
+section{padding:64px 0}
+section.tight{padding:52px 0}
+.sec-head{max-width:660px;margin-bottom:30px}
+.sec-head .eyebrow{margin-bottom:10px}
+.sec-head h2{font-size:clamp(22px,2.7vw,30px)}
+.sec-head p{margin-top:10px;color:var(--muted);font-size:14.5px;line-height:1.7}
+
+/* product cards */
+.apps{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.pcard{position:relative;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow);display:flex;flex-direction:column;transition:transform .18s,box-shadow .18s,border-color .18s}
+.pcard:hover{transform:translateY(-2px);box-shadow:0 18px 44px -28px rgba(16,24,40,.4);border-color:var(--line-strong)}
+.pcard.kit{background:linear-gradient(180deg,#fffdf9,#fff);border-color:#f0dcc0}
+.pcard-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.pcard-tag{font-size:10px;font-weight:800;letter-spacing:.12em;padding:4px 8px;border-radius:6px;background:var(--teal-soft);color:var(--teal);border:1px solid var(--teal-line)}
+.pcard.kit .pcard-tag{background:var(--amber-soft);color:var(--amber);border-color:var(--amber-line)}
+.price{font-size:13px;font-weight:800;color:var(--ink);text-align:right;white-space:nowrap}
+.price small{display:block;font-size:10.5px;font-weight:600;color:var(--faint);letter-spacing:0}
+.pcard h3{font-size:20px;margin-bottom:8px}
+.pcard .desc{font-size:13.8px;color:var(--muted);line-height:1.65;min-height:46px}
+.feats{list-style:none;margin:18px 0 0;padding:0;display:grid;gap:8px}
+.feats li{display:flex;gap:8px;font-size:13.2px;color:#3f4a58;line-height:1.5}
+.feats svg{width:15px;height:15px;flex:none;margin-top:2.5px;stroke:var(--teal);stroke-width:2.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.pcard.kit .feats svg{stroke:#b45309}
+.pcard-act{margin-top:22px;display:flex;flex-direction:column;gap:9px}
+.pcard-note{font-size:11.5px;color:var(--faint);text-align:center;line-height:1.5}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.step{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px;box-shadow:var(--shadow)}
+.step-n{width:26px;height:26px;border-radius:8px;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;font-size:12px;font-weight:800;margin-bottom:12px}
+.step h4{font-size:15px;margin-bottom:6px}
+.step p{font-size:13px;color:var(--muted);line-height:1.65}
+.mig{margin-top:16px;display:flex;gap:10px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-left:3px solid var(--teal);border-radius:0 12px 12px 0;padding:14px 16px;font-size:12.8px;color:#4b5a6b;line-height:1.65;box-shadow:var(--shadow)}
+.mig b{color:var(--ink);font-weight:750}
+.mig svg{width:16px;height:16px;flex:none;margin-top:2px;stroke:var(--teal);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+/* iphone help */
+.help{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:26px;align-items:stretch;background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:30px;box-shadow:var(--shadow)}
+.help h3{font-size:21px;margin-bottom:10px}
+.help .desc{font-size:13.8px;color:var(--muted);line-height:1.7}
+.help-list{list-style:none;margin:18px 0 0;padding:0;display:grid;gap:12px}
+.help-list li{display:flex;gap:10px;font-size:13.2px;color:#3f4a58;line-height:1.6}
+.help-list .k{flex:none;width:20px;height:20px;border-radius:6px;background:var(--teal-soft);color:var(--teal);font-size:11px;font-weight:800;display:grid;place-items:center;margin-top:2px}
+.help-list b{color:var(--ink);font-weight:750}
+.note-card{background:linear-gradient(180deg,#f7fafd,#fbfcfe);border:1px solid #e3ecf5;border-radius:14px;padding:20px}
+.note-card h4{font-size:13.5px;color:var(--brand2);margin-bottom:10px;letter-spacing:-.01em}
+.note-card p{font-size:12.8px;color:#4b5a6b;line-height:1.7}
+.note-card p + p{margin-top:8px}
+.note-card code{background:#eaf0f6;border:1px solid #dbe5ef;border-radius:5px;padding:1px 5px;font-size:11.5px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#24425f}
+
+/* code section */
+.code-band{background:linear-gradient(165deg,#0e2a47,#0a1c30 70%);color:#dfe8f2;border-radius:var(--radius);padding:40px;position:relative;overflow:hidden;box-shadow:var(--shadow-lg)}
+.code-band::after{content:"";position:absolute;inset:0;background:radial-gradient(600px 260px at 88% -10%,rgba(13,127,117,.35),transparent 70%);pointer-events:none}
+.code-band .in{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:32px;align-items:center}
+.code-band .eyebrow{color:#7fd8cd}
+.code-band .eyebrow .dot{background:#7fd8cd}
+.code-band h2{color:#fff;font-size:clamp(21px,2.6vw,28px)}
+.code-band p{margin-top:12px;font-size:14px;color:#b8c8da;line-height:1.75;max-width:520px}
+.code-box{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:20px;backdrop-filter:blur(6px)}
+.code-box .lbl{font-size:10.5px;font-weight:800;letter-spacing:.13em;color:#8ba6c2;margin-bottom:10px}
+.code-sample{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:14px;letter-spacing:.06em;color:#fff;background:rgba(255,255,255,.1);border:1px dashed rgba(255,255,255,.28);border-radius:9px;padding:10px 12px;text-align:center}
+.code-list{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:7px}
+.code-list li{display:flex;justify-content:space-between;gap:10px;font-size:12.3px;color:#c3d3e3}
+.code-list b{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11.8px;color:#fff;letter-spacing:.04em}
+.code-foot{margin-top:14px;font-size:11.5px;color:#93a9c1;line-height:1.6}
+.code-band a.mail{color:#8fe3d8;border-bottom:1px solid rgba(143,227,216,.4)}
+
+/* buy row */
+.buy{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.buy a{display:flex;flex-direction:column;gap:4px;background:#fff;border:1px solid var(--line);border-radius:13px;padding:18px;box-shadow:var(--shadow);transition:border-color .15s,transform .15s}
+.buy a:hover{border-color:#c9d5e2;transform:translateY(-2px)}
+.buy .n{font-size:13.5px;font-weight:750;color:var(--ink)}
+.buy .p{font-size:12px;color:var(--muted)}
+.buy .s{font-size:10.5px;font-weight:800;letter-spacing:.08em;color:var(--teal);margin-top:6px}
+
+/* footer */
+footer{background:#0b1826;color:#9fb2c6;padding:38px 0 46px;margin-top:20px}
+.f-in{max-width:1120px;margin:0 auto;padding:0 22px;display:flex;flex-wrap:wrap;gap:18px;justify-content:space-between;align-items:flex-start}
+.f-brand{display:flex;align-items:center;gap:9px;color:#fff;font-weight:800;font-size:14px;letter-spacing:-.02em}
+.f-brand .mark{background:linear-gradient(158deg,#2a5d8c,#12314c)}
+.f-note{font-size:11.8px;line-height:1.75;max-width:520px}
+.f-note b{color:#d6e2ee;font-weight:700}
+.f-links{display:flex;gap:14px;font-size:11.8px;flex-wrap:wrap}
+.f-links a:hover{color:#fff}
+
+@media (max-width:900px){
+  .hero-in{grid-template-columns:1fr;gap:30px;padding:46px 22px 44px}
+  .mock{order:2;max-width:480px}
+  .apps{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr}
+  .help{grid-template-columns:1fr;padding:24px}
+  .code-band{padding:28px}
+  .code-band .in{grid-template-columns:1fr;gap:22px}
+  .buy{grid-template-columns:1fr}
+  section{padding:46px 0}
+  .hd-nav{display:none}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none !important}}
+</style>
+</head>
+<body data-lang="ko">
+<a class="skip ko" href="#main">본문으로 건너뛰기</a>
+<a class="skip en" href="#main">Skip to content</a>
+
+<header class="hd">
+  <div class="hd-in">
+    <a class="brand" href="./" aria-label="Nexora Quote Desk 홈">
+      <span class="mark">N</span>
+      <span class="bname">Nexora Quote Desk</span>
+      <span class="btag">WEB</span>
+    </a>
+    <nav class="hd-nav" aria-label="주요 섹션">
+      <a href="#apps" class="ko">제품</a>
+      <a href="#apps" class="en">Products</a>
+      <a href="#how" class="ko">사용법</a>
+      <a href="#how" class="en">How to use</a>
+      <a href="#iphone" class="ko">아이폰 안내</a>
+      <a href="#iphone" class="en">iPhone guide</a>
+      <a href="#code" class="ko">액세스 코드</a>
+      <a href="#code" class="en">Access code</a>
+    </nav>
+    <span class="hd-sp"></span>
+    <button class="langbtn" id="langBtn" type="button" aria-label="언어 바꾸기 / Switch language">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/></svg>
+      <span id="langLabel">EN</span>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ================= HERO ================= -->
+  <div class="hero">
+    <div class="hero-in">
+      <div>
+        <div class="eyebrow"><span class="dot"></span><span class="ko">NEXORA LABS · 인테리어 견적 도구</span><span class="en">NEXORA LABS · INTERIOR ESTIMATING</span></div>
+        <h1 class="ko">링크 하나로,<br>오늘 바로 쓰는 견적 도구</h1>
+        <h1 class="en">One link.<br>A quoting tool you can use today.</h1>
+        <p class="lede ko">파일을 내려받아 열다가 자바스크립트 차단에 막히지 마세요. 설치도, 회원가입도 없이 브라우저에서 바로 열리고, 입력한 견적은 서버가 아닌 <b>내 기기에만</b> 저장됩니다.</p>
+        <p class="lede en">No downloads to wrestle with, no JavaScript blocked by your file viewer. It opens right in the browser, and your estimates are stored <b>only on your device</b> — never on a server.</p>
+        <div class="cta">
+          <a class="btn teal lg ko" href="lite-ko/">무료 Lite 바로 시작</a>
+          <a class="btn teal lg en" href="lite-en/">Start free Lite</a>
+          <a class="btn primary lg ko" href="kit-ko/">Business Kit 열기</a>
+          <a class="btn primary lg en" href="kit-en/">Open Business Kit</a>
+        </div>
+        <div class="chips">
+          <span class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="ko">설치 없음</span><span class="en">Nothing to install</span></span>
+          <span class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="ko">아이폰 · 아이패드 · PC</span><span class="en">iPhone · iPad · desktop</span></span>
+          <span class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="ko">데이터는 내 기기에만</span><span class="en">Data stays on your device</span></span>
+          <span class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="ko">오프라인 동작</span><span class="en">Works offline</span></span>
+        </div>
+      </div>
+
+      <div class="mock" aria-hidden="true">
+        <div class="mock-bar"><i></i><i></i><i></i><span class="url">nexora-quote-desk</span></div>
+        <div class="mock-b">
+          <div class="mock-hd"><span class="mock-title">견적 작성</span><span class="mock-pill">KIT</span></div>
+          <div class="mock-grid">
+            <div class="mock-field"><b>고객명</b><span>김*수</span></div>
+            <div class="mock-field"><b>현장</b><span>울산 동구 아파트 24평</span></div>
+            <div class="mock-field"><b>원가 합계</b><span>2,940,000</span></div>
+            <div class="mock-field"><b>판매 단가</b><span>3,742,200</span></div>
+          </div>
+          <div class="mock-rows">
+            <div class="mock-row"><span>자재비</span><b>1,820,000</b></div>
+            <div class="mock-row"><span>노무비</span><b>1,120,000</b></div>
+            <div class="mock-row"><span>부가세 (10%)</span><b>340,200</b></div>
+          </div>
+          <div class="mock-total"><span>총 합계</span><b>3,742,200원</b></div>
+          <div class="mock-foot"><span class="mock-tag">마진 안전</span><span class="mock-tag">서명 완료</span><span class="mock-tag">PDF 준비</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= APPS ================= -->
+  <section id="apps">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow"><span class="dot"></span><span class="ko">제품</span><span class="en">PRODUCTS</span></div>
+        <h2 class="ko">무료로 시작하고, 필요할 때 Kit으로</h2>
+        <h2 class="en">Start free, upgrade to the Kit when you need it</h2>
+        <p class="ko">두 제품 모두 같은 화면에서 열립니다. Lite는 누구나 바로, Business Kit은 구매 후 받은 액세스 코드로 엽니다.</p>
+        <p class="en">Both open in the same window. Lite is open to everyone; the Business Kit unlocks with the access code you receive after purchase.</p>
+      </div>
+
+      <div class="apps">
+        <!-- Lite -->
+        <div class="pcard">
+          <div class="pcard-top">
+            <div>
+              <div class="pcard-tag">FREE</div>
+              <h3 style="margin-top:12px">Quote Lite</h3>
+            </div>
+            <div class="price">0원<small>무료 · $0</small></div>
+          </div>
+          <p class="desc ko">원가·마진 계산부터 견적서 인쇄까지, 견적의 기본 동선을 그대로 담았습니다. 코드 없이 바로 시작하세요.</p>
+          <p class="desc en">Cost, margin and a printable estimate — the essential flow, free. No code needed.</p>
+          <ul class="feats">
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="ko">품목·원가·판매가 계산, 마진 신호등</span><span class="en">Line items, cost and margin signal</span></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="ko">면적 환산(평↔㎡), 부가세 포함 계산</span><span class="en">Area conversion and VAT handling</span></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="ko">견적서 미리보기와 인쇄 / PDF</span><span class="en">Estimate preview, print or save as PDF</span></li>
+          </ul>
+          <div class="pcard-act" style="margin-top:auto">
+            <a class="btn teal ko" href="lite-ko/">한국어 Lite 열기</a>
+            <a class="btn teal en" href="lite-en/">Open Lite (English)</a>
+            <span class="pcard-note ko">로그인 없이 즉시 실행</span>
+            <span class="pcard-note en">Opens instantly, no sign-in</span>
+          </div>
+        </div>
+
+        <!-- Kit -->
+        <div class="pcard kit">
+          <div class="pcard-top">
+            <div>
+              <div class="pcard-tag">BUSINESS KIT</div>
+              <h3 style="margin-top:12px">Quote Desk Kit</h3>
+            </div>
+            <div class="price">39,000원<small>$27 · 주력 상품</small></div>
+          </div>
+          <p class="desc ko">견적을 쓰는 도구를 넘어, 상담부터 서명·AS까지 이어지는 실무 한 벌. 구매자 코드로 열립니다.</p>
+          <p class="desc en">More than a calculator: presets, customer scripts, signature and after-service paperwork in one kit.</p>
+          <ul class="feats">
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="ko">업종 프리셋 3종 (인테리어·창호·시공)</span><span class="en">3 industry presets (interior, windows, build)</span></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="ko">고객 응대 문자 40종, 상담 체크리스트, AS 안내문</span><span class="en">40 customer scripts, checklist, service notices</span></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="ko">현장 서명 패드, 저장·백업·복원, 견적서 PDF</span><span class="en">On-site signature, save/backup, PDF output</span></li>
+          </ul>
+          <div class="pcard-act" style="margin-top:auto">
+            <a class="btn primary ko" href="kit-ko/">액세스 코드로 열기</a>
+            <a class="btn primary en" href="kit-en/">Unlock with access code</a>
+            <span class="pcard-note ko">구매처: 크몽 · Gumroad</span>
+            <span class="pcard-note en">Purchased on Gumroad · KMONG</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= HOW ================= -->
+  <section id="how" class="tight" style="background:#eef2f7">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow"><span class="dot"></span><span class="ko">사용법</span><span class="en">HOW IT WORKS</span></div>
+        <h2 class="ko">세 단계면 끝</h2>
+        <h2 class="en">Three steps</h2>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">1</div>
+          <h4 class="ko">링크를 연다</h4>
+          <h4 class="en">Open the link</h4>
+          <p class="ko">카카오톡·문자·메일로 받은 주소를 누르면 브라우저에서 바로 앱이 뜹니다. 파일 앱에서 열 필요가 없습니다.</p>
+          <p class="en">Tap the address you received and the app opens in your browser. No file manager, no downloads.</p>
+        </div>
+        <div class="step">
+          <div class="step-n">2</div>
+          <h4 class="ko">견적을 쓴다</h4>
+          <h4 class="en">Write the estimate</h4>
+          <p class="ko">고객명과 품목을 입력하면 원가·마진·최저 판매가가 동시에 계산됩니다. 저장은 이 브라우저에 남습니다.</p>
+          <p class="en">Enter the customer and line items; cost, margin and floor price update together. Saves stay in this browser.</p>
+        </div>
+        <div class="step">
+          <div class="step-n">3</div>
+          <h4 class="ko">서명 · 인쇄 / PDF</h4>
+          <h4 class="en">Sign, print, or PDF</h4>
+          <p class="ko">현장에서 서명을 받고, 견적서 한 장으로 인쇄하거나 PDF로 저장해 고객에게 보냅니다.</p>
+          <p class="en">Collect a signature on site, then print a one-page estimate or save it as a PDF to send.</p>
+        </div>
+      </div>
+      <div class="mig">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+        <span class="ko"><b>이미 파일(.html)로 쓰고 계셨다면</b> — 데이터는 웹 버전으로 자동 이전되지 않습니다. 기존 앱에서 <b>백업 내보내기(JSON)</b>를 받은 뒤, 웹 버전의 <b>불러오기</b>로 옮기면 그대로 이어서 쓸 수 있습니다.</span>
+        <span class="en"><b>Already using the .html file?</b> Nothing moves over automatically. Export a backup (JSON) from the old file, then import it in the web version.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= IPHONE ================= -->
+  <section id="iphone">
+    <div class="wrap">
+      <div class="help">
+        <div>
+          <div class="eyebrow"><span class="dot"></span><span class="ko">아이폰 · 아이패드 안내</span><span class="en">iPhone · iPad GUIDE</span></div>
+          <h3 class="ko">홈 화면에 추가하면 앱처럼</h3>
+          <h3 class="en">Add it to your Home Screen</h3>
+          <p class="desc ko">Safari에서 한 번만 추가해 두면, 다음부터는 아이콘을 눌러 바로 견적을 쓸 수 있습니다. 주소창도 사라져 화면이 넓어집니다.</p>
+          <p class="desc en">Add it once in Safari and it opens from an icon next time — no address bar, more room for the estimate.</p>
+          <ul class="help-list">
+            <li><span class="k">1</span><span class="ko"><b>Safari</b>로 이 페이지를 연 뒤, 아래 <b>공유</b> 버튼을 누릅니다.</span><span class="en">Open this page in <b>Safari</b>, then tap <b>Share</b>.</span></li>
+            <li><span class="k">2</span><span class="ko"><b>홈 화면에 추가</b>를 선택하고 이름을 정합니다.</span><span class="en">Choose <b>Add to Home Screen</b> and name it.</span></li>
+            <li><span class="k">3</span><span class="ko">홈 화면 아이콘으로 언제든 실행합니다.</span><span class="en">Launch it any time from the icon.</span></li>
+          </ul>
+        </div>
+        <div class="note-card">
+          <h4 class="ko">PDF로 저장하는 방법</h4>
+          <h4 class="en">How to save a PDF</h4>
+          <p class="ko">견적서 화면에서 <b>인쇄 / PDF</b>를 누르면 인쇄 미리보기가 열립니다. 미리보기를 <b>두 손가락으로 벌려</b> 확대하면 숨어 있던 <b>공유</b> 버튼이 나타나고, 거기서 <b>파일에 저장</b>을 고르면 PDF로 보관됩니다.</p>
+          <p class="en">Tap <b>Print / PDF</b>, then <b>pinch to zoom</b> the preview — the hidden <b>Share</b> button appears. Choose <b>Save to Files</b>.</p>
+          <p class="ko">받는 분께 보낼 때는 카카오톡·메일 첨부로 바로 보내면 됩니다. 종이 없이도 서명된 견적서를 주고받을 수 있습니다.</p>
+          <p class="en">Send it straight through KakaoTalk or mail — a signed estimate, no paper needed.</p>
+          <p class="ko" style="margin-top:12px;color:#5b7288"><b>주의</b> — 시크릿 모드에서는 저장이 되지 않을 수 있습니다. 일반 탭에서 사용하세요.</p>
+          <p class="en" style="margin-top:12px;color:#5b7288"><b>Note</b> — private browsing may block saving. Use a normal tab.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CODE ================= -->
+  <section id="code" class="tight">
+    <div class="wrap">
+      <div class="code-band">
+        <div class="in">
+          <div>
+            <div class="eyebrow"><span class="dot"></span><span class="ko">구매자 안내</span><span class="en">FOR BUYERS</span></div>
+            <h2 class="ko">액세스 코드 한 번이면 열립니다</h2>
+            <h2 class="en">One access code unlocks it</h2>
+            <p class="ko">Business Kit을 구매하시면 판매처(크몽 · Gumroad)의 구매 완료 메일이나 전달 메시지에 코드가 함께 옵니다. 대소문자와 하이픈은 상관없이 입력하시면 됩니다. 한 번 입력한 코드는 그 기기에 기억되어 다음부터 묻지 않습니다.</p>
+            <p class="en">Your code arrives with the purchase receipt or delivery message from Gumroad or KMONG. Capitals and hyphens don’t matter. Once entered, the device remembers it.</p>
+          </div>
+          <div class="code-box">
+            <div class="lbl ko">코드 형식 예시</div>
+            <div class="lbl en">CODE FORMAT</div>
+            <div class="code-sample">GUMROAD-KIT-27</div>
+            <ul class="code-list">
+              <li><span class="ko">크몽 구매</span><span class="en">KMONG</span><b>KMONG-KIT-39</b></li>
+              <li><span class="ko">Gumroad 구매</span><span class="en">Gumroad</span><b>GUMROAD-KIT-27</b></li>
+            </ul>
+            <div class="code-foot ko">코드를 받지 못하셨다면 <a class="mail" href="mailto:nexoralabs.kr@gmail.com">nexoralabs.kr@gmail.com</a> 으로 구매 번호와 함께 알려주세요.</div>
+            <div class="code-foot en">No code in your receipt? Write to <a class="mail" href="mailto:nexoralabs.kr@gmail.com">nexoralabs.kr@gmail.com</a> with your order number.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= BUY ================= -->
+  <section class="tight" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head" style="margin-bottom:20px">
+        <h2 class="ko" style="font-size:19px">다른 제품과 구매처</h2>
+        <h2 class="en" style="font-size:19px">More products &amp; where to buy</h2>
+      </div>
+      <div class="buy">
+        <a href="https://nexoralabs112.gumroad.com/l/business-kit" target="_blank" rel="noopener">
+          <span class="n">Nexora Business Kit</span>
+          <span class="p ko">$27 · 프리셋 · 문자 40종 · 실무 서류</span>
+          <span class="p en">$27 · presets, 40 scripts, paperwork</span>
+          <span class="s">GUMROAD →</span>
+        </a>
+        <a href="https://nexoralabs112.gumroad.com/l/jvtjwl" target="_blank" rel="noopener">
+          <span class="n">Nexora Quote Desk Pro</span>
+          <span class="p ko">$13 · 견적·저장·백업·PDF</span>
+          <span class="p en">$13 · quotes, saving, backup, PDF</span>
+          <span class="s">GUMROAD →</span>
+        </a>
+        <a href="https://nexoralabs112.gumroad.com/l/quote-lite" target="_blank" rel="noopener">
+          <span class="n">Quote Lite <span style="font-weight:600;color:var(--faint)">/ files</span></span>
+          <span class="p ko">$0+ · 파일로도 받아 두기</span>
+          <span class="p en">$0+ · get the file version too</span>
+          <span class="s">GUMROAD →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="f-in">
+    <div>
+      <div class="f-brand"><span class="mark">N</span>Nexora Labs</div>
+      <p class="f-note ko" style="margin-top:12px">Nexora Quote Desk는 인테리어·시공 업체용 견적 보조 도구입니다. 계산 결과와 세율은 실제 계약 전에 반드시 확인하세요. 입력한 견적 데이터는 서버로 전송되지 않고 사용하시는 브라우저에만 저장됩니다.</p>
+      <p class="f-note en" style="margin-top:12px">Nexora Quote Desk is an estimating helper for interior and construction businesses. Always verify figures and tax rates before contracting. Your data is never sent to a server; it stays in your browser.</p>
+    </div>
+    <div style="text-align:right">
+      <div class="f-links">
+        <a href="lite-ko/" class="ko">Lite</a><a href="kit-ko/" class="ko">Business Kit</a><a href="#code" class="ko">액세스 코드</a>
+        <a href="lite-en/" class="en">Lite</a><a href="kit-en/" class="en">Business Kit</a><a href="#code" class="en">Access code</a>
+        <a href="mailto:nexoralabs.kr@gmail.com">nexoralabs.kr@gmail.com</a>
+      </div>
+      <p class="f-note" style="margin-top:12px">© 2026 Nexora Labs. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var KEY = "nx_hub_lang";
+  var btn = document.getElementById("langBtn");
+  var label = document.getElementById("langLabel");
+  function apply(lang){
+    document.body.setAttribute("data-lang", lang);
+    document.documentElement.lang = lang;
+    label.textContent = (lang === "ko") ? "EN" : "한국어";
+    document.title = (lang === "ko")
+      ? "Nexora Quote Desk — 인테리어 견적 도구 웹 버전"
+      : "Nexora Quote Desk — interior estimating, in your browser";
+    try { localStorage.setItem(KEY, lang); } catch (e) {}
+  }
+  var saved = null;
+  try { saved = localStorage.getItem(KEY); } catch (e) {}
+  if (saved === "en" || saved === "ko") apply(saved);
+  else {
+    var nav = (navigator.language || "ko").toLowerCase();
+    apply(nav.indexOf("ko") === 0 ? "ko" : "en");
+  }
+  btn.addEventListener("click", function(){
+    apply(document.body.getAttribute("data-lang") === "ko" ? "en" : "ko");
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,2065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; media-src 'none'; connect-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Nexora Quote Lite | Contractor Estimate Calculator</title>
+<!--
+  Nexora Quote Lite v2.0 — (c) 2026 Nexora Labs. All rights reserved.
+  Licence: one business. No resale or redistribution of this file.
+  Single offline HTML: no external resources, no network requests.
+  Calculation and tax results are a helper, not tax or legal advice.
+-->
+<meta name="description" content="Free estimate calculator for remodeling, construction and installation crews. Cost to price with your target margin, per-item sales tax, deposit and balance, printed on US Letter.">
+<style>
+  :root{
+    --ink:#0b1220; --text:#1f2937; --muted:#6b7280; --faint:#9aa3b2;
+    --line:#e5e8ee; --line-strong:#d5dbe4; --bg:#f6f7f9; --card:#ffffff;
+    --brand:#0e2a47; --brand-2:#173f63; --brand-soft:#eaf0f6;
+    --teal:#0d7f75; --teal-soft:#e7f4f1;
+    --amber:#b45309; --amber-soft:#fdf4e7;
+    --red:#b42318; --red-soft:#fdecea;
+    --radius:16px; --radius-sm:11px;
+    --shadow:0 1px 2px rgba(16,24,40,.04), 0 1px 3px rgba(16,24,40,.03);
+    --shadow-lg:0 12px 32px -12px rgba(16,24,40,.18), 0 2px 6px rgba(16,24,40,.05);
+  }
+  *{box-sizing:border-box}
+  [hidden]{display:none !important}
+  html,body{margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(1200px 420px at 50% -180px, #eef3f8 0%, rgba(246,247,249,0) 70%),
+      var(--bg);
+    color:var(--text);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    font-size:15px; line-height:1.5; -webkit-text-size-adjust:100%;
+    font-feature-settings:"cv02","cv03","cv04","tnum";
+  }
+  h1,h2,h3,h4{margin:0; font-weight:700; letter-spacing:-.02em; color:var(--ink)}
+  p{margin:0}
+  svg{display:block}
+  .ico{width:16px;height:16px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+  /* ---------- top bar ---------- */
+  .topbar{position:sticky; top:0; z-index:30; background:rgba(255,255,255,.86); border-bottom:1px solid var(--line); backdrop-filter:saturate(180%) blur(12px)}
+  .tb-in{max-width:1240px; margin:0 auto; padding:11px 24px; display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+  .brand{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:-.03em; color:var(--ink)}
+  .brand-mark{width:28px;height:28px;border-radius:9px;background:linear-gradient(160deg,#173f63,#0b2036);color:#fff;display:grid;place-items:center;font-size:13px;font-weight:800;box-shadow:0 1px 2px rgba(16,24,40,.25)}
+  .brand-tag{font-size:10.5px;font-weight:800;letter-spacing:.1em;padding:3px 7px;border-radius:6px;background:var(--teal-soft);color:var(--teal);border:1px solid #cfe9e3}
+  .tb-spacer{flex:1}
+  .tb-actions{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+
+  /* ---------- buttons ---------- */
+  .btn{appearance:none; display:inline-flex; align-items:center; justify-content:center; gap:7px; border:1px solid var(--line-strong); background:#fff; color:var(--text); padding:9px 13px; border-radius:10px; font-size:13.5px; font-weight:600; cursor:pointer; font-family:inherit; transition:background .15s,border-color .15s,box-shadow .15s,transform .05s; white-space:nowrap}
+  .btn:hover{background:#fafbfc; border-color:#c3ccd7}
+  .btn:active{transform:translateY(.5px)}
+  .btn:focus-visible{outline:2px solid var(--brand); outline-offset:2px}
+  .btn.primary{background:linear-gradient(180deg,#173f63,#0e2a47); border-color:#0e2a47; color:#fff; box-shadow:0 1px 2px rgba(14,42,71,.3), inset 0 1px 0 rgba(255,255,255,.08)}
+  .btn.primary:hover{background:linear-gradient(180deg,#1b4a73,#10314f)}
+  .btn.sm{padding:6px 10px; font-size:12.5px; border-radius:8px; gap:5px}
+  .btn.ghost{background:transparent; border-color:transparent; color:var(--muted)}
+  .btn.ghost:hover{background:#eef1f5; color:var(--ink); border-color:transparent}
+  .btn.icon{padding:8px; width:34px; height:34px}
+
+  /* ---------- shell ---------- */
+  .wrap{max-width:1240px; margin:0 auto; padding:26px 24px 64px}
+  .page-head{display:flex; align-items:flex-end; justify-content:space-between; gap:20px; margin-bottom:20px; flex-wrap:wrap}
+  .eyebrow{font-size:11.5px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--teal); margin-bottom:7px}
+  .page-head h1{font-size:clamp(24px,3.2vw,31px); letter-spacing:-.035em; line-height:1.15}
+  .page-head .lede{margin-top:7px; font-size:14px; color:var(--muted); max-width:560px; line-height:1.55}
+  .head-chips{display:flex; gap:7px; flex-wrap:wrap; margin-bottom:4px}
+  .chip{display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:#475569; background:#fff; border:1px solid var(--line); padding:5px 10px; border-radius:999px; box-shadow:var(--shadow)}
+  .chip .dot{width:6px;height:6px;border-radius:50%;background:var(--teal)}
+
+  /* ---------- KPI ---------- */
+  .kpi-strip{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:18px}
+  .kpi{position:relative; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px 16px 13px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:3px; min-width:0; overflow:hidden}
+  .kpi .k{display:flex; align-items:center; gap:6px; font-size:10.8px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:#8a94a0}
+  .kpi .k .ico{width:13px;height:13px;stroke-width:2}
+  .kpi strong{font-size:25px; letter-spacing:-.035em; font-variant-numeric:tabular-nums; line-height:1.16; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--ink)}
+  .kpi .sub{font-size:11.5px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .kpi.primary{background:linear-gradient(155deg,#1d4a70 0%,#12314e 55%,#0d2843 100%); border-color:#12314e; color:#fff; box-shadow:0 8px 24px -12px rgba(13,40,67,.55), inset 0 1px 0 rgba(255,255,255,.09)}
+  .kpi.primary .k{color:#a8bccf}
+  .kpi.primary strong{color:#fff}
+  .kpi.primary .sub{color:#b6c8d8}
+  .kpi.profit strong{color:var(--teal)}
+  .kpi.neg strong{color:var(--red)}
+  .kpi .bar{height:5px; border-radius:99px; background:#eef1f4; margin-top:9px; overflow:hidden}
+  .kpi .bar i{display:block; height:100%; width:0; background:linear-gradient(90deg,#0d7f75,#16a394); border-radius:99px; transition:width .18s ease}
+  .kpi.neg .bar i{background:var(--red)}
+
+  /* ---------- layout & cards ---------- */
+  .layout{display:grid; grid-template-columns:minmax(0,1fr) 370px; gap:18px; align-items:start}
+  .layout > div, .layout > aside{min-width:0}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:20px 20px 18px}
+  .card + .card{margin-top:16px}
+  .card-head{display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:16px}
+  .card-title{display:flex; align-items:center; gap:9px}
+  .step{width:22px;height:22px;border-radius:7px;background:var(--brand-soft);color:var(--brand);display:grid;place-items:center;font-size:11.5px;font-weight:800;flex:none}
+  .card-head h2{font-size:15.5px; letter-spacing:-.015em}
+  .card-head .hint{font-size:12px; color:var(--faint); text-align:right; line-height:1.45; padding-top:2px}
+  .grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:13px}
+  .field{display:flex; flex-direction:column; gap:5px; min-width:0}
+  .field > label{font-size:12px; color:#5b6472; font-weight:650}
+  .field input,.field select,.field textarea{width:100%; padding:10px 11px; border:1px solid var(--line-strong); border-radius:10px; font-family:inherit; font-size:14px; color:var(--ink); background:#fff; min-width:0; transition:border-color .15s,box-shadow .15s,background .15s}
+  .field input::placeholder,.field textarea::placeholder{color:#aeb6c2}
+  .field input:hover,.field select:hover,.field textarea:hover{border-color:#c2cbd6}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none; border-color:#5c7f9f; box-shadow:0 0 0 3.5px rgba(23,63,99,.1)}
+  .field input[type=date]{font-variant-numeric:tabular-nums}
+  .field textarea{resize:vertical; line-height:1.55}
+  .span2{grid-column:span 2}
+  .suffix{position:relative}
+  .suffix input{padding-right:36px}
+  .suffix .sx{position:absolute; right:12px; top:50%; transform:translateY(-50%); font-size:12.5px; color:var(--faint); font-weight:600}
+
+  /* ---------- items table ---------- */
+  .table-scroll{overflow-x:auto; margin:0 -6px; padding:2px 6px 4px; -webkit-overflow-scrolling:touch}
+  table.items{width:100%; border-collapse:separate; border-spacing:0; min-width:800px}
+  table.items th{font-size:10px; color:#8a94a0; font-weight:800; text-align:left; padding:0 6px 8px; border-bottom:1px solid var(--line); white-space:nowrap; text-transform:uppercase; letter-spacing:.07em}
+  table.items td{padding:7px 3px; border-bottom:1px solid #f0f2f5; vertical-align:middle}
+  table.items tr:last-child td{border-bottom:none}
+  table.items tbody tr:hover td{background:#fbfcfd}
+  table.items input,table.items select{width:100%; padding:8px 7px; border:1px solid transparent; border-radius:8px; font-family:inherit; font-size:13.5px; background:#f8f9fb; min-width:0; color:var(--ink); transition:background .12s,border-color .12s,box-shadow .12s}
+  table.items input:hover,table.items select:hover{border-color:var(--line); background:#fff}
+  table.items input:focus,table.items select:focus{outline:none; background:#fff; border-color:#5c7f9f; box-shadow:0 0 0 3px rgba(23,63,99,.09)}
+  table.items input[readonly]{background:#f2f6f9; color:var(--brand); font-weight:700}
+  table.items input[type=number]{text-align:right; padding-right:6px; font-variant-numeric:tabular-nums}
+  table.items select.i-cat{font-size:12.5px; padding-left:5px; padding-right:2px}
+  .num{text-align:right; font-variant-numeric:tabular-nums}
+  .i-amount{font-weight:750; white-space:nowrap; padding-right:6px; font-variant-numeric:tabular-nums; color:var(--ink)}
+  .tax-cell{text-align:center}
+  .tax-pill{position:relative; display:inline-flex; cursor:pointer; user-select:none; vertical-align:middle}
+  .tax-pill input{position:absolute; inset:0; width:100%; height:100%; opacity:0; margin:0; cursor:pointer}
+  .tax-pill span{font-size:10.5px; font-weight:800; letter-spacing:.04em; padding:4px 9px; border-radius:999px; background:#f1f3f5; color:#6b7280; border:1px solid #e2e5e9; white-space:nowrap; line-height:1.35; transition:background .12s,color .12s,border-color .12s}
+  .tax-pill span::after{content:"Exempt"}
+  .tax-pill input:checked + span{background:var(--teal-soft); color:var(--teal); border-color:#bfe3db}
+  .tax-pill input:checked + span::after{content:"Tax"}
+  .tax-pill input:focus-visible + span{outline:2px solid var(--brand); outline-offset:2px}
+  .row-del{border:none; background:transparent; color:#c3cad4; cursor:pointer; padding:6px; border-radius:8px; line-height:1; display:grid; place-items:center}
+  .row-del:hover{background:var(--red-soft); color:var(--red)}
+  .items-foot{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:14px; flex-wrap:wrap}
+  .items-foot .left{display:flex; gap:8px; flex-wrap:wrap}
+  .items-foot .hint{font-size:12px; color:var(--faint)}
+  .count-pill{font-size:11.5px; font-weight:700; color:#5b6472; background:#f1f4f7; border:1px solid var(--line); padding:3px 9px; border-radius:999px}
+
+  /* ---------- sidebar ---------- */
+  .side{position:sticky; top:72px}
+  .gauge{margin:4px 0 14px}
+  .gauge-bar{height:10px; border-radius:99px; background:#eef1f4; display:flex; overflow:hidden; box-shadow:inset 0 1px 1px rgba(16,24,40,.06)}
+  .gauge-bar i{display:block; height:100%; transition:width .2s ease}
+  .gauge-cost{background:linear-gradient(180deg,#93a3b5,#7d8ea2)}
+  .gauge-profit{background:linear-gradient(180deg,#14a08f,#0d7f75)}
+  .gauge.neg .gauge-profit{background:var(--red)}
+  .gauge-legend{display:flex; justify-content:space-between; gap:10px; margin-top:7px; font-size:11.5px; color:var(--muted)}
+  .gauge-legend b{color:var(--ink); font-weight:700}
+  .gauge-legend .sw{display:inline-block; width:7px; height:7px; border-radius:2px; margin-right:4px; vertical-align:1px}
+  .margin-row{display:flex; align-items:center; gap:10px; margin-top:2px}
+  .margin-row input[type=range]{flex:1; accent-color:var(--brand); height:18px}
+  .margin-row .num-in{width:74px; flex:none}
+  .margin-row .num-in input{width:100%; padding:7px 8px; border:1px solid var(--line-strong); border-radius:8px; font-family:inherit; font-size:13.5px; text-align:right; font-variant-numeric:tabular-nums}
+  .switch{display:flex; align-items:flex-start; gap:8px; font-size:12px; color:var(--muted); cursor:pointer; line-height:1.4; margin-top:9px}
+  .switch input{width:15px; height:15px; accent-color:var(--brand); margin-top:1px; flex:none}
+  .divider{height:1px; background:var(--line); margin:15px 0}
+  .mini-rows{display:grid; gap:9px}
+  .mini-row{display:flex; align-items:center; justify-content:space-between; gap:10px}
+  .mini-row label{font-size:12.5px; font-weight:600; color:#4b5563}
+  .mini-row .inp{display:flex; align-items:center; gap:5px}
+  .mini-row input{width:88px; padding:7px 8px; border:1px solid var(--line-strong); border-radius:8px; font-family:inherit; font-size:13.5px; text-align:right; font-variant-numeric:tabular-nums}
+  .mini-row input:focus{outline:none; border-color:#5c7f9f; box-shadow:0 0 0 3px rgba(23,63,99,.1)}
+  .mini-row .u{font-size:12px; color:var(--faint); width:14px; text-align:left}
+  .sum-list{list-style:none; margin:0; padding:0}
+  .sum-list li{display:flex; justify-content:space-between; gap:12px; padding:6.5px 0; font-size:13.5px; border-bottom:1px dashed #edf0f3}
+  .sum-list li:last-child{border-bottom:none}
+  .sum-list .k{color:var(--muted)}
+  .sum-list .v{font-weight:650; font-variant-numeric:tabular-nums; white-space:nowrap}
+  .sum-list li.total{border-bottom:none; border-top:2px solid var(--ink); margin-top:4px; padding-top:10px; font-size:15px}
+  .sum-list li.total .v{font-weight:800; font-size:22px; letter-spacing:-.03em; color:var(--ink)}
+  .sum-list li.due .v{color:var(--brand); font-weight:750}
+  .sum-list li.profit .v{color:var(--teal)}
+  .sum-list li.profit.neg .v{color:var(--red)}
+  .warn{display:none; margin-top:12px; padding:10px 12px; border-radius:10px; background:var(--red-soft); color:var(--red); font-size:12.5px; font-weight:600; line-height:1.45}
+  .warn.show{display:block}
+  .side-actions{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:14px}
+  .tip{margin-top:12px; padding:10px 12px; border-radius:10px; background:#f8fafc; border:1px solid #eef1f5; font-size:12px; color:#556270; line-height:1.55}
+
+  .upsell{margin-top:16px; border:1px solid #ecd9b4; background:linear-gradient(180deg,#fffbf3,#fffdf9); border-radius:var(--radius); padding:17px}
+  .upsell h3{font-size:14.5px; display:flex; align-items:center; gap:8px}
+  .upsell .price-pill{font-size:10.5px; font-weight:800; letter-spacing:.04em; background:var(--amber); color:#fff; padding:2px 7px; border-radius:999px}
+  .upsell p{font-size:12.8px; color:#6b5a3e; margin-top:6px; line-height:1.55}
+  .upsell ul{list-style:none; margin:11px 0 0; padding:0; display:grid; gap:7px}
+  .upsell li{display:flex; gap:8px; font-size:12.8px; color:#3f3a33; line-height:1.45}
+  .upsell li .ck{color:var(--amber); font-weight:800; flex:none}
+
+  /* ---------- preview / sheet ---------- */
+  .preview-block{grid-column:1 / -1; min-width:0; margin-top:4px}
+  .preview-head{display:flex; align-items:center; justify-content:space-between; gap:12px; margin:6px 2px 12px; flex-wrap:wrap}
+  .preview-head h2{font-size:15.5px; display:flex; align-items:center; gap:8px}
+  .preview-head .tools{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+  .preview-head select{padding:6px 9px; border:1px solid var(--line-strong); border-radius:8px; font-family:inherit; font-size:12.5px; background:#fff}
+  .preview-head .hint{font-size:12px; color:var(--faint)}
+  .sheet-wrap{overflow-x:auto; padding:2px}
+  .sheet{background:#fff; border:1px solid #e3e7ed; border-radius:8px; padding:38px 42px 30px; max-width:820px; margin:0 auto; box-shadow:0 18px 44px -24px rgba(16,24,40,.28); color:#111; font-size:12.5px}
+  .sheet-top{display:flex; justify-content:space-between; align-items:flex-start; gap:24px; border-top:4px solid #0e2a47; padding-top:18px}
+  .sheet-top .co{display:flex; gap:13px; align-items:flex-start; min-width:0}
+  .co-mark{width:42px; height:42px; border-radius:11px; background:#0e2a47; color:#fff; display:grid; place-items:center; font-size:19px; font-weight:800; flex:none}
+  .sheet-top .co h1{font-size:22px; letter-spacing:-.025em; line-height:1.2}
+  .sheet-top .co p{font-size:10.8px; color:#5b6472; margin-top:5px; line-height:1.7}
+  .sheet-title{text-align:right; flex:none}
+  .sheet-title strong{font-size:25px; letter-spacing:.18em; display:block; line-height:1.05; color:#0e2a47}
+  .sheet-title .meta{font-size:10.8px; color:#4b5563; margin-top:9px; line-height:1.85; white-space:nowrap}
+  .sheet-title .meta b{color:#111; font-weight:700}
+  .sheet-parties{display:flex; gap:26px; margin:18px 0 2px; padding:12px 14px; border:1px solid #e8ecf1; border-radius:7px; background:#fafbfc}
+  .sheet-parties .box{flex:1; min-width:0}
+  .sheet-parties h4{font-size:9px; color:#8a94a0; letter-spacing:.11em; margin-bottom:4px; text-transform:uppercase; font-weight:800}
+  .sheet-parties p{font-size:11.8px; line-height:1.6; white-space:pre-line; color:#1f2937}
+  table.q{width:100%; border-collapse:collapse; margin-top:16px; font-size:11.3px}
+  table.q th{background:#eef2f6; border-top:1px solid #c9d3dd; border-bottom:1px solid #c9d3dd; padding:8px; font-size:9px; color:#334155; text-align:left; font-weight:800; text-transform:uppercase; letter-spacing:.07em}
+  table.q td{border-bottom:1px solid #e8ebef; padding:8px; vertical-align:top}
+  table.q tr:nth-child(even) td{background:#fafbfc}
+  table.q td.num{text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums}
+  table.q .empty td{color:#aaa; text-align:center; padding:22px 8px}
+  .q-bottom{display:flex; gap:30px; align-items:flex-start; margin-top:18px}
+  .q-notes{flex:1; min-width:0; font-size:10.3px; color:#444; line-height:1.7}
+  .q-notes b{display:block; margin-bottom:4px; color:#222; font-size:9px; letter-spacing:.09em; text-transform:uppercase}
+  .q-notes span{white-space:pre-line}
+  .q-totals{width:45%; min-width:262px; flex:none; border-top:2px solid #0e2a47}
+  .q-totals .r{display:flex; justify-content:space-between; gap:16px; padding:7px 8px; font-size:11.3px; border-bottom:1px solid #eef0f3}
+  .q-totals .r .v{font-variant-numeric:tabular-nums; white-space:nowrap}
+  .q-totals .r.big{border-bottom:none; border-top:none; font-size:15px; font-weight:800; padding-top:9px}
+  .q-totals .r.due{background:#f4f7fa; font-weight:700}
+  .sheet-accept{display:flex; gap:32px; margin-top:26px}
+  .sheet-accept div{flex:1; font-size:9px; color:#7b8590; letter-spacing:.05em; text-transform:uppercase}
+  .sheet-accept i{display:block; border-bottom:1px solid #a7b0ba; height:20px; margin-top:7px}
+  .sheet-foot{margin-top:22px; padding-top:10px; border-top:1px solid #e8ebef; display:flex; justify-content:space-between; gap:12px; font-size:9.3px; color:#7b8590}
+  .footer{margin-top:30px; text-align:center; font-size:11.5px; color:#9aa3b2; line-height:1.8}
+
+  /* ---------- toast & dialog ---------- */
+  .toast{position:fixed; left:50%; bottom:26px; transform:translate(-50%,16px); background:#0b1220; color:#fff; padding:11px 17px; border-radius:12px; font-size:13px; opacity:0; pointer-events:none; transition:opacity .2s,transform .2s; z-index:60; box-shadow:0 16px 40px -10px rgba(0,0,0,.45); max-width:92vw; text-align:center}
+  .toast.show{opacity:1; transform:translate(-50%,0)}
+  dialog{border:none; border-radius:16px; padding:0; width:min(580px,92vw); box-shadow:0 30px 80px -20px rgba(15,23,42,.5)}
+  dialog::backdrop{background:rgba(9,17,31,.45); backdrop-filter:blur(2px)}
+  .dlg-in{padding:20px 22px 20px}
+  .dlg-in h3{font-size:15.5px; margin-bottom:3px}
+  .dlg-in p{font-size:12.5px; color:var(--muted); margin-bottom:11px; line-height:1.5}
+  .dlg-in textarea{width:100%; height:250px; padding:13px; border:1px solid var(--line-strong); border-radius:11px; font-family:inherit; font-size:13px; line-height:1.65; resize:vertical; color:var(--ink); background:#fbfcfd}
+  .dlg-actions{display:flex; justify-content:flex-end; gap:8px; margin-top:13px}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:1100px){
+    .kpi-strip{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
+  @media (max-width:980px){
+    .layout{grid-template-columns:minmax(0,1fr)}
+    .side{position:static}
+    .preview-block{margin-top:8px}
+    .page-head{align-items:flex-start}
+  }
+  @media (max-width:620px){
+    body{font-size:14.5px}
+    .wrap{padding:18px 12px 44px}
+    .tb-in{padding:10px 12px; gap:8px}
+    .brand-tag{display:none}
+    .tb-actions .btn{padding:7px 10px; font-size:12.5px}
+    .grid{grid-template-columns:1fr}
+    .span2{grid-column:auto}
+    .card{padding:16px 14px}
+    .kpi-strip{grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px}
+    .kpi{padding:11px 12px 10px}
+    .kpi strong{font-size:19px}
+    .kpi .k{font-size:9.6px}
+    .kpi .sub{font-size:10.2px}
+    .sheet{padding:22px 18px; min-width:600px}
+    .sheet-top{flex-direction:column; gap:10px}
+    .sheet-title{text-align:left}
+    .q-totals{width:100%; min-width:0}
+    .q-bottom{flex-direction:column}
+    .side-actions{grid-template-columns:1fr 1fr}
+    .page-head h1{font-size:24px}
+    .swipe{display:inline}
+  }
+
+  /* ---------- print ---------- */
+  @media print{
+    body{background:#fff; font-size:11px}
+    .topbar,.col-main,.side,.preview-head,.footer,.upsell,.toast,dialog,.no-print,.kpi-strip,.page-head{display:none !important}
+    .wrap{padding:0; max-width:none}
+    .layout{display:block}
+    .preview-block{margin:0}
+    .sheet-wrap{overflow:visible; padding:0}
+    .sheet{border:none; border-radius:0; box-shadow:none; max-width:none; width:100%; padding:0; font-size:11px}
+    .sheet-top{border-top:3px solid #0e2a47; padding-top:10px}
+    .sheet-top .co h1{font-size:19px}
+    .co-mark{width:36px;height:36px;font-size:16px}
+    .sheet-title strong{font-size:22px}
+    table.q{font-size:10.3px}
+    table.q th{font-size:8.5px}
+    .q-totals .r{font-size:10.3px}
+    .q-totals .r.big{font-size:13px}
+    .q-notes{font-size:9.6px}
+    .sheet-foot{font-size:8.7px}
+    tr,td,th{page-break-inside:avoid}
+  }
+  /* ===================== v2.0 — light, converter, draft, transfer ===================== */
+  .sample-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:linear-gradient(90deg,#fdf3e3 0%,#fffaf1 70%);border-top:1px solid #f3e3c9;padding:8px 18px;font-size:12.5px;color:#7a5a22}
+  .sample-bar .sb-in{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap;width:100%}
+  .sample-bar strong{font-weight:800;color:#8a5a12}
+  .sample-bar .sb-dot{width:7px;height:7px;border-radius:50%;background:#d9911f;box-shadow:0 0 0 3px rgba(217,145,31,.16);flex:none}
+  .sample-bar .btn{margin-left:auto}
+
+  .light{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:750;padding:4px 10px 4px 6px;border-radius:999px;border:1px solid transparent;line-height:1.35;white-space:nowrap}
+  .light .ic{width:17px;height:17px;border-radius:50%;display:grid;place-items:center;font-size:10.5px;font-weight:900;color:#fff;flex:none;line-height:1}
+  .light.lt-green{background:var(--teal-soft);color:#0a5f57;border-color:#bfe3db}
+  .light.lt-green .ic{background:#0d7f75}
+  .light.lt-amber{background:var(--amber-soft);color:#8a4a06;border-color:#f0dcc0}
+  .light.lt-amber .ic{background:#c47a12}
+  .light.lt-red{background:var(--red-soft);color:#9b1c13;border-color:#f3cccc}
+  .light.lt-red .ic{background:var(--red)}
+  .light.lt-loss{background:#3b0a06;color:#fff;border-color:#3b0a06}
+  .light.lt-loss .ic{background:#ff7a6b;color:#3b0a06}
+  .light.lt-none{background:#f1f3f5;color:#6b7280;border-color:#e2e5e9}
+  .light.lt-none .ic{background:#9aa3b2}
+  .light-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0 0;justify-content:space-between}
+  .light-row .hint{font-size:11px;color:#9aa3b2;line-height:1.4}
+
+  .rl-cell{width:16px;padding-right:0!important}
+  .rlight{display:inline-block;width:9px;height:9px;border-radius:50%;background:#d5dbe4;box-shadow:0 0 0 1px rgba(16,24,40,.06)}
+  .rlight.rl-green{background:#0d7f75}
+  .rlight.rl-amber{background:#d9911f}
+  .rlight.rl-red{background:#b42318}
+  .rlight.rl-loss{background:#3b0a06;box-shadow:0 0 0 2px #ff9c90}
+
+  .draft-box{margin-top:12px;border:1px solid var(--line);border-radius:11px;background:#f8fafc;padding:10px 12px}
+  .draft-hint{font-size:11.5px;color:#6b7280;line-height:1.5}
+  .draft-hint.bad{color:var(--red);font-weight:650}
+  .draft-box .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+
+  .conv-out{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:#374151;border:1px solid var(--line);border-radius:11px;background:#f8fafc;padding:12px 14px;margin-top:12px;min-height:46px;align-items:center}
+  .conv-out b{font-weight:750;color:var(--ink);font-variant-numeric:tabular-nums}
+  .conv-qty{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .conv-qty strong{font-size:21px;letter-spacing:-.02em;color:var(--brand)}
+  .conv-qty span{font-size:12px;color:#6b7280;line-height:1.45}
+  .conv-note{font-size:11.5px;color:#9aa3b2;line-height:1.5;margin-top:9px}
+  .dlg-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:13px}
+  .dlg-in{padding:20px 22px 20px}
+  .dlg-in h3{font-size:15.5px;margin-bottom:3px}
+  .dlg-in p{font-size:12.5px;color:var(--muted);margin-bottom:11px;line-height:1.5}
+  .dlg-in .field{margin-top:10px}
+
+  .btn{min-height:40px}
+  .btn.sm{min-height:34px}
+  .field input,.field select,.field textarea{min-height:42px}
+  .actionbar{position:fixed;left:0;right:0;bottom:0;z-index:28;background:rgba(255,255,255,.96);border-top:1px solid var(--line-strong);box-shadow:0 -10px 30px -18px rgba(16,24,40,.5)}
+  .actionbar .ab-in{max-width:1200px;margin:0 auto;padding:10px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .ab-kpis{display:flex;align-items:center;gap:16px;flex-wrap:wrap;flex:1;min-width:0}
+  .ab-kpis .ab{display:flex;flex-direction:column;line-height:1.15}
+  .ab-kpis .ab .k{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#8a94a0}
+  .ab-kpis .ab strong{font-size:19px;letter-spacing:-.03em;font-variant-numeric:tabular-nums;color:var(--ink);white-space:nowrap}
+  .ab-kpis .ab.profit strong{color:var(--teal)}
+  .ab-acts{display:flex;gap:8px;flex-wrap:wrap}
+  .ab-acts .btn{min-height:44px;font-size:14.5px;padding:0 18px}
+  main.wrap{padding-bottom:96px}
+
+  @media (max-width:620px){
+    /* the bottom bar already carries the primary action — keep the header to two tidy rows */
+    .tb-actions #btnPrint{display:none}
+    .tb-in{gap:8px}
+    .actionbar .ab-in{padding:8px 12px;gap:8px}
+    .ab-kpis .ab strong{font-size:16px}
+    .ab-acts{width:100%}
+    .ab-acts .btn{flex:1;min-height:48px;font-size:15px}
+    main.wrap{padding-bottom:150px}
+    .btn{min-height:44px}
+    .btn.sm{min-height:40px}
+    .field input,.field select,.field textarea{min-height:46px;font-size:15px}
+    .sample-bar{padding:8px 12px}
+    .conv-out{gap:12px}
+  }
+  @media print{
+    .sample-bar,.light-row,.draft-box,.rlight,.rl-cell,.actionbar{display:none!important}
+  }
+</style>
+<style id="pageRule">@page{size:letter;margin:0.5in}</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="tb-in">
+    <div class="brand">
+      <span class="brand-mark">N</span>
+      <span>Nexora Quote</span>
+      <span class="brand-tag">LITE</span>
+      <span class="brand-tag" id="sampleBadge" style="background:#e7f4f1;color:#0d7f75;border-color:#bfe3db" hidden>SAMPLE</span>
+    </div>
+    <div class="tb-spacer"></div>
+    <div class="tb-actions">
+      <button class="btn ghost sm" type="button" id="btnSample">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H11L9.5 22 19 10h-6.5z"/></svg>
+        Sample
+      </button>
+      <button class="btn ghost sm" type="button" id="btnReset">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+        Reset
+      </button>
+      <button class="btn primary sm" type="button" id="btnPrint">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="7" rx="1.6"/><path d="M6 16h12v5H6z"/></svg>
+        Print / Save PDF
+      </button>
+    </div>
+  </div>
+  <div class="sample-bar" id="sampleBar" hidden>
+    <div class="sb-in">
+      <span class="sb-dot"></span>
+      <span><strong>Sample estimate</strong> — a filled-in job so you can see the light, the sheet and the print layout. Change any number you like; press the button when you want a blank one.</span>
+      <button class="btn sm" type="button" id="sampleClear">Start my own estimate</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">Estimate builder</p>
+      <h1>Price the job, not your time.</h1>
+      <p class="lede">Enter what the job costs you. Nexora prices it at your target margin, adds sales tax where it applies, and prints a US Letter estimate you can send today.</p>
+    </div>
+    <div class="head-chips">
+      <span class="chip"><span class="dot"></span>Works offline</span>
+      <span class="chip">8 lines</span>
+      <span class="chip">No account</span>
+    </div>
+  </div>
+
+  <section class="kpi-strip" aria-label="Estimate summary">
+    <div class="kpi" title="What the job costs you: materials, labor and other costs">
+      <span class="k">Your cost</span>
+      <strong id="kpi_cost">$0.00</strong>
+      <span class="sub" id="kpi_cost_sub">Material $0.00 · Labor $0.00</span>
+    </div>
+    <div class="kpi primary" title="What the customer pays, sales tax included">
+      <span class="k">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/></svg>
+        Customer pays
+      </span>
+      <strong id="kpi_total">$0.00</strong>
+      <span class="sub" id="kpi_total_sub">No sales tax</span>
+    </div>
+    <div class="kpi profit" id="kpi_profit_card" title="What is left for you after your costs">
+      <span class="k">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M4 18 10 11l4 4 6-8"/><path d="M15 7h5v5"/></svg>
+        Your profit
+      </span>
+      <strong id="kpi_profit">$0.00</strong>
+      <span class="sub" id="kpi_profit_sub">Set a margin to price the job</span>
+    </div>
+    <div class="kpi" title="Your profit as a share of the pre-tax price">
+      <span class="k">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M5 19V9M12 19V5M19 19v-7"/></svg>
+        Profit %
+      </span>
+      <strong id="kpi_margin">0%</strong>
+      <div class="bar"><i id="kpi_bar"></i></div>
+    </div>
+  </section>
+
+  <div class="layout">
+    <div class="col-main">
+
+      <section class="card">
+        <div class="card-head">
+          <div class="card-title"><span class="step">1</span><h2>Your business</h2></div>
+          <span class="hint">Saved in this browser<br>after you type it once</span>
+        </div>
+        <div class="grid">
+          <div class="field">
+            <label for="c_name">Business name</label>
+            <input id="c_name" type="text" placeholder="Northline Interiors" autocomplete="organization">
+          </div>
+          <div class="field">
+            <label for="c_owner">Your name</label>
+            <input id="c_owner" type="text" placeholder="Jordan Miles" autocomplete="name">
+          </div>
+          <div class="field">
+            <label for="c_tel">Phone</label>
+            <input id="c_tel" type="tel" placeholder="(512) 555-0148" autocomplete="tel">
+          </div>
+          <div class="field">
+            <label for="c_email">Email</label>
+            <input id="c_email" type="email" placeholder="you@yourcompany.com" autocomplete="email">
+          </div>
+          <div class="field span2">
+            <label for="c_addr">Address</label>
+            <input id="c_addr" type="text" placeholder="2410 E 7th St, Austin, TX 78702" autocomplete="street-address">
+          </div>
+          <div class="field">
+            <label for="c_license">License # <span style="color:#a3abb8">(optional)</span></label>
+            <input id="c_license" type="text" placeholder="TX #TACLB-48219">
+          </div>
+          <div class="field">
+            <label for="c_pay">Payment instructions</label>
+            <input id="c_pay" type="text" placeholder="Zelle: pay@northlineinteriors.com">
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <div class="card-title"><span class="step">2</span><h2>Customer &amp; job</h2></div>
+          <span class="hint">Printed exactly as typed<br>on the customer's copy</span>
+        </div>
+        <div class="grid">
+          <div class="field">
+            <label for="q_client">Customer name</label>
+            <input id="q_client" type="text" placeholder="Dana Whitfield">
+          </div>
+          <div class="field">
+            <label for="q_tel">Customer phone / email</label>
+            <input id="q_tel" type="text" placeholder="(512) 555-0193">
+          </div>
+          <div class="field span2">
+            <label for="q_site">Job address / project</label>
+            <input id="q_site" type="text" placeholder="1204 Cedar Bend Dr, Austin, TX 78758 — living room &amp; kitchen refresh">
+          </div>
+          <div class="field">
+            <label for="q_no">Estimate #</label>
+            <input id="q_no" type="text" placeholder="EST-20261126-001">
+          </div>
+          <div class="field">
+            <label for="q_date">Date</label>
+            <input id="q_date" type="date">
+          </div>
+          <div class="field">
+            <label for="q_valid">Valid until</label>
+            <input id="q_valid" type="date">
+          </div>
+          <div class="field">
+            <label for="q_deposit">Deposit</label>
+            <div class="suffix"><input id="q_deposit" type="number" min="0" max="100" step="1" value="30" inputmode="numeric"><span class="sx">%</span></div>
+          </div>
+          <div class="field span2">
+            <label for="q_note">Notes &amp; terms</label>
+            <textarea id="q_note" rows="4">Scope: Work and materials as listed above.
+Exclusions: Permits, HOA fees, hazardous material removal, and any work not listed above are not included.
+Terms: This estimate is valid until the date shown. The deposit is due to schedule the work; the balance is due on completion. Change orders require written approval.</textarea>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <div class="card-title"><span class="step">3</span><h2>Line items</h2></div>
+          <span class="count-pill" id="lineCount">1 / 8 lines</span>
+        </div>
+        <div class="table-scroll">
+          <table class="items">
+            <thead>
+              <tr>
+                <th style="width:16px"><span class="sr-only">Margin</span></th>
+                <th>Description</th>
+                <th style="width:94px">Type</th>
+                <th style="width:62px">Qty</th>
+                <th style="width:74px">Unit</th>
+                <th style="width:92px">Unit cost</th>
+                <th style="width:92px">Unit price</th>
+                <th style="width:72px" class="tax-cell">Sales tax</th>
+                <th style="width:92px" class="num">Amount</th>
+                <th style="width:30px"></th>
+              </tr>
+            </thead>
+            <tbody id="itemRows"></tbody>
+          </table>
+        </div>
+        <div class="items-foot">
+          <div class="left">
+            <button class="btn sm" type="button" id="btnAddRow">
+              <svg class="ico" viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M12 5v14M5 12h14"/></svg>
+              Add line
+            </button>
+            <button class="btn sm" type="button" id="btnBasic">Basic items</button>
+          </div>
+          <span class="hint">Unit price fills from your margin — turn off “set from margin” to type your own.</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <details class="details-help">
+          <summary>First time? 3-minute walkthrough</summary>
+          <ol>
+            <li>Type your <b>business details</b> once. They stay in this browser for next time.</li>
+            <li>Fill in the <b>customer and job</b>; estimate number, date and valid-until fill themselves in.</li>
+            <li>Add <b>line items</b> with quantity, unit and your cost per unit.</li>
+            <li>Set your <b>target margin</b> on the right — each unit price is calculated for you.</li>
+            <li>Mark lines <b>Tax</b> where your state charges sales tax (most states tax materials, many do not tax labor).</li>
+            <li>Check the <b>customer view</b> below, then <b>Print / Save PDF</b>.</li>
+          </ol>
+        </details>
+      </section>
+    </div>
+
+    <aside>
+      <div class="side">
+        <section class="card">
+          <div class="card-head" style="margin-bottom:12px">
+            <div class="card-title"><h2 style="font-size:15px">Profitability</h2></div>
+            <span class="hint" id="costHint">Cost split</span>
+          </div>
+
+          <div class="gauge" id="gauge">
+            <div class="gauge-bar">
+              <i class="gauge-cost" id="gaugeCost" style="width:100%"></i>
+              <i class="gauge-profit" id="gaugeProfit" style="width:0%"></i>
+            </div>
+            <div class="gauge-legend">
+              <span><span class="sw" style="background:#8496a9"></span>Cost <b id="gaugeCostTxt">$0.00</b></span>
+              <span><span class="sw" style="background:#0d7f75"></span>Profit <b id="gaugeProfitTxt">$0.00</b></span>
+            </div>
+          </div>
+
+          <div class="light-row">
+            <span class="light lt-none" id="lightChip" title="How healthy the margin is on this estimate"><span class="ic" id="lightIcon">–</span><span id="lightLabel">Add a cost</span></span>
+            <button class="btn sm" type="button" id="btnConvert" title="Turn an area into a material quantity">Area → quantity</button>
+          </div>
+          <p class="hint" style="font-size:12px;color:#6b7280;margin-top:6px;line-height:1.45" id="lightHint">Type what the job costs you and a green, amber or red light tells you if the price is healthy.</p>
+          <p class="hint" style="font-size:11px;color:#a3abb8;margin-top:2px;line-height:1.4">Lights use an example target of 25% and minimum of 15%. Pro lets you set your own and shows the discount floor.</p>
+
+          <div class="margin-row">
+            <input id="marginSlider" type="range" min="0" max="60" step="1" value="25" aria-label="Target margin percent">
+            <div class="num-in"><input id="marginRate" type="number" min="0" max="90" step="1" value="25" inputmode="decimal" aria-label="Target margin percent"></div>
+          </div>
+          <label class="switch" for="autoMargin">
+            <input id="autoMargin" type="checkbox" checked>
+            <span>Set each unit price from the target margin<br>(turn off to type your own prices)</span>
+          </label>
+
+          <div class="divider"></div>
+          <div class="mini-rows">
+            <div class="mini-row">
+              <label for="discount">Discount</label>
+              <div class="inp"><span class="u">$</span><input id="discount" type="number" min="0" step="0.01" value="0" inputmode="decimal"></div>
+            </div>
+            <div class="mini-row">
+              <label for="taxRate">Sales tax</label>
+              <div class="inp"><input id="taxRate" type="number" min="0" max="30" step="0.001" value="0" inputmode="decimal"><span class="u">%</span></div>
+            </div>
+            <div class="mini-row">
+              <label for="depositPct">Deposit</label>
+              <div class="inp"><input id="depositPct" type="number" min="0" max="100" step="1" value="30" inputmode="numeric"><span class="u">%</span></div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+          <ul class="sum-list" aria-live="polite">
+            <li><span class="k">Items</span><span class="v" id="s_items">$0.00</span></li>
+            <li id="s_discRow" style="display:none"><span class="k">Discount</span><span class="v" id="s_disc">-$0.00</span></li>
+            <li><span class="k">Subtotal</span><span class="v" id="s_supply">$0.00</span></li>
+            <li><span class="k" id="s_tax_label">Sales tax</span><span class="v" id="s_tax">$0.00</span></li>
+            <li class="total"><span>Total</span><span class="v" id="s_total">$0.00</span></li>
+            <li class="due"><span class="k">Deposit due</span><span class="v" id="s_dep">$0.00</span></li>
+            <li class="due"><span class="k">Balance due</span><span class="v" id="s_bal">$0.00</span></li>
+            <li class="profit" id="s_marginRow"><span class="k">Profit</span><span class="v" id="s_margin">$0.00 (0%)</span></li>
+          </ul>
+
+          <div class="draft-box">
+            <div class="draft-hint" id="draftHint">This estimate is kept in one slot in this browser.</div>
+            <div class="acts">
+              <button class="btn sm" type="button" id="btnExportOne">Export 1 quote</button>
+              <button class="btn sm" type="button" id="btnImportOne">Import 1 quote</button>
+              <button class="btn sm" type="button" id="btnDraftDiscard">Discard draft</button>
+              <input id="importOneFile" type="file" accept=".json,application/json" hidden>
+            </div>
+          </div>
+
+          <div class="warn" id="warn"></div>
+          <div class="warn" id="inputWarn"></div>
+
+          <div class="side-actions">
+            <button class="btn sm" type="button" id="btnCopy">
+              <svg class="ico" viewBox="0 0 24 24" style="width:14px;height:14px"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>
+              Copy text
+            </button>
+            <button class="btn sm" type="button" id="btnPrint2">Print / PDF</button>
+          </div>
+          <div class="tip">Prices round up to the next whole dollar. A discount is applied before tax, split across taxable and exempt lines.</div>
+        </section>
+
+        <section class="upsell">
+          <h3>Quote Desk Pro <span class="price-pill">$13</span></h3>
+          <p>This file holds one estimate at a time. When you send several a week, the records and the follow-ups are what save you.</p>
+          <ul>
+            <li><span class="ck">✓</span> Every estimate saved and reopened</li>
+            <li><span class="ck">✓</span> Follow-up due list for Monday morning</li>
+            <li><span class="ck">✓</span> Your logo, deposit tracking, JSON backup</li>
+          </ul>
+        </section>
+      </div>
+    </aside>
+
+    <div class="preview-block">
+      <div class="preview-head">
+        <h2>
+          <svg class="ico" viewBox="0 0 24 24" style="stroke:#8a94a0"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+          Customer view
+        </h2>
+        <div class="tools">
+          <span class="hint">Paper</span>
+          <select id="paperSize">
+            <option value="letter" selected>US Letter</option>
+            <option value="a4">A4</option>
+          </select>
+          <span class="hint">Prints only this sheet.</span>
+          <span class="hint swipe">Swipe the sheet sideways to see all of it →</span>
+        </div>
+      </div>
+
+      <div class="sheet-wrap">
+        <div class="sheet" id="quoteSheet">
+          <div class="sheet-top">
+            <div class="co">
+              <span class="co-mark" id="pv_mark">N</span>
+              <div>
+                <h1 id="pv_cname">Your business name</h1>
+                <p>
+                  <span id="pv_owner_line">Your name</span><br>
+                  <span id="pv_addr">Your address</span><br>
+                  <span id="pv_contact_line">Phone · Email</span><br>
+                  <span id="pv_license_line"></span>
+                </p>
+              </div>
+            </div>
+            <div class="sheet-title">
+              <strong>ESTIMATE</strong>
+              <div class="meta">
+                Estimate # <b id="pv_no">—</b><br>
+                Date <span id="pv_date">—</span><br>
+                Valid until <span id="pv_valid">—</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="sheet-parties">
+            <div class="box">
+              <h4>Prepared for</h4>
+              <p><b id="pv_client">Customer name</b><br><span id="pv_clienttel">—</span></p>
+            </div>
+            <div class="box">
+              <h4>Project / job site</h4>
+              <p id="pv_site">Job address</p>
+            </div>
+          </div>
+
+          <table class="q">
+            <thead>
+              <tr>
+                <th style="width:38px">#</th>
+                <th>Description</th>
+                <th style="width:60px" class="num">Qty</th>
+                <th style="width:58px">Unit</th>
+                <th style="width:104px" class="num">Unit price</th>
+                <th style="width:112px" class="num">Amount</th>
+              </tr>
+            </thead>
+            <tbody id="pv_items"></tbody>
+          </table>
+
+          <div class="q-bottom">
+            <div class="q-notes">
+              <b>Notes &amp; terms</b>
+              <span id="pv_note">—</span>
+            </div>
+            <div class="q-totals">
+              <div class="r"><span>Subtotal</span><span class="v" id="pv_subtotal">$0.00</span></div>
+              <div class="r" id="pv_disc_row" style="display:none"><span>Discount</span><span class="v" id="pv_disc">-$0.00</span></div>
+              <div class="r"><span id="pv_tax_label">Sales tax</span><span class="v" id="pv_tax">$0.00</span></div>
+              <div class="r big"><span>Total</span><span class="v" id="pv_total">$0.00</span></div>
+              <div class="r due"><span id="pv_dep_label">Deposit due (30%)</span><span class="v" id="pv_dep">$0.00</span></div>
+              <div class="r"><span>Balance due</span><span class="v" id="pv_bal">$0.00</span></div>
+            </div>
+          </div>
+
+          <div class="sheet-accept">
+            <div>Accepted by (signature)<i></i></div>
+            <div>Date<i></i></div>
+          </div>
+
+          <div class="sheet-foot">
+            <span id="pv_pay">Payment instructions</span>
+            <span>Thank you for your business.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        Nexora Quote Lite · Free estimate calculator for remodeling, construction and installation crews<br>
+        This version does not keep a record of estimates. Close the window and the estimate is gone; your business details stay.
+      </div>
+    </div>
+  </div>
+</main>
+
+<dialog id="copyDialog">
+  <div class="dlg-in">
+    <h3>Text version for email or text</h3>
+    <p>Copy this into a text, email or message. Confirm the numbers with the customer afterward.</p>
+    <textarea id="copyText" readonly></textarea>
+    <div class="dlg-actions">
+      <button class="btn" type="button" id="btnCopyClose">Close</button>
+      <button class="btn primary" type="button" id="btnCopyGo">Copy</button>
+    </div>
+  </div>
+</dialog>
+
+<div class="actionbar" id="actionBar">
+  <div class="ab-in">
+    <div class="ab-kpis">
+      <span class="ab"><span class="k">Total</span><strong id="abTotal">$0.00</strong></span>
+      <span class="ab profit" id="abProfitWrap"><span class="k">Your profit</span><strong id="abProfit">$0.00</strong></span>
+      <span class="light lt-none" id="abLight"><span class="ic" id="abLightIcon">–</span><span id="abLightLabel">Add a cost</span></span>
+    </div>
+    <div class="ab-acts">
+      <button class="btn primary" type="button" id="abPrint">Print / Save PDF</button>
+    </div>
+  </div>
+</div>
+
+<dialog id="convDialog">
+  <div class="dlg-in">
+    <h3>Area → material quantity</h3>
+    <p>Convert an area between sq ft, sq yd, m² and pyeong, then estimate how many packages to buy. Nothing is changed until you press Apply.</p>
+    <div class="field">
+      <label for="convArea">Area to cover</label>
+      <input id="convArea" type="number" min="0" step="any" inputmode="decimal" placeholder="1200">
+    </div>
+    <div class="field">
+      <label for="convUnit">Area unit</label>
+      <select id="convUnit">
+        <option value="sq ft">sq ft</option><option value="sq yd">sq yd</option>
+        <option value="m2">m²</option><option value="pyeong">pyeong</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="convCoverage">One package covers</label>
+      <input id="convCoverage" type="number" min="0" step="any" inputmode="decimal" placeholder="24">
+    </div>
+    <div class="field">
+      <label for="convCoverageUnit">Package unit</label>
+      <select id="convCoverageUnit">
+        <option value="sq ft">sq ft</option><option value="sq yd">sq yd</option>
+        <option value="m2">m²</option><option value="pyeong">pyeong</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="convWaste">Waste allowance</label>
+      <input id="convWaste" type="number" min="0" max="100" step="1" inputmode="numeric" value="10">
+    </div>
+    <div class="conv-out" id="convOut"></div>
+    <div class="conv-qty"><strong id="convQty">—</strong><span id="convQtyNote">Add the coverage of one package to count what to buy.</span></div>
+    <div id="convApply" hidden>
+      <div class="field">
+        <label for="convLine">Put the quantity on</label>
+        <select id="convLine"></select>
+      </div>
+    </div>
+    <p class="conv-note">A line that already has a quantity is only replaced after you confirm. Quote Desk Pro adds the same calculator with a package picker per line and trade grouping.</p>
+    <div class="dlg-actions">
+      <button class="btn" type="button" id="convClose">Close</button>
+      <button class="btn primary" type="button" id="convApplyBtn">Apply to the line</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="resetDialog">
+  <div class="dlg-in">
+    <h3>Clear this desk</h3>
+    <p>Deletes this product's data in this browser: your business details, this draft and the sample. Other Nexora products and files you already downloaded are not touched.</p>
+    <div class="dlg-actions" style="justify-content:flex-start;margin-bottom:12px">
+      <button class="btn sm" type="button" id="resetBackup">Export this estimate first</button>
+    </div>
+    <div class="field">
+      <label for="resetInput">Type DELETE to confirm</label>
+      <input id="resetInput" type="text" autocomplete="off" spellcheck="false" placeholder="DELETE">
+    </div>
+    <div class="dlg-actions">
+      <button class="btn" type="button" id="resetCancel">Cancel</button>
+      <button class="btn" type="button" id="resetGo" disabled style="background:#b42318;border-color:#b42318;color:#fff">Delete everything</button>
+    </div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  var TIER = "lite";
+  var MAX_ROWS = 8;
+  var STORE_KEY = "nexora:quote:en:lite:settings";
+  var DEFAULT_NOTE = "Scope: Work and materials as listed above.\nExclusions: Permits, HOA fees, hazardous material removal, and any work not listed above are not included.\nTerms: This estimate is valid until the date shown. The deposit is due to schedule the work; the balance is due on completion. Change orders require written approval.";
+  var COMPANY_FIELDS = ["c_name", "c_owner", "c_tel", "c_email", "c_addr", "c_license", "c_pay"];
+  var PREF_FIELDS = ["taxRate", "depositPct", "marginRate"];
+  var UNITS = ["ea", "ft", "sq ft", "lin ft", "hr", "job", "sq yd"];
+
+  /* ---------- money ---------- */
+  function toNumber(value) {
+    if (value === null || value === undefined) return 0;
+    var n = Number(String(value).replace(/[^0-9.\-]/g, ""));
+    return isFinite(n) ? n : 0;
+  }
+  function toCents(value) { return Math.round(toNumber(value) * 100); }
+  function money(cents) {
+    var c = Math.round(toNumber(cents));
+    var neg = c < 0;
+    var abs = Math.abs(c);
+    var rest = String(abs % 100);
+    if (rest.length < 2) rest = "0" + rest;
+    var s = String(Math.floor(abs / 100)).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return (neg ? "-$" : "$") + s + "." + rest;
+  }
+  function fmtQty(n) {
+    var v = toNumber(n);
+    if (Math.round(v) === v) return String(v);
+    return String(Math.round(v * 100) / 100);
+  }
+  function priceFromCost(costCents, marginPercent) {
+    var m = Math.min(Math.max(toNumber(marginPercent), 0), 95);
+    if (costCents <= 0) return 0;
+    return Math.ceil(costCents / (1 - m / 100) / 100) * 100;
+  }
+
+  function computeTotals(rows, opts) {
+    var mat = 0, labor = 0, etc = 0, cost = 0, taxableItems = 0, itemsTotal = 0;
+    var lines = [];
+    for (var i = 0; i < rows.length; i++) {
+      var r = rows[i];
+      var qty = toNumber(r.qty);
+      var cAmount = Math.round(qty * toNumber(r.cost));
+      cost += cAmount;
+      if (r.cat === "labor") labor += cAmount;
+      else if (r.cat === "etc") etc += cAmount;
+      else mat += cAmount;
+
+      var unit = opts.autoMargin ? priceFromCost(toNumber(r.cost), opts.marginRate) : toNumber(r.price);
+      var amount = Math.round(qty * unit);
+      itemsTotal += amount;
+      if (r.taxable) taxableItems += amount;
+      lines.push({ unitPrice: unit, amount: amount });
+    }
+    var discount = Math.max(0, toNumber(opts.discount));
+    if (discount > itemsTotal) discount = itemsTotal;
+    var subtotal = Math.max(0, itemsTotal - discount);
+    var taxRate = Math.min(Math.max(toNumber(opts.taxRate), 0), 100);
+    var taxableAfter = itemsTotal > 0 ? Math.round(taxableItems * subtotal / itemsTotal) : 0;
+    var tax = Math.round(taxableAfter * taxRate / 100);
+    var total = subtotal + tax;
+    var deposit = Math.round(total * Math.min(Math.max(toNumber(opts.depositPct), 0), 100) / 100);
+    var profit = subtotal - cost;
+    return {
+      mat: mat, labor: labor, etc: etc, cost: cost, lines: lines,
+      itemsTotal: itemsTotal, taxableItems: taxableItems, discount: discount,
+      subtotal: subtotal, taxableAfter: taxableAfter, tax: tax, total: total,
+      deposit: deposit, balance: total - deposit, profit: profit,
+      rate: subtotal > 0 ? (profit / subtotal) * 100 : 0,
+      costShare: (cost + Math.max(0, profit)) > 0 ? cost / (cost + Math.max(0, profit)) : 0
+    };
+  }
+
+  /* ---------- dates ---------- */
+  function pad2(n) { return n < 10 ? "0" + n : String(n); }
+  function todayISO(offset) {
+    var d = new Date();
+    if (offset) d.setDate(d.getDate() + offset);
+    return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate());
+  }
+  function fmtDate(iso) {
+    if (!iso) return "—";
+    var p = String(iso).split("-");
+    return p.length === 3 ? p[1] + "/" + p[2] + "/" + p[0] : iso;
+  }
+  function estimateNumber() {
+    var d = new Date();
+    var seq = Math.floor(Math.random() * 900) + 100;
+    return "EST-" + d.getFullYear() + pad2(d.getMonth() + 1) + pad2(d.getDate()) + "-" + seq;
+  }
+
+  if (typeof document === "undefined") {
+    if (typeof globalThis !== "undefined") {
+      globalThis.__liteTest = { toNumber: toNumber, money: money, priceFromCost: priceFromCost, computeTotals: computeTotals };
+    }
+    return;
+  }
+
+  var $ = function (id) { return document.getElementById(id); };
+  var rowsEl = $("itemRows");
+
+  /* ---------- rows ---------- */
+  function makeRow(data) {
+    var tr = document.createElement("tr");
+    tr.className = "item-row";
+    var opts = "";
+    for (var u = 0; u < UNITS.length; u++) opts += '<option value="' + UNITS[u] + '">' + UNITS[u] + "</option>";
+    var lightCell = document.createElement("td");
+    lightCell.className = "rl-cell";
+    var dot = document.createElement("span");
+    dot.className = "rlight rl-none";
+    dot.title = "No cost yet";
+    dot.setAttribute("aria-label", "No cost yet");
+    lightCell.appendChild(dot);
+    tr.appendChild(lightCell);
+    tr.innerHTML =
+      '<td><input class="i-name" type="text" placeholder="Interior repaint — walls &amp; ceilings" autocomplete="off" maxlength="120" aria-label="Description"></td>' +
+      '<td><select class="i-cat" aria-label="Cost type"><option value="mat">Material</option><option value="labor">Labor</option><option value="etc">Other</option></select></td>' +
+      '<td><input class="i-qty" type="number" min="0" step="any" value="1" inputmode="decimal" aria-label="Quantity"></td>' +
+      '<td><select class="i-unit" aria-label="Unit">' + opts + "</select></td>" +
+      '<td><input class="i-cost" type="number" min="0" step="0.01" value="" inputmode="decimal" aria-label="Unit cost"></td>' +
+      '<td><input class="i-sell" type="number" min="0" step="0.01" value="" inputmode="decimal" aria-label="Unit price"></td>' +
+      '<td class="tax-cell"><label class="tax-pill" title="Charge sales tax on this line"><input class="i-tax" type="checkbox" checked aria-label="Charge sales tax"><span></span></label></td>' +
+      '<td class="num i-amount">$0.00</td>' +
+      '<td><button class="row-del" type="button" title="Delete this line" aria-label="Delete this line"><svg class="ico" viewBox="0 0 24 24" style="width:15px;height:15px"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13"/></svg></button></td>';
+    if (data) {
+      tr.querySelector(".i-name").value = data.name || "";
+      tr.querySelector(".i-cat").value = data.cat || "mat";
+      tr.querySelector(".i-qty").value = data.qty === undefined ? 1 : data.qty;
+      tr.querySelector(".i-unit").value = data.unit || "ea";
+      tr.querySelector(".i-cost").value = data.cost === undefined || data.cost === 0 ? "" : data.cost;
+      tr.querySelector(".i-sell").value = data.sell === undefined ? "" : data.sell;
+      tr.querySelector(".i-tax").checked = data.taxable !== false;
+    } else {
+      tr.querySelector(".i-unit").value = "ea";
+    }
+    return tr;
+  }
+
+  function countRows() { return rowsEl.querySelectorAll(".item-row").length; }
+
+  function addRow(data) {
+    if (countRows() >= MAX_ROWS) {
+      toast("Lite holds 8 lines. Save this estimate as a PDF, then start a new one for the rest.");
+      return null;
+    }
+    var tr = makeRow(data);
+    rowsEl.appendChild(tr);
+    return tr;
+  }
+
+  function readRows() {
+    var out = [];
+    rowsEl.querySelectorAll(".item-row").forEach(function (tr) {
+      out.push({
+        name: tr.querySelector(".i-name").value.trim(),
+        cat: tr.querySelector(".i-cat").value,
+        qty: toNumber(tr.querySelector(".i-qty").value),
+        unit: tr.querySelector(".i-unit").value,
+        cost: toCents(tr.querySelector(".i-cost").value),
+        price: toCents(tr.querySelector(".i-sell").value),
+        taxable: tr.querySelector(".i-tax").checked
+      });
+    });
+    return out;
+  }
+
+  function options() {
+    return {
+      autoMargin: $("autoMargin").checked,
+      marginRate: $("marginRate").value,
+      discount: toCents($("discount").value),
+      taxRate: $("taxRate").value,
+      depositPct: $("depositPct").value
+    };
+  }
+
+  function textOr(value, fallback) {
+    var v = (value || "").trim();
+    return v ? v : fallback;
+  }
+
+  /* ---------- validation ---------- */
+  var warnTimer = null;
+  function flashField(el, message) {
+    if (!el) return;
+    el.classList.add("invalid");
+    var box = $("inputWarn");
+    box.textContent = message;
+    box.classList.add("show");
+    if (warnTimer) clearTimeout(warnTimer);
+    warnTimer = setTimeout(function () {
+      el.classList.remove("invalid");
+      box.classList.remove("show");
+    }, 2600);
+  }
+
+  function sanitize(el) {
+    if (!el || el.type !== "number" || el.disabled) return;
+    var raw = String(el.value).trim();
+    if (raw === "") { el.classList.remove("invalid"); return; }
+    var n = Number(raw);
+    var min = el.min !== "" ? Number(el.min) : -Infinity;
+    var max = el.max !== "" ? Number(el.max) : Infinity;
+    if (!isFinite(n)) {
+      el.value = "";
+      flashField(el, "That is not a number — the field was cleared.");
+      return;
+    }
+    var c = Math.min(Math.max(n, min), max);
+    if (c !== n) {
+      el.value = String(c);
+      flashField(el, "Adjusted to the allowed range (" + min + " to " + max + ").");
+    }
+  }
+
+  /* ---------- render ---------- */
+  function recalc() {
+    var rows = readRows();
+    var trs = rowsEl.querySelectorAll(".item-row");
+    var auto = $("autoMargin").checked;
+    var t = computeTotals(rows, options());
+    lastRowsLite = rows;
+
+    for (var i = 0; i < rows.length; i++) {
+      var sellInput = trs[i].querySelector(".i-sell");
+      if (auto) {
+        sellInput.value = t.lines[i].unitPrice > 0 ? (t.lines[i].unitPrice / 100).toFixed(2) : "";
+        sellInput.readOnly = true;
+        sellInput.tabIndex = -1;
+      } else {
+        sellInput.readOnly = false;
+        sellInput.removeAttribute("tabindex");
+      }
+      trs[i].querySelector(".i-amount").textContent = money(t.lines[i].amount);
+    }
+
+    $("lineCount").textContent = countRows() + " / " + MAX_ROWS + " lines";
+    var rateLabel = Math.round(toNumber($("taxRate").value) * 1000) / 1000;
+
+    // KPI
+    $("kpi_cost").textContent = money(t.cost);
+    $("kpi_cost_sub").textContent = "Material " + money(t.mat) + " · Labor " + money(t.labor);
+    $("kpi_total").textContent = money(t.total);
+    $("kpi_total_sub").textContent = t.tax > 0 ? "Includes " + money(t.tax) + " sales tax" : "No sales tax";
+    $("kpi_profit").textContent = money(t.profit);
+    $("kpi_profit_sub").textContent = t.subtotal > 0
+      ? (Math.round((t.profit / Math.max(1, t.cost)) * 100) + "% markup on cost")
+      : "Set a margin to price the job";
+    $("kpi_profit_card").classList.toggle("neg", t.profit < 0 && t.subtotal > 0);
+    $("kpi_margin").textContent = (Math.round(t.rate * 10) / 10) + "%";
+    $("kpi_bar").style.width = Math.max(0, Math.min(100, t.rate)) + "%";
+
+    // gauge
+    var costShare = t.cost + Math.max(0, t.profit) > 0
+      ? (t.cost / (t.cost + Math.max(0, t.profit))) * 100 : 100;
+    $("gaugeCost").style.width = Math.max(0, Math.min(100, costShare)) + "%";
+    $("gaugeProfit").style.width = Math.max(0, 100 - costShare) + "%";
+    $("gauge").classList.toggle("neg", t.profit < 0);
+    $("gaugeCostTxt").textContent = money(t.cost);
+    $("gaugeProfitTxt").textContent = money(t.profit);
+
+    // totals
+    $("s_items").textContent = money(t.itemsTotal);
+    $("s_discRow").style.display = t.discount > 0 ? "flex" : "none";
+    $("s_disc").textContent = "-" + money(t.discount);
+    $("s_supply").textContent = money(t.subtotal);
+    $("s_tax_label").textContent = rateLabel > 0 ? "Sales tax (" + rateLabel + "%)" : "Sales tax";
+    $("s_tax").textContent = money(t.tax);
+    $("s_total").textContent = money(t.total);
+    $("s_dep").textContent = money(t.deposit);
+    $("s_bal").textContent = money(t.balance);
+    $("s_margin").textContent = money(t.profit) + " (" + (Math.round(t.rate * 10) / 10) + "%)";
+    $("s_marginRow").classList.toggle("neg", t.profit < 0 && t.subtotal > 0);
+
+    var warn = $("warn");
+    if (t.cost > 0 && t.subtotal > 0 && t.rate < 10) {
+      warn.textContent = "Your margin is " + (Math.round(t.rate * 10) / 10) + "%. Check your costs or raise the target margin.";
+      warn.classList.add("show");
+    } else if (t.profit < 0 && t.subtotal > 0) {
+      warn.textContent = "Your price is below cost on this one. Sending it as-is loses money.";
+      warn.classList.add("show");
+    } else if (t.cost > 0 && t.itemsTotal === 0) {
+      warn.textContent = "Unit prices are $0.00. Adjust the target margin or type your own prices.";
+      warn.classList.add("show");
+    } else {
+      warn.classList.remove("show");
+    }
+
+    updatePreview(rows, t);
+    if (typeof v2AfterRecalc === "function") v2AfterRecalc(t);
+  }
+
+  function updatePreview(rows, t) {
+    $("pv_mark").textContent = (($("c_name").value || "N").trim().charAt(0) || "N").toUpperCase();
+    $("pv_cname").textContent = textOr($("c_name").value, "Your business name");
+    $("pv_owner_line").textContent = textOr($("c_owner").value, "Your name");
+    $("pv_addr").textContent = textOr($("c_addr").value, "Your address");
+    var contact = [];
+    if (($("c_tel").value || "").trim()) contact.push($("c_tel").value.trim());
+    if (($("c_email").value || "").trim()) contact.push($("c_email").value.trim());
+    $("pv_contact_line").textContent = contact.length ? contact.join(" · ") : "Phone · Email";
+    var lic = ($("c_license").value || "").trim();
+    $("pv_license_line").textContent = lic ? "License " + lic : "";
+    $("pv_pay").textContent = textOr($("c_pay").value, "Payment instructions");
+
+    $("pv_no").textContent = $("q_no").value || "—";
+    $("pv_date").textContent = fmtDate($("q_date").value);
+    $("pv_valid").textContent = fmtDate($("q_valid").value);
+    $("pv_client").textContent = textOr($("q_client").value, "Customer name");
+    $("pv_clienttel").textContent = textOr($("q_tel").value, "—");
+    $("pv_site").textContent = textOr($("q_site").value, "Job address / project");
+
+    var body = $("pv_items");
+    body.innerHTML = "";
+    var wrote = 0;
+    for (var i = 0; i < rows.length; i++) {
+      var r = rows[i];
+      var line = t.lines[i];
+      if (!r.name && line.amount === 0) continue;
+      var tr = document.createElement("tr");
+      var values = [String(wrote + 1), r.name || "(no description)", fmtQty(r.qty), r.unit || "—", money(line.unitPrice), money(line.amount)];
+      for (var c = 0; c < values.length; c++) {
+        var td = document.createElement("td");
+        td.textContent = values[c];
+        if (c === 0 || c === 4 || c === 5) td.className = "num";
+        tr.appendChild(td);
+      }
+      body.appendChild(tr);
+      wrote += 1;
+    }
+    if (wrote === 0) {
+      var empty = document.createElement("tr");
+      empty.className = "empty";
+      var etd = document.createElement("td");
+      etd.colSpan = 6;
+      etd.textContent = "Add line items and they appear here exactly as the customer will see them.";
+      empty.appendChild(etd);
+      body.appendChild(empty);
+    }
+
+    $("pv_subtotal").textContent = money(t.itemsTotal);
+    $("pv_disc_row").style.display = t.discount > 0 ? "flex" : "none";
+    $("pv_disc").textContent = "-" + money(t.discount);
+    var rate = Math.round(toNumber($("taxRate").value) * 1000) / 1000;
+    $("pv_tax_label").textContent = rate > 0 ? "Sales tax (" + rate + "%)" : "Sales tax";
+    $("pv_tax").textContent = money(t.tax);
+    $("pv_total").textContent = money(t.total);
+    var dep = Math.round(toNumber($("depositPct").value) * 10) / 10;
+    $("pv_dep_label").textContent = dep > 0 ? "Deposit due (" + dep + "%)" : "Deposit due";
+    $("pv_dep").textContent = money(t.deposit);
+    $("pv_bal").textContent = money(t.balance);
+    $("pv_note").textContent = ($("q_note").value || "").trim() || "—";
+  }
+
+  function summaryText(rows, t) {
+    var items = [];
+    for (var i = 0; i < rows.length; i++) {
+      var r = rows[i];
+      var line = t.lines[i];
+      if (!r.name && line.amount === 0) continue;
+      items.push((items.length + 1) + ". " + (r.name || "Item") + " — " + fmtQty(r.qty) + " " + (r.unit || "") +
+        " × " + money(line.unitPrice) + " = " + money(line.amount));
+    }
+    var head = [
+      textOr($("c_name").value, "Estimate") + " — Estimate " + ($("q_no").value || ""),
+      "Customer: " + textOr($("q_client").value, "—")
+    ];
+    if (($("q_site").value || "").trim()) head.push("Job: " + $("q_site").value.trim());
+    head.push("");
+    var tail = [""];
+    if (t.discount > 0) tail.push("Discount: -" + money(t.discount));
+    tail.push("Subtotal: " + money(t.subtotal));
+    if (t.tax > 0) tail.push("Sales tax: " + money(t.tax));
+    tail.push("Total: " + money(t.total));
+    if (t.deposit > 0) {
+      tail.push("Deposit due: " + money(t.deposit));
+      tail.push("Balance due: " + money(t.balance));
+    }
+    if ($("q_valid").value) tail.push("Valid until: " + fmtDate($("q_valid").value));
+    if (($("c_tel").value || "").trim()) tail.push("Questions: " + $("c_tel").value.trim());
+    var body = items.length ? items : ["(no line items)"];
+    return head.concat(body).concat(tail).join("\n");
+  }
+
+  var toastTimer = null;
+  function toast(msg) {
+    var el = $("toast");
+    el.textContent = msg;
+    el.classList.add("show");
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.classList.remove("show"); }, 2800);
+  }
+
+  function copyText(text) {
+    var ok = false;
+    var ta = $("copyText");
+    ta.value = text;
+    ta.focus();
+    ta.select();
+    try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+    toast(ok ? "Copied. Paste it into your text or email." : "The text is selected — copy it with Ctrl+C (⌘C on Mac).");
+    return ok;
+  }
+
+  /* ---------- company storage ---------- */
+  function saveCompany() {
+    try {
+      var data = {};
+      COMPANY_FIELDS.forEach(function (k) { data[k] = $(k).value; });
+      PREF_FIELDS.forEach(function (k) { data[k] = $(k).value; });
+      localStorage.setItem(STORE_KEY, JSON.stringify(data));
+    } catch (e) { /* blocked storage: keep working */ }
+  }
+  function loadCompany() {
+    try {
+      var raw = localStorage.getItem(STORE_KEY);
+      if (!raw) return;
+      var data = JSON.parse(raw);
+      COMPANY_FIELDS.forEach(function (k) {
+        if (typeof data[k] === "string" && data[k]) $(k).value = data[k];
+      });
+      PREF_FIELDS.forEach(function (k) {
+        if (typeof data[k] === "string" && data[k] !== "") $(k).value = data[k];
+      });
+    } catch (e) { /* ignore corrupted entry */ }
+  }
+
+  function loadSample() {
+    $("c_name").value = "Northline Interiors";
+    $("c_owner").value = "Jordan Miles";
+    $("c_tel").value = "(512) 555-0148";
+    $("c_email").value = "jordan@northlineinteriors.com";
+    $("c_addr").value = "2410 E 7th St, Austin, TX 78702";
+    $("c_license").value = "TX #TACLB-48219";
+    $("c_pay").value = "Zelle: pay@northlineinteriors.com · Check payable to Northline Interiors";
+    $("q_client").value = "Dana Whitfield";
+    $("q_tel").value = "(512) 555-0193";
+    $("q_site").value = "1204 Cedar Bend Dr, Austin, TX 78758 — living room & kitchen refresh";
+    $("q_no").value = estimateNumber();
+    $("q_date").value = todayISO(0);
+    $("q_valid").value = todayISO(14);
+    $("q_deposit").value = "30";
+    rowsEl.innerHTML = "";
+    addRow({ name: "Interior repaint — walls & ceilings (2 coats)", cat: "labor", qty: 1180, unit: "sq ft", cost: 1.40, taxable: false });
+    addRow({ name: "Premium paint & primer", cat: "mat", qty: 1180, unit: "sq ft", cost: 0.62, taxable: true });
+    addRow({ name: "Luxury vinyl plank install", cat: "labor", qty: 640, unit: "sq ft", cost: 2.10, taxable: false });
+    addRow({ name: "LVP flooring (7 mm, 20 mil wear layer)", cat: "mat", qty: 640, unit: "sq ft", cost: 3.25, taxable: true });
+    addRow({ name: "Baseboard & shoe molding — supply", cat: "mat", qty: 210, unit: "lin ft", cost: 4.80, taxable: true });
+    addRow({ name: "Baseboard install, caulk & paint", cat: "labor", qty: 210, unit: "lin ft", cost: 3.40, taxable: false });
+    addRow({ name: "Debris removal & dumpster", cat: "etc", qty: 1, unit: "job", cost: 385, taxable: true });
+    $("marginRate").value = 25;
+    $("marginSlider").value = 25;
+    $("autoMargin").checked = true;
+    $("discount").value = 0;
+    $("taxRate").value = "8.25";
+    $("depositPct").value = 30;
+    saveCompany();
+    recalc();
+    toast("Sample loaded. Change any number and watch it recalculate.");
+  }
+
+  function resetAll() {
+    if (!window.confirm("Clear this estimate and your saved business details?")) return;
+    ["c_name", "c_owner", "c_tel", "c_email", "c_addr", "c_license", "c_pay", "q_client", "q_tel", "q_site", "q_note"].forEach(function (id) {
+      $(id).value = "";
+    });
+    $("q_note").value = "Scope: Work and materials as listed above.\nExclusions: Permits, HOA fees, hazardous material removal, and any work not listed above are not included.\nTerms: This estimate is valid until the date shown. The deposit is due to schedule the work; the balance is due on completion. Change orders require written approval.";
+    $("q_no").value = estimateNumber();
+    $("q_date").value = todayISO(0);
+    $("q_valid").value = todayISO(14);
+    $("q_deposit").value = "30";
+    $("marginRate").value = 25;
+    $("marginSlider").value = 25;
+    $("autoMargin").checked = true;
+    $("discount").value = 0;
+    $("taxRate").value = "0";
+    $("depositPct").value = "30";
+    rowsEl.innerHTML = "";
+    addRow();
+    try { localStorage.removeItem(STORE_KEY); } catch (e) {}
+    recalc();
+    toast("Cleared.");
+  }
+
+  var BASIC_ITEMS = [
+    { name: "Demolition & haul-away", cat: "etc", qty: 1, unit: "job", cost: 0 },
+    { name: "Materials", cat: "mat", qty: 1, unit: "job", cost: 0 },
+    { name: "Labor", cat: "labor", qty: 1, unit: "job", cost: 0 },
+    { name: "Trim & finish materials", cat: "mat", qty: 1, unit: "job", cost: 0 },
+    { name: "Permits & fees", cat: "etc", qty: 1, unit: "job", cost: 0 },
+    { name: "Final cleanup", cat: "etc", qty: 1, unit: "job", cost: 0 }
+  ];
+
+  function applyBasic() {
+    var hasData = countRows() > 1 || (rowsEl.querySelector(".i-name") && rowsEl.querySelector(".i-name").value.trim() !== "");
+    if (hasData && !window.confirm("Replace the lines you have typed with the basic list?")) return;
+    rowsEl.innerHTML = "";
+    BASIC_ITEMS.forEach(function (it) { addRow(it); });
+    recalc();
+    toast("Basic items added. Fill in the cost per unit.");
+  }
+
+  /* ---------- events ---------- */
+  document.addEventListener("input", function (e) {
+    if (!e.target) return;
+    if (COMPANY_FIELDS.indexOf(e.target.id) !== -1 || PREF_FIELDS.indexOf(e.target.id) !== -1) saveCompany();
+    if (e.target.id === "marginRate") $("marginSlider").value = Math.min(60, toNumber(e.target.value));
+    if (e.target.id === "marginSlider") $("marginRate").value = e.target.value;
+    if (e.target.id === "q_deposit") $("depositPct").value = e.target.value;
+    if (e.target.id === "depositPct") $("q_deposit").value = e.target.value;
+    recalc();
+  });
+  document.addEventListener("change", function (e) {
+    if (e.target && e.target.type === "number") sanitize(e.target);
+    recalc();
+  });
+  document.addEventListener("blur", function (e) {
+    if (e.target && e.target.type === "number") { sanitize(e.target); recalc(); }
+  }, true);
+
+  document.addEventListener("click", function (e) {
+    var del = e.target.closest ? e.target.closest(".row-del") : null;
+    if (!del) return;
+    var tr = del.closest("tr");
+    if (countRows() <= 1) {
+      tr.querySelector(".i-name").value = "";
+      tr.querySelector(".i-qty").value = 1;
+      tr.querySelector(".i-unit").value = "ea";
+      tr.querySelector(".i-cost").value = "";
+      tr.querySelector(".i-sell").value = "";
+      tr.querySelector(".i-cat").value = "mat";
+      tr.querySelector(".i-tax").checked = true;
+    } else {
+      tr.parentNode.removeChild(tr);
+    }
+    recalc();
+  });
+
+  $("btnAddRow").addEventListener("click", function () {
+    var tr = addRow();
+    if (tr) { tr.querySelector(".i-name").focus(); recalc(); }
+  });
+  $("btnBasic").addEventListener("click", applyBasic);
+  $("btnSample").addEventListener("click", function () {
+    if (countRows() > 1 || $("q_client").value) {
+      if (!window.confirm("Replace what you have typed with the sample estimate?")) return;
+    }
+    openSample();
+  });
+  $("btnReset").addEventListener("click", openReset);
+
+  function printQuote() {
+    var hasLine = readRows().some(function (r) { return r.name || r.cost || r.price; });
+    if (!hasLine) { toast("Add at least one line item before printing."); return; }
+    if (!($("c_name").value || "").trim() && !window.confirm("Your business name is empty. Print anyway?")) return;
+    if (!($("q_client").value || "").trim() && !window.confirm("The customer name is empty. Print anyway?")) return;
+    var oldTitle = document.title;
+    document.title = "Estimate_" + ($("q_no").value || todayISO(0)).replace(/\//g, "-") +
+      (($("q_client").value || "").trim() ? "_" + $("q_client").value.trim().replace(/[\\/:*?"<>|]/g, "") : "");
+    window.print();
+    setTimeout(function () { document.title = oldTitle; }, 1500);
+  }
+  $("btnPrint").addEventListener("click", printQuote);
+  $("btnPrint2").addEventListener("click", printQuote);
+
+  $("paperSize").addEventListener("change", function () {
+    var size = this.value === "a4" ? "A4" : "letter";
+    var margin = this.value === "a4" ? "12mm" : "0.5in";
+    $("pageRule").textContent = "@page{size:" + size + ";margin:" + margin + "}";
+  });
+
+  $("btnCopy").addEventListener("click", function () {
+    var rows = readRows();
+    var t = computeTotals(rows, options());
+    var text = summaryText(rows, t);
+    var dlg = $("copyDialog");
+    $("copyText").value = text;
+    if (typeof dlg.showModal === "function") {
+      dlg.showModal();
+      setTimeout(function () { var ta = $("copyText"); ta.focus(); ta.select(); }, 60);
+    } else {
+      copyText(text);
+    }
+  });
+  $("btnCopyGo").addEventListener("click", function () { copyText($("copyText").value); });
+  $("btnCopyClose").addEventListener("click", function () {
+    var dlg = $("copyDialog");
+    if (typeof dlg.close === "function") dlg.close();
+  });
+
+  /* ---------- start ---------- */
+  function init() {
+    loadCompany();
+    $("q_no").value = estimateNumber();
+    $("q_date").value = todayISO(0);
+    $("q_valid").value = todayISO(14);
+    if (!$("taxRate").value) $("taxRate").value = "0";
+    if (!$("depositPct").value) $("depositPct").value = "30";
+    $("q_deposit").value = $("depositPct").value;
+    $("marginSlider").value = Math.min(60, toNumber($("marginRate").value));
+    addRow();
+    recalc();
+    if (typeof v2InitLite === "function") v2InitLite();
+  }
+  /* =====================================================================
+     v2.0 — margin light, area converter, one-slot draft, single-estimate
+     transfer, sample desk and the typed-confirmation reset.
+     User text is only ever written with textContent; nothing is evaluated.
+     ===================================================================== */
+
+  var LKEY = {
+    settings: "nexora:quote:en:lite:settings",
+    draft: "nexora:quote:en:lite:draft",
+    sample: "nexora:quote:en:lite:sample",
+    version: "nexora:quote:en:lite:version"
+  };
+  var LKEY_LEGACY = "nexora_quote_lite_en_v1";
+  var LITE_TARGET = 25;
+  var LITE_MIN = 15;
+  var APP_VERSION = "2.0";
+  var SCHEMA = 2;
+  var AREA_SQFT = { "sq ft": 1, "sq yd": 9, "m2": 10.7639, "pyeong": 35.58317 };
+  var sampleActive = false;
+  var sampleDismissed = false;
+  var draft = { savedAt: "", failed: false };
+  var draftTimer = null;
+  var wiping = false;
+
+  function lstoreGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lstoreSet(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } }
+  function lstoreDel(k) { try { localStorage.removeItem(k); } catch (e) { /* ignore */ } }
+  function lparse(t) { if (typeof t !== "string" || !t) return null; try { return JSON.parse(t); } catch (e) { return null; } }
+
+  /* ---------- margin light ---------- */
+  function lightFor(t, target, min) {
+    if (!t || t.cost <= 0 || t.subtotal <= 0) {
+      return { level: "none", icon: "–", label: "Add a cost", hint: "Type what the job costs you to see the light." };
+    }
+    if (t.profit < 0) return { level: "loss", icon: "!", label: "Loss", hint: "Price is below cost — this job loses money." };
+    if (t.rate >= target) return { level: "green", icon: "✓", label: "Target met", hint: "Margin is at or above your target." };
+    if (t.rate >= min) return { level: "amber", icon: "▲", label: "Check costs", hint: "Below target — discount or cost check." };
+    return { level: "red", icon: "▼", label: "Margin risk", hint: "Below your minimum margin." };
+  }
+
+  function paintLight(t) {
+    var light = lightFor(t, LITE_TARGET, LITE_MIN);
+    var bar = $("abLight");
+    if (bar) {
+      bar.className = "light lt-" + light.level;
+      $("abLightIcon").textContent = light.icon;
+      $("abLightLabel").textContent = light.label;
+    }
+    if (t) {
+      $("abTotal").textContent = money(t.total);
+      $("abProfit").textContent = money(t.profit);
+      $("abProfitWrap").classList.toggle("neg", t.profit < 0 && t.subtotal > 0);
+    }
+    var chip = $("lightChip");
+    if (!chip) return;
+    chip.className = "light lt-" + light.level;
+    $("lightIcon").textContent = light.icon;
+    $("lightLabel").textContent = light.label;
+    $("lightHint").textContent = light.hint;
+  }
+
+  function rowLights(t, rows) {
+    var trs = rowsEl.querySelectorAll(".item-row");
+    rows.forEach(function (r, i) {
+      var dot = trs[i] && trs[i].querySelector(".rlight");
+      if (!dot) return;
+      var unit = t.lines[i] ? t.lines[i].unitPrice : 0;
+      var cost = toCents(r.cost);
+      var level = "none", title = "No cost yet";
+      if (cost > 0 && unit > 0) {
+        var lineProfit = unit - cost;
+        var rate = unit > 0 ? (lineProfit / unit) * 100 : 0;
+        if (lineProfit < 0) { level = "loss"; title = "Below cost"; }
+        else if (rate >= LITE_TARGET) { level = "green"; title = "At target"; }
+        else if (rate >= LITE_MIN) { level = "amber"; title = "Below target"; }
+        else { level = "red"; title = "Below minimum"; }
+      }
+      dot.className = "rlight rl-" + level;
+      dot.title = title;
+      dot.setAttribute("aria-label", title);
+    });
+  }
+
+  /* ---------- the one-slot draft ---------- */
+  function captureEstimate() {
+    var rows = readRows();
+    return {
+      id: "draft",
+      number: $("q_no").value.trim(),
+      issued: $("q_date").value,
+      valid: $("q_valid").value,
+      customer: $("q_client").value.trim(),
+      contact: $("q_tel").value.trim(),
+      job: $("q_site").value.trim(),
+      note: $("q_note").value,
+      taxRate: toNumber($("taxRate").value),
+      depositPct: toNumber($("depositPct").value),
+      discount: Math.round(toNumber($("discount").value) * 100) / 100,
+      marginRate: toNumber($("marginRate").value),
+      autoMargin: $("autoMargin").checked,
+      items: rows.map(function (r) {
+        // readRows gives cents; the file format (shared with Pro) carries dollars
+        return {
+          desc: r.name, cat: r.cat, qty: r.qty, unit: r.unit,
+          cost: Math.round(r.cost) / 100, price: Math.round(r.price) / 100, taxable: r.taxable
+        };
+      })
+    };
+  }
+
+  function applyEstimate(e) {
+    if (!e) return;
+    $("q_no").value = e.number || estimateNumber();
+    $("q_date").value = e.issued || todayISO(0);
+    $("q_valid").value = e.valid || todayISO(14);
+    $("q_client").value = e.customer || "";
+    $("q_tel").value = e.contact || "";
+    $("q_site").value = e.job || "";
+    $("q_note").value = e.note || "";
+    $("taxRate").value = e.taxRate === undefined ? "0" : String(e.taxRate);
+    $("depositPct").value = e.depositPct === undefined ? "30" : String(e.depositPct);
+    $("q_deposit").value = $("depositPct").value;
+    $("discount").value = e.discount === undefined ? "0" : String(e.discount);
+    $("marginRate").value = e.marginRate === undefined ? "25" : String(e.marginRate);
+    $("marginSlider").value = Math.min(60, toNumber($("marginRate").value));
+    $("autoMargin").checked = e.autoMargin !== false;
+    rowsEl.innerHTML = "";
+    var items = (e.items || []).slice(0, MAX_ROWS);
+    if (!items.length) addRow();
+    items.forEach(function (it) {
+      addRow({ name: it.desc, cat: it.cat, qty: it.qty, unit: it.unit, cost: it.cost, price: it.price, taxable: it.taxable });
+    });
+    recalc();
+  }
+
+  function saveDraft(immediate) {
+    if (wiping) return;
+    if (draftTimer) { clearTimeout(draftTimer); draftTimer = null; }
+    var run = function () {
+      if (wiping) return;
+      var payload = {
+        product: "NexoraQuoteDesk", schemaVersion: SCHEMA, kind: "draft", tier: "lite",
+        currency: "USD", savedAt: new Date().toISOString(), estimate: captureEstimate()
+      };
+      var ok = lstoreSet(LKEY.draft, JSON.stringify(payload));
+      draft.failed = !ok;
+      if (ok) draft.savedAt = payload.savedAt;
+      paintDraftHint();
+    };
+    if (immediate) run();
+    else draftTimer = setTimeout(run, 450);
+  }
+
+  function paintDraftHint() {
+    var el = $("draftHint");
+    if (!el) return;
+    if (draft.failed) {
+      el.className = "draft-hint bad";
+      el.textContent = "Not saved: this browser refused storage. Keep the tab open and export the estimate.";
+      return;
+    }
+    if (!draft.savedAt) {
+      el.className = "draft-hint";
+      el.textContent = "This estimate is kept in one slot in this browser, so a reload does not lose it.";
+      return;
+    }
+    var mins = Math.floor((Date.now() - Date.parse(draft.savedAt)) / 60000);
+    el.className = "draft-hint";
+    el.textContent = "Draft saved " + (mins < 1 ? "just now" : mins + " min ago") + " · one estimate slot in this browser";
+  }
+
+  function discardDraft() {
+    lstoreDel(LKEY.draft);
+    draft = { savedAt: "", failed: false };
+    paintDraftHint();
+  }
+
+  /* ---------- sample desk ---------- */
+  function samplePayload() {
+    return {
+      product: "NexoraQuoteDesk", schemaVersion: SCHEMA, kind: "sample", tier: "lite",
+      savedAt: new Date().toISOString(),
+      estimate: {
+        id: "demo-lite-0001", number: "DEMO-001", issued: todayISO(0), valid: todayISO(14),
+        customer: "Dana Whitfield", contact: "(512) 555-0193",
+        job: "1204 Cedar Bend Dr, Austin, TX 78758 — living room & kitchen refresh",
+        note: DEFAULT_NOTE,
+        taxRate: 8.25, depositPct: 30, discount: 0, marginRate: 25, autoMargin: true,
+        items: [
+          { desc: "Interior repaint — walls & ceilings (2 coats)", cat: "labor", qty: 1180, unit: "sq ft", cost: 1.40, price: 0, taxable: false },
+          { desc: "Premium paint & primer", cat: "mat", qty: 1180, unit: "sq ft", cost: 0.62, price: 0, taxable: true },
+          { desc: "Luxury vinyl plank install", cat: "labor", qty: 640, unit: "sq ft", cost: 2.10, price: 0, taxable: false },
+          { desc: "LVP flooring (7 mm, 20 mil wear layer)", cat: "mat", qty: 640, unit: "sq ft", cost: 3.25, price: 0, taxable: true },
+          { desc: "Baseboard & shoe molding — supply", cat: "mat", qty: 210, unit: "lin ft", cost: 4.80, price: 0, taxable: true },
+          { desc: "Baseboard install, caulk & paint", cat: "labor", qty: 210, unit: "lin ft", cost: 3.40, price: 0, taxable: false },
+          { desc: "Debris removal & dumpster", cat: "etc", qty: 1, unit: "job", cost: 385, price: 0, taxable: true }
+        ]
+      }
+    };
+  }
+
+  function openSample() {
+    var s = samplePayload();
+    lstoreSet(LKEY.sample, JSON.stringify(s));
+    applyEstimate(s.estimate);
+    $("c_name").value = "Northline Interiors";
+    $("c_owner").value = "Jordan Miles";
+    $("c_tel").value = "(512) 555-0148";
+    $("c_email").value = "jordan@northlineinteriors.com";
+    $("c_addr").value = "2410 E 7th St, Austin, TX 78702";
+    $("c_license").value = "TX #TACLB-48219";
+    $("c_pay").value = "Zelle: pay@northlineinteriors.com · Check payable to Northline Interiors";
+    saveCompany();
+    sampleActive = true;
+    $("sampleBar").hidden = false;
+    $("sampleBadge").hidden = false;
+    paintDraftHint();
+    recalc();
+  }
+
+  function clearSample() {
+    sampleActive = false;
+    sampleDismissed = true;
+    lstoreDel(LKEY.sample);
+    lstoreDel(LKEY.draft);
+    draft = { savedAt: "", failed: false };
+    lstoreDel(LKEY_LEGACY);
+    try { localStorage.removeItem(LKEY.settings); } catch (e) { /* ignore */ }
+    ["c_name", "c_owner", "c_tel", "c_email", "c_addr", "c_license", "c_pay", "q_client", "q_tel", "q_site"].forEach(function (id) {
+      $(id).value = "";
+    });
+    $("q_note").value = DEFAULT_NOTE;
+    $("q_no").value = estimateNumber();
+    $("q_date").value = todayISO(0);
+    $("q_valid").value = todayISO(14);
+    $("q_deposit").value = "30";
+    $("marginRate").value = "25";
+    $("marginSlider").value = "25";
+    $("autoMargin").checked = true;
+    $("discount").value = "0";
+    $("taxRate").value = "0";
+    $("depositPct").value = "30";
+    rowsEl.innerHTML = "";
+    addRow();
+    $("sampleBar").hidden = true;
+    $("sampleBadge").hidden = true;
+    lstoreSet(LKEY.settings, JSON.stringify({ sampleDismissed: true }));
+    paintDraftHint();
+    recalc();
+    toast("Sample cleared. Type your own numbers — they save in this browser.");
+  }
+
+  /* ---------- area → quantity ---------- */
+  function converterResult() {
+    var value = toNumber($("convArea").value);
+    var unit = $("convUnit").value;
+    if (!isFinite(value) || value <= 0) return null;
+    var sqft = value * AREA_SQFT[unit];
+    var cov = toNumber($("convCoverage").value) * (AREA_SQFT[$("convCoverageUnit").value] || 1);
+    var waste = Math.min(Math.max(toNumber($("convWaste").value), 0), 100);
+    var out = { sqft: sqft, waste: waste, packages: null, cov: cov };
+    if (isFinite(cov) && cov > 0) {
+      out.packages = Math.ceil((sqft * (1 + waste / 100)) / cov);
+      out.order = sqft * (1 + waste / 100);
+    }
+    return out;
+  }
+
+  function paintConverter() {
+    var value = toNumber($("convArea").value);
+    var r = converterResult();
+    var box = $("convOut");
+    box.textContent = "";
+    if (!r) {
+      var p = document.createElement("span");
+      p.textContent = "Enter an area above 0.";
+      $("convQty").textContent = "—";
+      $("convQtyNote").textContent = "Add the coverage of one package to count what to buy.";
+      $("convApply").hidden = true;
+      return;
+    }
+    var sqft = r.sqft;
+    [["sq ft", sqft], ["sq yd", sqft / 9], ["m²", sqft / 10.7639], ["pyeong", sqft / 35.58317]].forEach(function (pair) {
+      var span = document.createElement("span");
+      span.appendChild(document.createTextNode(pair[0] + " "));
+      var b = document.createElement("b");
+      b.textContent = pair[1] >= 1000 ? Math.round(pair[1]).toLocaleString("en-US")
+        : pair[1] >= 100 ? (Math.round(pair[1] * 10) / 10).toFixed(1)
+        : (Math.round(pair[1] * 100) / 100).toFixed(2);
+      span.appendChild(b);
+      box.appendChild(span);
+    });
+    if (r.packages === null) {
+      $("convQty").textContent = "—";
+      $("convQtyNote").textContent = "Add the coverage of one package to count what to buy.";
+      $("convApply").hidden = true;
+      return;
+    }
+    $("convQty").textContent = r.packages + (r.packages === 1 ? " package" : " packages");
+    $("convQtyNote").textContent = "For " + Math.round(r.order).toLocaleString("en-US") + " sq ft with " +
+      Math.round(r.waste) + "% waste, at " + (Math.round(r.cov * 100) / 100) + " sq ft per package.";
+    $("convApply").hidden = false;
+    var sel = $("convLine");
+    var keep = sel.value;
+    sel.textContent = "";
+    readRows().forEach(function (row, i) {
+      if (!row.name) return;
+      var o = document.createElement("option");
+      o.value = String(i);
+      o.textContent = (i + 1) + ". " + row.name.slice(0, 52);
+      sel.appendChild(o);
+    });
+    if (keep) sel.value = keep;
+  }
+
+  function applyConverter() {
+    var r = converterResult();
+    if (!r || r.packages === null) { toast("Nothing to apply yet."); return; }
+    var i = parseInt($("convLine").value, 10);
+    var tr = rowsEl.querySelectorAll(".item-row")[i];
+    if (!tr) { toast("Pick a line first."); return; }
+    var qty = tr.querySelector(".i-qty");
+    if (qty.value !== "" && toNumber(qty.value) !== 1 && toNumber(qty.value) !== r.packages) {
+      if (!window.confirm("Line " + (i + 1) + " already has a quantity of " + qty.value + ". Replace it with " + r.packages + "?")) return;
+    }
+    qty.value = String(r.packages);
+    recalc();
+    saveDraft(false);
+    var dlg = $("convDialog");
+    if (typeof dlg.close === "function") dlg.close();
+    toast("Line " + (i + 1) + " set to " + r.packages + " packages.");
+  }
+
+  /* ---------- single-estimate transfer ---------- */
+  function safeRecompute(e) {
+    var t = computeTotals((e.items || []).map(function (it) {
+      return { qty: it.qty, cost: toCents(it.cost), price: toCents(it.price), cat: it.cat, taxable: it.taxable };
+    }), { autoMargin: e.autoMargin !== false, marginRate: e.marginRate, discount: toCents(e.discount), taxRate: 0, depositPct: 0 });
+    if (!isFinite(t.itemsTotal) || !isFinite(t.cost)) throw new Error("bad numbers");
+    return t;
+  }
+
+  function normalizeIncoming(raw) {
+    if (!raw || typeof raw !== "object") return null;
+    var e = {};
+    e.number = typeof raw.number === "string" ? raw.number.slice(0, 40) : estimateNumber();
+    e.issued = typeof raw.issued === "string" && /^\d{4}-\d{2}-\d{2}$/.test(raw.issued) ? raw.issued : todayISO(0);
+    e.valid = typeof raw.valid === "string" && /^\d{4}-\d{2}-\d{2}$/.test(raw.valid) ? raw.valid : todayISO(14);
+    e.customer = typeof raw.customer === "string" ? raw.customer.slice(0, 120) : "";
+    e.contact = typeof raw.contact === "string" ? raw.contact.slice(0, 120) : "";
+    e.job = typeof raw.job === "string" ? raw.job.slice(0, 180) : "";
+    e.note = typeof raw.note === "string" ? raw.note.slice(0, 2000) : "";
+    e.taxRate = Math.min(Math.max(toNumber(raw.taxRate), 0), 30);
+    e.depositPct = Math.min(Math.max(toNumber(raw.depositPct), 0), 100);
+    e.discount = Math.max(0, Math.round(toNumber(raw.discount) * 100) / 100);
+    e.marginRate = Math.min(Math.max(toNumber(raw.marginRate), 0), 90);
+    e.autoMargin = raw.autoMargin !== false;
+    if (!Array.isArray(raw.items) || raw.items.length < 1 || raw.items.length > MAX_ROWS) throw new Error("item count");
+    e.items = raw.items.map(function (it) {
+      it = it && typeof it === "object" ? it : {};
+      var qty = toNumber(it.qty), cost = toNumber(it.cost), price = toNumber(it.price);
+      if (!isFinite(qty) || qty < 0 || !isFinite(cost) || !isFinite(price)) throw new Error("number");
+      if (cost < 0 || price < 0) throw new Error("negative");
+      return {
+        desc: typeof it.desc === "string" ? it.desc.slice(0, 200) : "",
+        cat: (it.cat === "labor" || it.cat === "etc") ? it.cat : "mat",
+        qty: Math.min(qty, 100000),
+        unit: UNITS.indexOf(it.unit) !== -1 ? it.unit : "ea",
+        cost: Math.round(cost * 100) / 100,
+        price: Math.round(price * 100) / 100,
+        taxable: it.taxable !== false
+      };
+    });
+    safeRecompute(e);
+    return e;
+  }
+
+  function forbiddenKeys(value, depth) {
+    if (depth > 8 || value === null || typeof value !== "object") return false;
+    var keys = Object.keys(value);
+    for (var i = 0; i < keys.length; i++) {
+      var k = keys[i];
+      if (k === "__proto__" || k === "constructor" || k === "prototype") return true;
+      if (value[k] && typeof value[k] === "object" && forbiddenKeys(value[k], depth + 1)) return true;
+    }
+    return false;
+  }
+
+  function exportOne() {
+    if (sampleActive) { toast("Clear the sample first — the sample does not export."); return; }
+    var e = captureEstimate();
+    if (!e.customer) { toast("Add the customer name before exporting."); return; }
+    var payload = {
+      product: "NexoraQuoteDesk", schemaVersion: SCHEMA, kind: "quote",
+      exportedAt: new Date().toISOString(), currency: "USD", quote: e
+    };
+    var safeNo = String(e.number || "estimate").replace(/[^A-Za-z0-9_-]/g, "");
+    var blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "Nexora_Quote_EN_" + safeNo + "_" + todayISO(0).replace(/-/g, "") + ".json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 5000);
+    toast("One estimate exported — it holds customer details and your costs. Not a customer document.");
+  }
+
+  function importOne(file) {
+    if (!file) return;
+    if (file.size > 1048576) { toast("That file is over 1 MB. Nothing was changed."); return; }
+    if (sampleActive) { toast("Clear the sample first — the sample does not import."); return; }
+    var reader = new FileReader();
+    reader.onload = function () {
+      var data = lparse(String(reader.result));
+      if (!data || forbiddenKeys(data, 0)) { toast("That file is not a safe Nexora estimate. Nothing was changed."); return; }
+      if (data.product !== "NexoraQuoteDesk") { toast("That is not a Nexora estimate file."); return; }
+      if (data.schemaVersion !== SCHEMA) { toast("That file was made with another version of the desk. Nothing was changed."); return; }
+      if (data.kind !== "quote" || !data.quote) { toast("That is not a single-estimate file."); return; }
+      if (data.currency && data.currency !== "USD") { toast("That estimate is in another currency. Nothing was changed."); return; }
+      var e;
+      try { e = normalizeIncoming(data.quote); }
+      catch (err) { toast("That estimate did not pass the checks. Nothing was changed."); return; }
+      var hasWork = $("q_client").value.trim() || countRows() > 1 || rowsEl.querySelector(".i-name").value.trim();
+      if (hasWork && !window.confirm("Replace the estimate you are working on with " + (e.customer || "the imported one") + "?")) return;
+      applyEstimate(e);
+      saveDraft(true);
+      toast("Estimate imported. It replaced the working copy — nothing else was touched.");
+    };
+    reader.onerror = function () { toast("That file could not be read."); };
+    reader.readAsText(file, "utf-8");
+  }
+
+  /* ---------- reset ---------- */
+  function openReset() {
+    $("resetInput").value = "";
+    $("resetGo").disabled = true;
+    var dlg = $("resetDialog");
+    if (typeof dlg.showModal === "function") dlg.showModal();
+    setTimeout(function () { $("resetInput").focus(); }, 60);
+  }
+
+  function wipeLite() {
+    if ($("resetInput").value.trim() !== "DELETE") { toast("Type DELETE to confirm."); return; }
+    wiping = true;
+    if (draftTimer) { clearTimeout(draftTimer); draftTimer = null; }
+    ["settings", "draft", "sample", "version"].forEach(function (k) { lstoreDel("nexora:quote:en:lite:" + k); });
+    lstoreSet(LKEY.settings, JSON.stringify({ sampleDismissed: true }));
+    lstoreDel(LKEY_LEGACY);
+    var dlg = $("resetDialog");
+    if (typeof dlg.close === "function") dlg.close();
+    toast("This desk is cleared. Other Nexora products were left alone. Reloading…");
+    setTimeout(function () { window.location.reload(); }, 900);
+  }
+
+  /* ---------- boot ---------- */
+  function v2InitLite() {
+    // settings moved into the product namespace; take the old key with us
+    var legacy = lparse(lstoreGet(LKEY_LEGACY));
+    if (legacy && !lstoreGet(LKEY.settings)) {
+      var migrated = {};
+      COMPANY_FIELDS.forEach(function (k) { if (typeof legacy[k] === "string") migrated[k] = legacy[k]; });
+      PREF_FIELDS.forEach(function (k) { if (typeof legacy[k] === "string") migrated[k] = legacy[k]; });
+      migrated.migratedAt = new Date().toISOString();
+      if (lstoreSet(LKEY.settings, JSON.stringify(migrated))) lstoreDel(LKEY_LEGACY);
+    }
+    var settings = lparse(lstoreGet(LKEY.settings)) || {};
+    sampleDismissed = settings.sampleDismissed === true;
+
+    var restored = lparse(lstoreGet(LKEY.draft));
+    var sample = lparse(lstoreGet(LKEY.sample));
+    if (sample && sample.estimate && !sampleDismissed) {
+      applyEstimate(sample.estimate);
+      sampleActive = true;
+      $("sampleBar").hidden = false;
+      $("sampleBadge").hidden = false;
+    } else if (restored && restored.estimate) {
+      applyEstimate(restored.estimate);
+      draft.savedAt = restored.savedAt || "";
+      toast("Draft restored from your last visit.");
+    } else if (!sampleDismissed) {
+      openSample();
+    }
+    paintDraftHint();
+    paintLight(lastTotalsLite);
+    bindV2();
+  }
+
+  var lastTotalsLite = null;
+  function v2AfterRecalc(t) {
+    lastTotalsLite = t;
+    paintLight(t);
+    if (t && lastRowsLite) rowLights(t, lastRowsLite);
+    paintDraftHint();
+  }
+  var lastRowsLite = null;
+
+  function bindV2() {
+    $("sampleClear").addEventListener("click", clearSample);
+    $("abPrint").addEventListener("click", function () { $("btnPrint").click(); });
+    $("btnDraftDiscard").addEventListener("click", function () {
+      discardDraft();
+      toast("Draft cleared. This page keeps what is on screen until you reload.");
+    });
+    $("btnConvert").addEventListener("click", function () {
+      var dlg = $("convDialog");
+      if (typeof dlg.showModal === "function") dlg.showModal();
+      paintConverter();
+    });
+    $("convClose").addEventListener("click", function () {
+      var d = $("convDialog");
+      if (typeof d.close === "function") d.close();
+    });
+    $("convArea").addEventListener("input", paintConverter);
+    $("convUnit").addEventListener("change", paintConverter);
+    $("convCoverage").addEventListener("input", paintConverter);
+    $("convCoverageUnit").addEventListener("change", paintConverter);
+    $("convWaste").addEventListener("input", paintConverter);
+    $("convApplyBtn").addEventListener("click", applyConverter);
+    $("btnExportOne").addEventListener("click", exportOne);
+    $("btnImportOne").addEventListener("click", function () { $("importOneFile").click(); });
+    $("importOneFile").addEventListener("change", function (e) {
+      importOne(e.target.files && e.target.files[0]);
+      e.target.value = "";
+    });
+    $("resetInput").addEventListener("input", function () { $("resetGo").disabled = this.value.trim() !== "DELETE"; });
+    $("resetGo").addEventListener("click", wipeLite);
+    $("resetCancel").addEventListener("click", function () {
+      var d = $("resetDialog");
+      if (typeof d.close === "function") d.close();
+    });
+    $("resetBackup").addEventListener("click", exportOne);
+    document.addEventListener("input", function (e) {
+      if (!e.target || !e.target.closest) return;
+      if (e.target.closest(".tb-actions")) return;
+      saveDraft(false);
+    });
+    document.addEventListener("change", function () { saveDraft(false); });
+    document.addEventListener("click", function (e) {
+      if (e.target && e.target.closest && (e.target.closest("#itemRows") || e.target.closest("#btnAddRow") || e.target.closest("#btnBasic"))) saveDraft(false);
+    });
+    window.addEventListener("beforeunload", function (e) {
+      saveDraft(true);
+      if (draft.failed) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    });
+  }
+
+  window.NexoraLite = {
+    version: APP_VERSION,
+    capture: captureEstimate,
+    apply: applyEstimate,
+    isSample: function () { return sampleActive; },
+    clearSample: clearSample,
+    exportOne: exportOne,
+    fetchDraft: captureEstimate,
+    keys: LKEY,
+    light: function () { return lightFor(lastTotalsLite, LITE_TARGET, LITE_MIN); }
+  };
+
+  init();
+})();
+</script>
+</body>
+</html>

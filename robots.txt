@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /kit-ko/
+Disallow: /kit-en/
