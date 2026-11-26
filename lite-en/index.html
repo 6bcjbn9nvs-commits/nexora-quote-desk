@@ -399,6 +399,42 @@
   @media print{
     .sample-bar,.light-row,.draft-box,.rlight,.rl-cell,.actionbar{display:none!important}
   }
+/* ===== conversion layer: 1-click demo + upgrade CTA ===== */
+  .hero-cta{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px}
+  .btn.demo{border-color:#bfe3db; background:linear-gradient(180deg,#eef8f6,#e2f2ee); color:#0a6a61; font-weight:750}
+  .btn.demo:hover{background:linear-gradient(180deg,#e6f5f2,#d9eee9); border-color:#a9d8cf}
+  .btn.kit{background:linear-gradient(180deg,#c07912,#a35c05); border-color:#a35c05; color:#fff; font-weight:750; box-shadow:0 1px 2px rgba(163,92,5,.28), inset 0 1px 0 rgba(255,255,255,.14)}
+  .btn.kit:hover{background:linear-gradient(180deg,#cf8415,#b06405); border-color:#b06405}
+  .btn.block{width:100%}
+  .upgrade-cta{display:grid; gap:7px; margin-top:13px}
+  .upgrade-cta .btn{width:100%; justify-content:center}
+  .upgrade-cta .sub{font-size:11.2px; color:#8a7c64; text-align:center; line-height:1.5}
+  .cmp{margin-top:20px; border:1px solid #ecd9b4; border-radius:var(--radius); background:linear-gradient(180deg,#fffbf4,#fff); box-shadow:var(--shadow); overflow:hidden}
+  .cmp-top{display:flex; align-items:flex-start; justify-content:space-between; gap:14px; padding:20px 22px 0; flex-wrap:wrap}
+  .cmp-top h2{font-size:17px; letter-spacing:-.02em; line-height:1.35}
+  .cmp-top p{font-size:12.8px; color:#6b5a3e; margin-top:5px; line-height:1.55; max-width:640px}
+  .cmp-cols{display:grid; grid-template-columns:1fr 1fr; margin-top:15px; border-top:1px solid #ecd9b4}
+  .cmp-col{padding:16px 22px 18px}
+  .cmp-col + .cmp-col{border-left:1px solid #f1e3cc; background:#fffdf8}
+  .cmp-col .tag{display:inline-block; font-size:10px; font-weight:800; letter-spacing:.1em; padding:3px 7px; border-radius:6px; background:#eef1f5; color:#5b6472}
+  .cmp-col .tag.kit{background:var(--amber-soft); color:var(--amber); border:1px solid #ecd9b4}
+  .cmp-col ul{list-style:none; margin:10px 0 0; padding:0; display:grid; gap:6px}
+  .cmp-col li{font-size:12.8px; color:#4b4132; line-height:1.45; display:flex; gap:7px}
+  .cmp-col li b{font-weight:750; color:var(--ink)}
+  .cmp-col.lite li{color:#6b7480}
+  .cmp-col .x{color:#b9c1cb; font-weight:800; flex:none}
+  .cmp-col .ck{color:var(--amber); font-weight:800; flex:none}
+  .cmp-acts{display:flex; gap:10px; flex-wrap:wrap; align-items:center; padding:0 22px 20px; background:#fffdf8}
+  .cmp-acts .note{font-size:11.6px; color:#8a7c64; line-height:1.55; max-width:560px}
+  @media (max-width:620px){
+    .hero-cta .btn{flex:1 1 100%; justify-content:center}
+    .cmp-cols{grid-template-columns:1fr}
+    .cmp-col{padding:14px 15px 16px}
+    .cmp-col + .cmp-col{border-left:none; border-top:1px solid #f1e3cc}
+    .cmp-top{padding:16px 15px 0}
+    .cmp-acts{padding:0 15px 16px}
+    .cmp-acts .btn{flex:1 1 100%}
+  }
 </style>
 <style id="pageRule">@page{size:letter;margin:0.5in}</style>
 </head>
@@ -443,6 +479,13 @@
       <p class="eyebrow">Estimate builder</p>
       <h1>Price the job, not your time.</h1>
       <p class="lede">Enter what the job costs you. Nexora prices it at your target margin, adds sales tax where it applies, and prints a US Letter estimate you can send today.</p>
+      <div class="hero-cta">
+        <button class="btn demo" type="button" id="btnDemoTop">
+          <svg class="ico" viewBox="0 0 24 24" style="width:14px;height:14px;flex:none"><path d="M13 2 4.5 13.5H11L9.5 22 19 10h-6.5z"/></svg>
+          Try it filled in
+        </button>
+        <a class="btn kit" href="https://nexoralabs112.gumroad.com/l/business-kit?utm_source=nexora_lite_en&amp;utm_medium=cta&amp;utm_campaign=quote_desk_kit&amp;utm_content=lite_top" target="_blank" rel="noopener">Get the Business Kit · $27</a>
+      </div>
     </div>
     <div class="head-chips">
       <span class="chip"><span class="dot"></span>Works offline</span>
@@ -704,13 +747,19 @@ Terms: This estimate is valid until the date shown. The deposit is due to schedu
         </section>
 
         <section class="upsell">
-          <h3>Quote Desk Pro <span class="price-pill">$13</span></h3>
-          <p>This file holds one estimate at a time. When you send several a week, the records and the follow-ups are what save you.</p>
+          <h3>Business Kit <span class="price-pill">$27</span></h3>
+          <p>This screen (Lite) stops at <b>8 lines and one draft</b>. The Kit keeps the estimates, turns them into customer messages, and takes the signature on site.</p>
           <ul>
-            <li><span class="ck">✓</span> Every estimate saved and reopened</li>
-            <li><span class="ck">✓</span> Follow-up due list for Monday morning</li>
-            <li><span class="ck">✓</span> Your logo, deposit tracking, JSON backup</li>
+            <li><span class="ck">✓</span> 50 lines per estimate · saved, searchable, with status</li>
+            <li><span class="ck">✓</span> 20 customer scripts across 7 moments — names and amounts filled in</li>
+            <li><span class="ck">✓</span> 3 trade presets (interior, windows, general)</li>
+            <li><span class="ck">✓</span> On-site signature, full backup, margin dashboard</li>
           </ul>
+          <div class="upgrade-cta">
+            <a class="btn kit block" href="https://nexoralabs112.gumroad.com/l/business-kit?utm_source=nexora_lite_en&amp;utm_medium=cta&amp;utm_campaign=quote_desk_kit&amp;utm_content=lite_sidebar" target="_blank" rel="noopener">Buy the Business Kit · $27</a>
+            <a class="btn block" href="https://nexoralabs112.gumroad.com/l/jvtjwl?utm_source=nexora_lite_en&amp;utm_medium=cta&amp;utm_campaign=quote_desk_pro&amp;utm_content=lite_sidebar" target="_blank" rel="noopener">Only need saving? Pro is $13</a>
+            <span class="sub">Card payment on Gumroad · your access code arrives by email</span>
+          </div>
         </section>
       </div>
     </aside>
@@ -815,6 +864,40 @@ Terms: This estimate is valid until the date shown. The deposit is due to schedu
       </div>
     </div>
   </div>
+
+  <section class="cmp no-print" id="cmpLiteVsKit">
+    <div class="cmp-top">
+      <div>
+        <h2>You are on Lite — this is where it stops</h2>
+        <p>8 lines, one draft, one copy-as-text message. Real jobs usually hit one of these four walls by the second estimate.</p>
+      </div>
+      <a class="btn kit" href="https://nexoralabs112.gumroad.com/l/business-kit?utm_source=nexora_lite_en&amp;utm_medium=cta&amp;utm_campaign=quote_desk_kit&amp;utm_content=lite_bottom" target="_blank" rel="noopener">Get the Business Kit · $27</a>
+    </div>
+    <div class="cmp-cols">
+      <div class="cmp-col lite">
+        <span class="tag">LITE · FREE</span>
+        <ul>
+          <li><span class="x">–</span><span><b>8 lines</b> per estimate</span></li>
+          <li><span class="x">–</span><span><b>One draft</b> — no saved history or search</span></li>
+          <li><span class="x">–</span><span><b>One</b> copy-as-text summary</span></li>
+          <li><span class="x">–</span><span>No signature, no backup, no dashboard</span></li>
+        </ul>
+      </div>
+      <div class="cmp-col">
+        <span class="tag kit">BUSINESS KIT · $27</span>
+        <ul>
+          <li><span class="ck">✓</span><span><b>50 lines</b> — the whole job on one sheet</span></li>
+          <li><span class="ck">✓</span><span>Every estimate <b>saved, searchable, with status</b></span></li>
+          <li><span class="ck">✓</span><span><b>20 customer scripts</b> with names and amounts filled in</span></li>
+          <li><span class="ck">✓</span><span><b>On-site signature</b>, full backup, margin dashboard</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="cmp-acts">
+      <a class="btn kit" href="https://nexoralabs112.gumroad.com/l/business-kit?utm_source=nexora_lite_en&amp;utm_medium=cta&amp;utm_campaign=quote_desk_kit&amp;utm_content=lite_bottom_2" target="_blank" rel="noopener">Buy for $27 →</a>
+      <span class="note">One payment, permanent licence. Your access code arrives by email and unlocks the Kit page on this site.</span>
+    </div>
+  </section>
 </main>
 
 <dialog id="copyDialog">
@@ -1460,6 +1543,19 @@ Terms: This estimate is valid until the date shown. The deposit is due to schedu
       if (!window.confirm("Replace what you have typed with the sample estimate?")) return;
     }
     openSample();
+  });
+  if ($("btnDemoTop")) $("btnDemoTop").addEventListener("click", function () {
+    var wrapEl = document.querySelector(".sheet-wrap");
+    if (sampleActive) {
+      if (wrapEl && wrapEl.scrollIntoView) wrapEl.scrollIntoView({ behavior: "smooth", block: "center" });
+      toast("The sample is already filled in — change any number to see it recalculate.");
+      return;
+    }
+    if (countRows() > 1 || $("q_client").value) {
+      if (!window.confirm("Replace what you have typed with the sample estimate?")) return;
+    }
+    openSample();
+    if (wrapEl && wrapEl.scrollIntoView) setTimeout(function () { wrapEl.scrollIntoView({ behavior: "smooth", block: "center" }); }, 80);
   });
   $("btnReset").addEventListener("click", openReset);
 

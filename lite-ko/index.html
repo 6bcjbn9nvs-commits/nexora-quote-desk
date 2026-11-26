@@ -525,6 +525,44 @@ body[data-paper="letter"] #pageRule{}
 .kit-row .w{font-size:11.8px;color:var(--muted);margin-top:2px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .kit-row .btn{flex:none}
 
+/* ===== conversion layer: 1-click demo + upgrade CTA ===== */
+.hero-cta{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.btn.demo{border-color:var(--teal-line);background:linear-gradient(180deg,#eef8f6,#e2f2ee);color:#0a6a61;font-weight:750}
+.btn.demo:hover{background:linear-gradient(180deg,#e6f5f2,#d9eee9);border-color:#b0dbd2}
+.btn.kit{background:linear-gradient(180deg,#c07912,#a35c05);border-color:#a35c05;color:#fff;font-weight:750;box-shadow:0 1px 2px rgba(163,92,5,.28),inset 0 1px 0 rgba(255,255,255,.14)}
+.btn.kit:hover{background:linear-gradient(180deg,#cf8415,#b06405)}
+.btn.block{width:100%}
+.upgrade-cta{display:grid;gap:7px;margin-top:12px}
+.upgrade-cta .btn{width:100%}
+.upgrade-cta .sub{font-size:11.2px;color:#8a7c64;text-align:center;line-height:1.5}
+.upsell .note a{color:#8a5a0c;font-weight:700;border-bottom:1px solid rgba(138,90,12,.32)}
+.cmp{margin-top:18px;border:1px solid var(--amber-line);border-radius:var(--radius);background:linear-gradient(180deg,#fffbf4,#fff);box-shadow:var(--shadow);overflow:hidden}
+.cmp-top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:18px 20px 0;flex-wrap:wrap}
+.cmp-top h2{font-size:16.5px;letter-spacing:-.02em;line-height:1.35}
+.cmp-top p{font-size:12.6px;color:#6b5a3e;margin-top:5px;line-height:1.55;max-width:640px}
+.cmp-cols{display:grid;grid-template-columns:1fr 1fr;margin-top:14px;border-top:1px solid var(--amber-line)}
+.cmp-col{padding:15px 20px 18px}
+.cmp-col + .cmp-col{border-left:1px solid #f1e3cc;background:#fffdf8}
+.cmp-col .tag{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.1em;padding:3px 7px;border-radius:6px;background:#eef1f5;color:#5b6472}
+.cmp-col .tag.kit{background:var(--amber-soft);color:var(--amber);border:1px solid var(--amber-line)}
+.cmp-col ul{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:6px}
+.cmp-col li{font-size:12.6px;color:#4b4132;line-height:1.45;display:flex;gap:7px}
+.cmp-col li b{font-weight:750;color:var(--ink)}
+.cmp-col.lite li{color:#6b7480}
+.cmp-col .x{color:#b9c1cb;font-weight:800;flex:none}
+.cmp-col .ck{color:var(--amber);font-weight:800;flex:none}
+.cmp-acts{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:0 20px 18px;background:#fffdf8}
+.cmp-acts .note{font-size:11.4px;color:#8a7c64;line-height:1.55;max-width:540px}
+.cmp-acts .note a{color:#8a5a0c;font-weight:700;border-bottom:1px solid rgba(138,90,12,.32)}
+@media (max-width:620px){
+  .hero-cta .btn{flex:1 1 100%}
+  .cmp-cols{grid-template-columns:1fr}
+  .cmp-col{padding:14px 15px 16px}
+  .cmp-col + .cmp-col{border-left:none;border-top:1px solid #f1e3cc}
+  .cmp-top{padding:16px 15px 0}
+  .cmp-acts{padding:0 15px 16px}
+  .cmp-acts .btn{flex:1 1 100%}
+}
 </style>
 <style id="pageRule">@page{size:A4;margin:12mm}</style>
 </head>
@@ -580,6 +618,13 @@ body[data-paper="letter"] #pageRule{}
       <div class="eyebrow">견적 작성</div>
       <h1 id="writeTitle">새 견적서</h1>
       <p class="lede">원가를 넣고 목표 마진을 정하면 판매 단가가 채워지고, 얼마까지 깎아도 되는지 바닥선이 함께 계산됩니다.</p>
+      <div class="hero-cta">
+        <button class="btn demo" type="button" id="btnDemoFill">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M13 2 4.5 13.5H11L9.5 22 19 10h-6.5z"/></svg>
+          샘플로 3초 체험
+        </button>
+        <a class="btn kit" href="https://nexoralabs112.gumroad.com/l/business-kit?utm_source=nexora_lite_ko&amp;utm_medium=cta&amp;utm_campaign=quote_desk_kit&amp;utm_content=lite_top" target="_blank" rel="noopener">Business Kit 39,000원 →</a>
+      </div>
     </div>
     <div class="head-chips">
       <span class="chip"><span class="dot"></span><span id="headState">새 견적</span></span>
@@ -735,16 +780,21 @@ body[data-paper="letter"] #pageRule{}
         </section>
 
         
-        <section class="upsell">
-          <h3>Quote Desk Pro <span class="price-pill">19,000원</span></h3>
-          <p>이 파일은 계산만 합니다. 견적이 하루에 여러 건이라면 기록과 후속 관리가 필요해집니다.</p>
+        <section class="upsell" id="upgradeBox">
+          <h3>Business Kit <span class="price-pill">39,000원</span></h3>
+          <p>이 화면(Lite)은 <b>품목 12줄 · 저장 1건</b>에서 멈춥니다. Kit은 견적을 쌓고, 문자로 이어 붙이고, 현장에서 서명까지 받습니다.</p>
           <ul>
-            <li><span class="ck">✓</span> 견적을 여러 건 저장하고 다시 꺼내기</li>
-            <li><span class="ck">✓</span> 다음 연락일이 지난 견적 확인</li>
-            <li><span class="ck">✓</span> 발행·수주·마진 대시보드</li>
-            <li><span class="ck">✓</span> 고객 확인 서명 저장 · 재출력</li>
+            <li><span class="ck">✓</span> 품목 500줄 · 견적 여러 건 저장·검색·상태 관리</li>
+            <li><span class="ck">✓</span> 고객 응대 문자 40종 (11가지 상황) — 이름·금액 자동 치환</li>
+            <li><span class="ck">✓</span> 업종 프리셋 3종 (인테리어·창호·시공)</li>
+            <li><span class="ck">✓</span> 현장 서명 패드 · 전체 백업·복원 · 마진 대시보드</li>
           </ul>
-          <div class="note">Lite: 품목 12줄 · 저장 이력 없음(작성 중 1건만 보존) · 대시보드 없음</div>
+          <div class="upgrade-cta">
+            <a class="btn kit block" href="https://nexoralabs112.gumroad.com/l/business-kit?utm_source=nexora_lite_ko&amp;utm_medium=cta&amp;utm_campaign=quote_desk_kit&amp;utm_content=lite_sidebar" target="_blank" rel="noopener">Business Kit 39,000원 구매</a>
+            <a class="btn block" href="https://nexoralabs112.gumroad.com/l/jvtjwl?utm_source=nexora_lite_ko&amp;utm_medium=cta&amp;utm_campaign=quote_desk_pro&amp;utm_content=lite_sidebar" target="_blank" rel="noopener">저장·PDF만 필요하면 Pro $13</a>
+            <span class="sub">구매 후 받은 액세스 코드를 바로 입력하면 열립니다</span>
+          </div>
+          <div class="note">카드 결제는 Gumroad에서 진행되며 해외 결제($27)는 카드사 환율로 원화 청구됩니다.<br>크몽에서 찾으시려면 <a href="https://kmong.com/search?keyword=%EC%9D%B8%ED%85%8C%EB%A6%AC%EC%96%B4%20%EA%B2%AC%EC%A0%81%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%A8" target="_blank" rel="noopener">크몽에서 ‘인테리어 견적 프로그램’ 검색</a></div>
         </section>
         
       </div>
@@ -817,6 +867,40 @@ body[data-paper="letter"] #pageRule{}
       </div>
     </div>
   </div>
+
+  <section class="cmp no-print" id="cmpLiteVsKit">
+    <div class="cmp-top">
+      <div>
+        <h2>지금 화면은 Lite입니다 — 견적이 쌓이면 여기서 멈춥니다</h2>
+        <p>품목 12줄, 저장 1건, 응대 문자 1종. 실제 영업에 쓰면 아래 네 곳에서 막힙니다.</p>
+      </div>
+      <a class="btn kit" href="https://nexoralabs112.gumroad.com/l/business-kit?utm_source=nexora_lite_ko&amp;utm_medium=cta&amp;utm_campaign=quote_desk_kit&amp;utm_content=lite_bottom" target="_blank" rel="noopener">Business Kit 39,000원 구매</a>
+    </div>
+    <div class="cmp-cols">
+      <div class="cmp-col lite">
+        <span class="tag">LITE · 무료</span>
+        <ul>
+          <li><span class="x">–</span><span>품목 <b>12줄</b>까지만</span></li>
+          <li><span class="x">–</span><span>저장은 <b>1건</b> (이력·검색 없음)</span></li>
+          <li><span class="x">–</span><span>응대 문자는 <b>요약 1종</b></span></li>
+          <li><span class="x">–</span><span>서명·백업·대시보드 <b>없음</b></span></li>
+        </ul>
+      </div>
+      <div class="cmp-col">
+        <span class="tag kit">BUSINESS KIT · 39,000원</span>
+        <ul>
+          <li><span class="ck">✓</span><span>품목 <b>500줄</b> — 한 견적에 공정을 다 담아도</span></li>
+          <li><span class="ck">✓</span><span><b>여러 건 저장·검색·상태 관리</b> (발행·수주·보류)</span></li>
+          <li><span class="ck">✓</span><span>응대 문자 <b>40종</b> — 이름·금액 자동 치환</span></li>
+          <li><span class="ck">✓</span><span><b>현장 서명</b>, 전체 백업, 마진 대시보드</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="cmp-acts">
+      <a class="btn kit" href="https://nexoralabs112.gumroad.com/l/business-kit?utm_source=nexora_lite_ko&amp;utm_medium=cta&amp;utm_campaign=quote_desk_kit&amp;utm_content=lite_bottom_2" target="_blank" rel="noopener">39,000원으로 구매 →</a>
+      <span class="note">구매 후 받은 액세스 코드로 바로 열립니다 · 해외 결제 $27 (카드사 환율로 원화 청구) · <a href="https://kmong.com/search?keyword=%EC%9D%B8%ED%85%8C%EB%A6%AC%EC%96%B4%20%EA%B2%AC%EC%A0%81%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%A8" target="_blank" rel="noopener">크몽에서 ‘인테리어 견적 프로그램’ 검색</a></span>
+    </div>
+  </section>
 </section>
 
 
@@ -2965,6 +3049,20 @@ function bindEvents() {
     var q = newQuote();
     loadQuote(q);
     showView("write");
+  });
+
+  /* 1-click demo: fill the sheet with a worked example and show it */
+  if ($("btnDemoFill")) $("btnDemoFill").addEventListener("click", function () {
+    var wrapEl = document.querySelector(".sheet-wrap");
+    if (sampleMode) {
+      if (wrapEl && wrapEl.scrollIntoView) wrapEl.scrollIntoView({ behavior: "smooth", block: "center" });
+      toast("샘플이 이미 채워져 있습니다. 금액을 바꾸면서 확인해 보세요.");
+      return;
+    }
+    if ((quotes.length || dirty || readRaw(K.draft)) && !confirm("샘플 화면으로 잠시 전환합니다. 작성 중인 내용은 임시저장에 남아 있고, 돌아오면 그대로 이어서 쓸 수 있습니다. 계속할까요?")) return;
+    enterSampleMode();
+    showView("write");
+    if (wrapEl && wrapEl.scrollIntoView) setTimeout(function () { wrapEl.scrollIntoView({ behavior: "smooth", block: "center" }); }, 80);
   });
   $("btnCopyMsg").addEventListener("click", openCopyDialog);
   $("btnCopyClose").addEventListener("click", function () { $("copyDialog").close(); });

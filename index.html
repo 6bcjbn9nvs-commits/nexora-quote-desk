@@ -140,6 +140,9 @@ body[data-lang="en"] .ko{display:none !important}
 .hero h1{font-size:clamp(29px,4.2vw,44px);letter-spacing:-.045em;line-height:1.12}
 .hero .lede{margin-top:16px;font-size:15.5px;color:var(--muted);max-width:520px;line-height:1.7}
 .cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+.cta-note{margin-top:10px;font-size:12.3px;color:var(--faint);line-height:1.65;max-width:520px}
+.cta-note a{color:var(--brand2);font-weight:700;border-bottom:1px solid rgba(23,63,99,.28)}
+.cta-note a:hover{color:var(--brand)}
 .btn{appearance:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line-strong);background:#fff;color:var(--text);padding:13px 19px;border-radius:12px;font-size:14.5px;font-weight:720;font-family:inherit;cursor:pointer;transition:background .15s,border-color .15s,transform .05s,box-shadow .15s}
 .btn:hover{background:#fafbfc;border-color:#c3ccd7}
 .btn:active{transform:translateY(1px)}
@@ -244,7 +247,7 @@ section.tight{padding:52px 0}
 .code-band a.mail{color:#8fe3d8;border-bottom:1px solid rgba(143,227,216,.4)}
 
 /* buy row */
-.buy{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.buy{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:14px}
 .buy a{display:flex;flex-direction:column;gap:4px;background:#fff;border:1px solid var(--line);border-radius:13px;padding:18px;box-shadow:var(--shadow);transition:border-color .15s,transform .15s}
 .buy a:hover{border-color:#c9d5e2;transform:translateY(-2px)}
 .buy .n{font-size:13.5px;font-weight:750;color:var(--ink)}
@@ -261,6 +264,30 @@ footer{background:#0b1826;color:#9fb2c6;padding:38px 0 46px;margin-top:20px}
 .f-links{display:flex;gap:14px;font-size:11.8px;flex-wrap:wrap}
 .f-links a:hover{color:#fff}
 
+/* ---------- compare ---------- */
+.cmp-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:32px;box-shadow:var(--shadow)}
+.cmp-head h2{font-size:clamp(21px,2.6vw,28px)}
+.cmp-head p{margin-top:9px;color:var(--muted);font-size:14px;line-height:1.7;max-width:680px}
+.cmp-table{width:100%;border-collapse:separate;border-spacing:0;margin-top:22px;font-size:13.6px}
+.cmp-table th,.cmp-table td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+.cmp-table thead th{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:800;background:#fafbfd;border-bottom:1px solid var(--line-strong)}
+.cmp-table thead th small{display:block;font-size:11px;letter-spacing:0;text-transform:none;color:var(--faint);font-weight:600;margin-top:2px}
+.cmp-table th:first-child{width:32%;color:#3f4a58;font-weight:700;font-size:13.2px}
+.cmp-table thead th:first-child{color:var(--faint);font-weight:800;font-size:11px}
+.cmp-table thead th.kit{color:var(--amber);background:var(--amber-soft);border-bottom-color:var(--amber-line)}
+.cmp-table td.kit{background:#fffdf8;color:#3d3527;font-weight:600}
+.cmp-table td.dim{color:var(--faint)}
+.cmp-table tbody tr:last-child td{border-bottom:none}
+.cmp-acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.cmp-note{margin-top:12px;font-size:12px;color:var(--faint);line-height:1.65}
+
+@media (max-width:760px){
+  .cmp-card{padding:22px 16px}
+  .cmp-table{font-size:12.6px}
+  .cmp-table th,.cmp-table td{padding:9px 7px}
+  .cmp-table th:first-child{width:36%}
+  .cmp-acts .btn{flex:1 1 100%}
+}
 @media (max-width:900px){
   .hero-in{grid-template-columns:1fr;gap:30px;padding:46px 22px 44px}
   .mock{order:2;max-width:480px}
@@ -290,6 +317,8 @@ footer{background:#0b1826;color:#9fb2c6;padding:38px 0 46px;margin-top:20px}
     <nav class="hd-nav" aria-label="주요 섹션">
       <a href="#apps" class="ko">제품</a>
       <a href="#apps" class="en">Products</a>
+      <a href="#compare" class="ko">Lite vs Kit</a>
+      <a href="#compare" class="en">Lite vs Kit</a>
       <a href="#how" class="ko">사용법</a>
       <a href="#how" class="en">How to use</a>
       <a href="#iphone" class="ko">아이폰 안내</a>
@@ -319,9 +348,11 @@ footer{background:#0b1826;color:#9fb2c6;padding:38px 0 46px;margin-top:20px}
         <div class="cta">
           <a class="btn teal lg ko" href="lite-ko/">무료 Lite 바로 시작</a>
           <a class="btn teal lg en" href="lite-en/">Start free Lite</a>
-          <a class="btn primary lg ko" href="kit-ko/">Business Kit 열기</a>
-          <a class="btn primary lg en" href="kit-en/">Open Business Kit</a>
+          <a class="btn primary lg ko" href="https://nexoralabs112.gumroad.com/l/business-kit?utm_source=nexora_hub&amp;utm_medium=cta&amp;utm_campaign=quote_desk_kit&amp;utm_content=hub_hero" target="_blank" rel="noopener">Business Kit 39,000원 구매</a>
+          <a class="btn primary lg en" href="https://nexoralabs112.gumroad.com/l/business-kit?utm_source=nexora_hub&amp;utm_medium=cta&amp;utm_campaign=quote_desk_kit&amp;utm_content=hub_hero" target="_blank" rel="noopener">Buy Business Kit · $27</a>
         </div>
+        <p class="cta-note ko">이미 구매하셨다면 <a href="kit-ko/">액세스 코드로 바로 열기 →</a> · 해외 결제 $27은 카드사 환율로 원화 청구됩니다.</p>
+        <p class="cta-note en">Already bought the Kit? <a href="kit-en/">Open it with your access code →</a></p>
         <div class="chips">
           <span class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="ko">설치 없음</span><span class="en">Nothing to install</span></span>
           <span class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="ko">아이폰 · 아이패드 · PC</span><span class="en">iPhone · iPad · desktop</span></span>
@@ -401,16 +432,70 @@ footer{background:#0b1826;color:#9fb2c6;padding:38px 0 46px;margin-top:20px}
           <p class="desc en">More than a calculator: presets, customer scripts, signature and after-service paperwork in one kit.</p>
           <ul class="feats">
             <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="ko">업종 프리셋 3종 (인테리어·창호·시공)</span><span class="en">3 industry presets (interior, windows, build)</span></li>
-            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="ko">고객 응대 문자 40종, 상담 체크리스트, AS 안내문</span><span class="en">40 customer scripts, checklist, service notices</span></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="ko">고객 응대 문자 40종 (문의·견적·미응답·AS 11가지 상황)</span><span class="en">20 customer scripts across 7 moments, from first reply to warranty</span></li>
             <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="ko">현장 서명 패드, 저장·백업·복원, 견적서 PDF</span><span class="en">On-site signature, save/backup, PDF output</span></li>
           </ul>
           <div class="pcard-act" style="margin-top:auto">
-            <a class="btn primary ko" href="kit-ko/">액세스 코드로 열기</a>
-            <a class="btn primary en" href="kit-en/">Unlock with access code</a>
-            <span class="pcard-note ko">구매처: 크몽 · Gumroad</span>
-            <span class="pcard-note en">Purchased on Gumroad · KMONG</span>
+            <a class="btn primary ko" href="https://nexoralabs112.gumroad.com/l/business-kit?utm_source=nexora_hub&amp;utm_medium=cta&amp;utm_campaign=quote_desk_kit&amp;utm_content=hub_card_kit" target="_blank" rel="noopener">39,000원으로 구매하기</a>
+            <a class="btn primary en" href="https://nexoralabs112.gumroad.com/l/business-kit?utm_source=nexora_hub&amp;utm_medium=cta&amp;utm_campaign=quote_desk_kit&amp;utm_content=hub_card_kit" target="_blank" rel="noopener">Buy the Kit · $27</a>
+            <a class="btn ko" href="kit-ko/">액세스 코드로 열기</a>
+            <a class="btn en" href="kit-en/">Unlock with access code</a>
+            <span class="pcard-note ko">Gumroad 카드 결제 · 코드는 구매 메일로</span>
+            <span class="pcard-note en">Card payment on Gumroad · code by email</span>
           </div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= COMPARE ================= -->
+  <section id="compare" class="tight" style="padding-top:0">
+    <div class="wrap">
+      <div class="cmp-card">
+        <div class="cmp-head">
+          <div class="eyebrow"><span class="dot"></span><span class="ko">LITE vs BUSINESS KIT</span><span class="en">LITE vs BUSINESS KIT</span></div>
+          <h2 class="ko">무료 Lite로 충분한가요?</h2>
+          <h2 class="en">Is the free Lite enough?</h2>
+          <p class="ko">오늘 견적 한 장을 내는 데는 Lite로 충분합니다. 그런데 견적이 쌓이고, 문자와 서명이 붙고, 지난달 마진을 되짚는 순간부터는 Kit이 필요합니다. 실제로 막히는 지점은 아래 네 가지입니다.</p>
+          <p class="en">Lite is enough to send one estimate today. Once estimates pile up — messages, signatures and last month's margin come with them — you need the Kit. These are the four places people actually get stuck.</p>
+        </div>
+
+        <table class="cmp-table ko">
+          <thead><tr><th>기능</th><th>Lite <small>무료</small></th><th class="kit">Business Kit <small>39,000원</small></th></tr></thead>
+          <tbody>
+            <tr><td>품목 줄 수</td><td class="dim">12줄</td><td class="kit">500줄</td></tr>
+            <tr><td>견적 저장</td><td class="dim">작성 중 1건만 (이력 없음)</td><td class="kit">여러 건 저장 · 검색 · 발행/수주/보류 관리</td></tr>
+            <tr><td>고객 응대 문자</td><td class="dim">요약 복사 1종</td><td class="kit">40종 · 11가지 상황 · 이름·금액 자동 치환</td></tr>
+            <tr><td>업종 프리셋</td><td class="dim">없음</td><td class="kit">3종 (인테리어 · 창호 · 시공)</td></tr>
+            <tr><td>현장 서명</td><td class="dim">없음</td><td class="kit">서명 패드 + 견적서에 서명 저장</td></tr>
+            <tr><td>백업 · 복원</td><td class="dim">견적 1건 JSON</td><td class="kit">전체 백업 · 복원</td></tr>
+            <tr><td>마진 관리</td><td class="dim">25% 신호등 고정</td><td class="kit">목표·최소 직접 설정 + 할인 바닥선</td></tr>
+            <tr><td>대시보드</td><td class="dim">없음</td><td class="kit">이번 달 발행 · 수주 · 마진 한 눈에</td></tr>
+          </tbody>
+        </table>
+
+        <table class="cmp-table en">
+          <thead><tr><th>Capability</th><th>Lite <small>free</small></th><th class="kit">Business Kit <small>$27</small></th></tr></thead>
+          <tbody>
+            <tr><td>Line items per estimate</td><td class="dim">8</td><td class="kit">50</td></tr>
+            <tr><td>Saved estimates</td><td class="dim">One draft only</td><td class="kit">Many, searchable, with status (sent / won / on hold)</td></tr>
+            <tr><td>Customer messages</td><td class="dim">One copy-as-text summary</td><td class="kit">20 scripts · 7 moments · auto-filled names and amounts</td></tr>
+            <tr><td>Trade presets</td><td class="dim">—</td><td class="kit">3 (interior, windows, general contracting)</td></tr>
+            <tr><td>On-site signature</td><td class="dim">—</td><td class="kit">Signature pad, saved onto the estimate</td></tr>
+            <tr><td>Backup &amp; restore</td><td class="dim">One estimate as JSON</td><td class="kit">Full backup and restore</td></tr>
+            <tr><td>Margin control</td><td class="dim">Fixed 25% traffic light</td><td class="kit">Your own target and floor, discount floor price</td></tr>
+            <tr><td>Dashboard</td><td class="dim">—</td><td class="kit">Sent, won and margin for the month</td></tr>
+          </tbody>
+        </table>
+
+        <div class="cmp-acts">
+          <a class="btn teal lg ko" href="lite-ko/">무료 Lite로 계속 쓰기</a>
+          <a class="btn teal lg en" href="lite-en/">Keep using the free Lite</a>
+          <a class="btn primary lg ko" href="https://nexoralabs112.gumroad.com/l/business-kit?utm_source=nexora_hub&amp;utm_medium=cta&amp;utm_campaign=quote_desk_kit&amp;utm_content=hub_compare" target="_blank" rel="noopener">Business Kit 39,000원 구매</a>
+          <a class="btn primary lg en" href="https://nexoralabs112.gumroad.com/l/business-kit?utm_source=nexora_hub&amp;utm_medium=cta&amp;utm_campaign=quote_desk_kit&amp;utm_content=hub_compare" target="_blank" rel="noopener">Get the Business Kit · $27</a>
+        </div>
+        <p class="cmp-note ko">한 번 결제하면 계속 쓰는 라이선스입니다. 구매 후 받은 액세스 코드를 <a href="kit-ko/" style="color:var(--brand2);font-weight:700">Business Kit 페이지</a>에 입력하면 바로 열립니다.</p>
+        <p class="cmp-note en">One payment, a permanent licence. Enter the access code from your receipt on the <a href="kit-en/" style="color:var(--brand2);font-weight:700">Business Kit page</a> and it opens.</p>
       </div>
     </div>
   </section>
@@ -520,25 +605,31 @@ footer{background:#0b1826;color:#9fb2c6;padding:38px 0 46px;margin-top:20px}
         <h2 class="en" style="font-size:19px">More products &amp; where to buy</h2>
       </div>
       <div class="buy">
-        <a href="https://nexoralabs112.gumroad.com/l/business-kit" target="_blank" rel="noopener">
+        <a href="https://nexoralabs112.gumroad.com/l/business-kit?utm_source=nexora_hub&amp;utm_medium=cta&amp;utm_campaign=quote_desk_kit&amp;utm_content=hub_buy_kit" target="_blank" rel="noopener">
           <span class="n">Nexora Business Kit</span>
-          <span class="p ko">$27 · 프리셋 · 문자 40종 · 실무 서류</span>
-          <span class="p en">$27 · presets, 40 scripts, paperwork</span>
+          <span class="p ko">$27 · 프리셋 3종 · 문자 40종 · 서명·백업</span>
+          <span class="p en">$27 · 3 presets, 20 scripts, signature, backup</span>
           <span class="s">GUMROAD →</span>
         </a>
-        <a href="https://nexoralabs112.gumroad.com/l/jvtjwl" target="_blank" rel="noopener">
+        <a href="https://nexoralabs112.gumroad.com/l/jvtjwl?utm_source=nexora_hub&amp;utm_medium=cta&amp;utm_campaign=quote_desk_pro&amp;utm_content=hub_buy_pro" target="_blank" rel="noopener">
           <span class="n">Nexora Quote Desk Pro</span>
           <span class="p ko">$13 · 견적·저장·백업·PDF</span>
           <span class="p en">$13 · quotes, saving, backup, PDF</span>
           <span class="s">GUMROAD →</span>
         </a>
-        <a href="https://nexoralabs112.gumroad.com/l/quote-lite" target="_blank" rel="noopener">
+        <a href="https://nexoralabs112.gumroad.com/l/quote-lite?utm_source=nexora_hub&amp;utm_medium=cta&amp;utm_campaign=quote_lite&amp;utm_content=hub_buy_lite" target="_blank" rel="noopener">
           <span class="n">Quote Lite <span style="font-weight:600;color:var(--faint)">/ files</span></span>
           <span class="p ko">$0+ · 파일로도 받아 두기</span>
           <span class="p en">$0+ · get the file version too</span>
           <span class="s">GUMROAD →</span>
         </a>
+        <a href="https://kmong.com/search?keyword=%EC%9D%B8%ED%85%8C%EB%A6%AC%EC%96%B4%20%EA%B2%AC%EC%A0%81%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%A8" target="_blank" rel="noopener">
+          <span class="n">크몽에서 찾기</span>
+          <span class="p">검색어 그대로: 인테리어 견적 프로그램</span>
+          <span class="s">KMONG →</span>
+        </a>
       </div>
+      <p class="cmp-note" style="margin-top:14px">결제는 Gumroad 카드 결제로 진행되며 해외 결제($27)는 카드사 환율로 원화 청구됩니다. 결제 후 받은 액세스 코드를 <a href="kit-ko/" style="color:var(--brand2);font-weight:700">Business Kit 페이지</a>에 입력하세요.</p>
     </div>
   </section>
 </main>
