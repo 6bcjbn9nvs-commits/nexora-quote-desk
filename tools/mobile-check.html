@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>mobile check (internal)</title>
+<style>
+  html,body{margin:0;background:#1a1d21;font-family:ui-monospace,Menlo,monospace;color:#c9d1d9}
+  .bar{padding:8px 10px;font-size:12px;background:#22262b;border-bottom:1px solid #333}
+  iframe{width:390px;height:844px;border:0;background:#fff;display:block}
+</style>
+</head>
+<body>
+<div class="bar" id="bar"></div>
+<iframe id="f"></iframe>
+<script>
+(function () {
+  var q = new URLSearchParams(location.search);
+  var p = q.get('p') || 'ko';
+  var y = parseInt(q.get('y') || '0', 10) || 0;
+  var map = { hub: '../', ko: '../lite-ko/', en: '../lite-en/' };
+  document.getElementById('bar').textContent = p + ' · 390×844 · y=' + y;
+  var f = document.getElementById('f');
+  f.src = map[p] || map.ko;
+  f.addEventListener('load', function () {
+    try { f.contentWindow.scrollTo(0, y); } catch (e) { document.getElementById('bar').textContent += ' scroll-failed'; }
+  });
+})();
+</script>
+</body>
+</html>
