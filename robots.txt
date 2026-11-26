@@ -1,3 +1,11 @@
 User-agent: *
+Allow: /
+
+# 유료 Business Kit 페이지는 액세스 코드 게이트 + noindex 로 검색에서 제외합니다.
 Disallow: /kit-ko/
 Disallow: /kit-en/
+
+# 검색 결과에 오류 페이지가 노출되지 않도록 제외
+Disallow: /404.html
+
+Sitemap: https://6bcjbn9nvs-commits.github.io/nexora-quote-desk/sitemap.xml
