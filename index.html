@@ -254,6 +254,20 @@ section.tight{padding:52px 0}
 .buy .p{font-size:12px;color:var(--muted)}
 .buy .s{font-size:10.5px;font-weight:800;letter-spacing:.08em;color:var(--teal);margin-top:6px}
 
+/* custom build (1:1) */
+.cust{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:34px;display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:32px;align-items:center}
+.cust::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#12a196,#0b6b63)}
+.cust h2{font-size:clamp(20px,2.4vw,26px)}
+.cust .desc{margin-top:12px;font-size:14px;color:var(--muted);line-height:1.75;max-width:560px}
+.cust-list{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:8px}
+.cust-list li{display:flex;gap:8px;font-size:13.2px;color:#3f4a58;line-height:1.55}
+.cust-list svg{width:15px;height:15px;flex:none;margin-top:2px;stroke:var(--teal);stroke-width:2.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.cust-act{background:linear-gradient(180deg,#f1faf8,#fbfdfc);border:1px solid var(--teal-line);border-radius:14px;padding:24px 22px;text-align:center}
+.cust-act .lbl{font-size:10.5px;font-weight:800;letter-spacing:.13em;color:var(--teal)}
+.cust-act p{margin-top:10px;font-size:12.6px;color:#4b5a6b;line-height:1.7;text-align:left}
+.cust-act .btn{width:100%;margin-top:15px;white-space:normal;line-height:1.4;text-align:center}
+.cust-act .small{margin-top:10px;font-size:11px;color:var(--faint);line-height:1.6}
+
 /* footer */
 footer{background:#0b1826;color:#9fb2c6;padding:38px 0 46px;margin-top:20px}
 .f-in{max-width:1120px;margin:0 auto;padding:0 22px;display:flex;flex-wrap:wrap;gap:18px;justify-content:space-between;align-items:flex-start}
@@ -294,6 +308,7 @@ footer{background:#0b1826;color:#9fb2c6;padding:38px 0 46px;margin-top:20px}
   .apps{grid-template-columns:1fr}
   .steps{grid-template-columns:1fr}
   .help{grid-template-columns:1fr;padding:24px}
+  .cust{grid-template-columns:1fr;padding:24px;gap:22px}
   .code-band{padding:28px}
   .code-band .in{grid-template-columns:1fr;gap:22px}
   .buy{grid-template-columns:1fr}
@@ -325,6 +340,8 @@ footer{background:#0b1826;color:#9fb2c6;padding:38px 0 46px;margin-top:20px}
       <a href="#iphone" class="en">iPhone guide</a>
       <a href="#code" class="ko">액세스 코드</a>
       <a href="#code" class="en">Access code</a>
+      <a href="#custom" class="ko">맞춤 제작</a>
+      <a href="#custom" class="en">Custom build</a>
     </nav>
     <span class="hd-sp"></span>
     <button class="langbtn" id="langBtn" type="button" aria-label="언어 바꾸기 / Switch language">
@@ -353,6 +370,8 @@ footer{background:#0b1826;color:#9fb2c6;padding:38px 0 46px;margin-top:20px}
         </div>
         <p class="cta-note ko">이미 구매하셨다면 <a href="kit-ko/">액세스 코드로 바로 열기 →</a> · 해외 결제 $27은 카드사 환율로 원화 청구됩니다.</p>
         <p class="cta-note en">Already bought the Kit? <a href="kit-en/">Open it with your access code →</a></p>
+        <p class="cta-note ko" style="margin-top:4px">품목·서식이 우리 업체와 달라 그대로 쓰기 어렵다면 <a href="https://soomgo.com/profile/users/19533701?utm_source=nexora_hub&amp;utm_medium=cta&amp;utm_campaign=custom_build&amp;utm_content=hub_hero">1:1 맞춤 제작 문의 (숨고) →</a></p>
+        <p class="cta-note en" style="margin-top:4px">Can’t use it as-is because your items or forms differ? <a href="https://soomgo.com/profile/users/19533701?utm_source=nexora_hub&amp;utm_medium=cta&amp;utm_campaign=custom_build&amp;utm_content=hub_hero_en">Ask for a custom build on Soomgo →</a></p>
         <div class="chips">
           <span class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="ko">설치 없음</span><span class="en">Nothing to install</span></span>
           <span class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="ko">아이폰 · 아이패드 · PC</span><span class="en">iPhone · iPad · desktop</span></span>
@@ -635,6 +654,37 @@ footer{background:#0b1826;color:#9fb2c6;padding:38px 0 46px;margin-top:20px}
       <p class="cmp-note en" style="margin-top:14px">Payment is a card payment on Gumroad; $27 is billed in KRW at your card issuer's rate. Enter the access code from your receipt on the <a href="kit-en/" style="color:var(--brand2);font-weight:700">Business Kit page</a>.</p>
     </div>
   </section>
+
+  <!-- ================= CUSTOM BUILD (숨고 1:1) ================= -->
+  <section id="custom" class="tight" style="padding-top:0">
+    <div class="wrap">
+      <div class="cust">
+        <div>
+          <div class="eyebrow"><span class="dot"></span><span class="ko">1:1 맞춤 제작</span><span class="en">CUSTOM BUILD</span></div>
+          <h2 class="ko">지금 쓰는 견적 방식이 따로 있으신가요?</h2>
+          <h2 class="en">Already have your own way of quoting?</h2>
+          <p class="desc ko">Lite와 Kit은 인테리어·창호·시공에서 흔한 견적 동선에 맞춰 만든 도구입니다. 품목 이름, 계산 항목, 견적서 서식, 쓰시는 문자 문구가 다르면 있는 것을 고쳐 쓰는 것보다 그 업체 기준으로 다시 만드는 편이 빠릅니다. 넥소라랩스가 숨고에서 요청을 받아 직접 상담하고 제작합니다.</p>
+          <p class="desc en">Lite and the Kit follow the usual estimating flow for interior, window and construction work. If your item names, calculations, estimate layout or message wording differ, building it around your shop is faster than bending this one. Nexora Labs takes these requests on Soomgo and builds them directly.</p>
+          <ul class="cust-list">
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="ko">품목·계산 항목을 지금 쓰는 그대로 (줄 수 제한 없이)</span><span class="en">Your own line items and calculations, without a row cap</span></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="ko">견적서 서식·상호·로고·서명란을 업체에 맞춰</span><span class="en">Estimate layout, logo and signature block fitted to your shop</span></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="ko">설치·회원가입 없이 링크나 파일로 납품</span><span class="en">Delivered as a link or file — nothing to install</span></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="ko">화면 구성안과 기능 목록을 먼저 문서로 확인한 뒤 제작</span><span class="en">You approve a written screen and feature plan before work starts</span></li>
+          </ul>
+        </div>
+        <div class="cust-act">
+          <div class="lbl ko">숨고 1:1 요청</div>
+          <div class="lbl en">REQUEST IT ON SOOMGO</div>
+          <p class="ko">업종과 지금 견적을 내는 방식을 적어 요청서를 남겨 주세요. 화면 구성안과 기능 목록, 범위를 문서로 먼저 보내드리고 확인받은 뒤 제작합니다. 상담과 진행은 숨고 채팅으로 합니다.</p>
+          <p class="en">Leave a request describing your trade and how you quote today. You get a written screen plan, feature list and scope first; work starts after you confirm. All of it happens in the Soomgo chat.</p>
+          <a class="btn teal lg ko" href="https://soomgo.com/profile/users/19533701?utm_source=nexora_hub&amp;utm_medium=cta&amp;utm_campaign=custom_build&amp;utm_content=hub_custom" target="_blank" rel="noopener">1:1 맞춤 견적·마진 웹앱 제작 문의 (숨고)</a>
+          <a class="btn teal lg en" href="https://soomgo.com/profile/users/19533701?utm_source=nexora_hub&amp;utm_medium=cta&amp;utm_campaign=custom_build&amp;utm_content=hub_custom_en" target="_blank" rel="noopener">Ask Nexora Labs on Soomgo</a>
+          <div class="small ko">숨고 프로필에서 견적 요청서를 남기시면 됩니다</div>
+          <div class="small en">Opens the Nexora Labs profile on Soomgo</div>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer>
@@ -646,8 +696,8 @@ footer{background:#0b1826;color:#9fb2c6;padding:38px 0 46px;margin-top:20px}
     </div>
     <div style="text-align:right">
       <div class="f-links">
-        <a href="lite-ko/" class="ko">Lite</a><a href="kit-ko/" class="ko">Business Kit</a><a href="#code" class="ko">액세스 코드</a>
-        <a href="lite-en/" class="en">Lite</a><a href="kit-en/" class="en">Business Kit</a><a href="#code" class="en">Access code</a>
+        <a href="lite-ko/" class="ko">Lite</a><a href="kit-ko/" class="ko">Business Kit</a><a href="#code" class="ko">액세스 코드</a><a href="#custom" class="ko">맞춤 제작</a>
+        <a href="lite-en/" class="en">Lite</a><a href="kit-en/" class="en">Business Kit</a><a href="#code" class="en">Access code</a><a href="#custom" class="en">Custom build</a>
         <a href="mailto:nexoralabs.kr@gmail.com">nexoralabs.kr@gmail.com</a>
       </div>
       <p class="f-note" style="margin-top:12px">© 2026 Nexora Labs. All rights reserved.</p>
