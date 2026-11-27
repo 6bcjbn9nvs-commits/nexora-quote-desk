@@ -154,6 +154,38 @@ a{color:inherit;text-decoration:none}
 .sheet-price b{font-size:34px;line-height:1;letter-spacing:-.045em;color:var(--brand);font-variant-numeric:tabular-nums}
 .sheet-price span{font-size:12.5px;font-weight:700;color:var(--muted);padding-bottom:4px}
 
+/* cost compare */
+.cmp-sec{padding:46px 0 0}
+.cmp{position:relative;overflow:hidden;background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow-lg);padding:28px 30px 22px}
+.cmp::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,#0d7f75,#173f63 55%,#0d7f75)}
+.cmp-top{max-width:700px}
+.cmp-kicker{font-size:10.5px;font-weight:800;letter-spacing:.14em;color:var(--teal);text-transform:uppercase}
+.cmp-top h2{margin-top:10px;font-size:clamp(21px,2.7vw,29px)}
+.cmp-top h2 em{font-style:normal;color:var(--teal);white-space:nowrap}
+.cmp-lede{margin-top:10px;font-size:14.2px;color:var(--muted);line-height:1.7}
+.cmp-lede b{color:var(--ink);font-weight:700;white-space:nowrap}
+.cmp-grid{margin-top:22px;display:grid;grid-template-columns:minmax(0,1fr) 150px minmax(0,1fr);gap:14px;align-items:stretch}
+.cmp-col{border:1px solid var(--line);border-radius:16px;padding:18px 18px 16px;background:#fbfcfe;display:flex;flex-direction:column}
+.cmp-col.best{border-color:var(--teal-line);background:linear-gradient(180deg,#f3fbf9,#fff)}
+.cmp-lbl{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:var(--ink);letter-spacing:-.02em}
+.cmp-lbl .k{flex:0 0 auto;display:grid;place-items:center;width:20px;height:20px;border-radius:6px;font-size:10.5px;font-weight:800;background:#eef2f7;color:#5b6472;border:1px solid #e0e5ec}
+.cmp-col.best .cmp-lbl .k{background:var(--teal-soft);color:var(--teal);border-color:var(--teal-line)}
+.cmp-amt{margin-top:12px;font-size:30px;font-weight:800;letter-spacing:-.045em;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+.cmp-col.best .cmp-amt{color:var(--brand)}
+.cmp-amt small{font-size:12.5px;font-weight:700;letter-spacing:-.02em;color:var(--muted);margin-left:4px}
+.cmp-cap{margin-top:6px;font-size:11.5px;color:var(--faint)}
+.cmp-list{margin-top:12px;border-top:1px dashed var(--line);padding-top:10px;display:grid;gap:6px}
+.cmp-list li{position:relative;padding-left:13px;font-size:12.8px;color:var(--muted);line-height:1.55}
+.cmp-list li::before{content:"";position:absolute;left:0;top:7px;width:4px;height:4px;border-radius:50%;background:#b3bcc7}
+.cmp-col.best .cmp-list li::before{background:var(--teal)}
+.cmp-mid{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;text-align:center}
+.cmp-mid::before{content:"";position:absolute;left:50%;top:6px;bottom:6px;width:1px;background:repeating-linear-gradient(180deg,var(--line-strong) 0 4px,transparent 4px 9px)}
+.cmp-vs{position:relative;background:var(--brand);color:#fff;font-size:15px;font-weight:800;letter-spacing:-.02em;padding:8px 12px;border-radius:999px;box-shadow:0 6px 18px -8px rgba(14,42,71,.6);white-space:nowrap}
+.cmp-vs-sub{position:relative;font-size:10.5px;font-weight:700;color:var(--muted);line-height:1.5;white-space:nowrap}
+.cmp-note{margin-top:18px;border-top:1px solid var(--line);padding-top:14px;display:grid;gap:7px}
+.cmp-note p{font-size:12px;color:var(--faint);line-height:1.65}
+.cmp-note b{color:var(--muted);font-weight:800}
+
 /* sections */
 section{padding:70px 0}
 section[id]{scroll-margin-top:84px}
@@ -277,6 +309,11 @@ footer{padding:34px 0 44px}
   .fit{grid-template-columns:1fr}
   .final{padding:32px 24px}
   .hd-nav{display:none}
+  .cmp{padding:24px 20px 20px}
+  .cmp-grid{grid-template-columns:1fr;gap:10px}
+  .cmp-mid{flex-direction:row;justify-content:flex-start;gap:10px;text-align:left;padding:2px 0}
+  .cmp-mid::before{display:none}
+  .cmp-vs-sub{max-width:none}
 }
 @media (max-width:640px){
   .hd-in{padding:10px 16px;gap:10px}
@@ -297,6 +334,9 @@ footer{padding:34px 0 44px}
   .mbar{display:block}
   body{padding-bottom:74px}
   .faq .a{padding-left:18px}
+  .cmp-sec{padding:30px 0 0}
+  .cmp-amt{font-size:27px}
+  .cmp-vs{font-size:13.5px;padding:7px 11px}
 }
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
@@ -315,6 +355,7 @@ footer{padding:34px 0 44px}
       <span class="btag">B2B</span>
     </a>
     <nav class="hd-nav" aria-label="페이지 안내">
+      <a href="#compare">비용 비교</a>
       <a href="#problem">문제</a>
       <a href="#scope">제공 범위</a>
       <a href="#price">가격</a>
@@ -365,6 +406,48 @@ footer{padding:34px 0 44px}
         <p class="sheet-foot">의향서는 구속력이 없습니다. 실제 계약과 결제는 업무 범위를 확인한 뒤 별도로 진행합니다.</p>
       </div>
     </aside>
+  </div>
+</section>
+
+<section id="compare" class="cmp-sec" aria-labelledby="cmp-title">
+  <div class="wrap">
+    <div class="cmp">
+      <div class="cmp-top">
+        <p class="cmp-kicker">비용 비교 · 반복 행정 업무 기준</p>
+        <h2 id="cmp-title">사무 담당자 1명 채용 비용의 <em>약 1/10</em></h2>
+        <p class="cmp-lede">매달 반복되는 정리·입력·집계 업무만 놓고 보면, 1명을 더 채용하는 비용(4대보험 포함 월 250~290만 원대)과 월 구독 <b>29.9만 원</b>은 약 1/10 차이입니다. 채용 공고·면접 없이 시작합니다.</p>
+      </div>
+      <div class="cmp-grid">
+        <div class="cmp-col">
+          <p class="cmp-lbl"><span class="k" aria-hidden="true">A</span>사무·행정 담당자 1명 추가 채용</p>
+          <p class="cmp-amt">250~290<small>만 원 / 월</small></p>
+          <p class="cmp-cap">4대보험 사업주 부담 포함</p>
+          <ul class="cmp-list">
+            <li>채용 공고·면접·교육에 시간이 먼저 듭니다</li>
+            <li>업무량이 줄어도 매달 같은 인건비가 나갑니다</li>
+            <li>퇴사하면 인수인계와 업무 공백이 생깁니다</li>
+          </ul>
+        </div>
+        <div class="cmp-mid">
+          <span class="cmp-vs">약 1/10</span>
+          <span class="cmp-vs-sub">실제 1/8.4~1/9.7<br>299,000 ÷ 250~290만 원</span>
+        </div>
+        <div class="cmp-col best">
+          <p class="cmp-lbl"><span class="k" aria-hidden="true">B</span>업무자동화 월 구독</p>
+          <p class="cmp-amt">299,000<small>원 / 월</small></p>
+          <p class="cmp-cap">부가세(VAT) 포함 · 3개월 단위</p>
+          <ul class="cmp-list">
+            <li>같은 입력에는 새벽에도 같은 계산·정리 결과</li>
+            <li>옮겨 적기·집계에서 생기는 누락·오타를 줄입니다</li>
+            <li>채용·교육 절차 없이 시작, 3개월마다 재확인</li>
+          </ul>
+        </div>
+      </div>
+      <div class="cmp-note">
+        <p><b>비교 기준</b> — 매달 반복되는 행정·입력·집계 업무입니다. 사람을 대체하거나 사람보다 모든 면에서 낫다는 뜻이 아니며, 판단·협상·대면 응대·현장 업무는 포함하지 않습니다. 자동 계산은 입력이 같으면 결과가 같지만, 입력값과 최종 확인의 책임은 담당자에게 있습니다.</p>
+        <p><b>인건비 산출</b> — 2026년 최저임금 월 환산액 2,156,880원(월 209시간)에 사업주 4대보험 부담(약 11%)을 더하면 약 239만 원, 퇴직급여 충당(월 급여의 1/12)까지 포함하면 약 257만 원입니다. 실제 채용 비용은 직무·경력·수당에 따라 250~290만 원대이며, 채용·교육 기간과 퇴사 시 공백은 별도입니다.</p>
+      </div>
+    </div>
   </div>
 </section>
 
