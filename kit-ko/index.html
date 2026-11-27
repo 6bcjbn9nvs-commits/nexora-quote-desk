@@ -1948,6 +1948,16 @@ var backupMeta = {};
 var draftTimer = null;
 var draftSaved = true;
 var pendingImport = null;
+/* 데모(샘플) 데이터 구분자 — 예시 문구·샘플이 바뀌면 값을 올려서 예전 샘플을 한 번 비운다. */
+var SAMPLE_TAG = "2026-11-neutral";
+/* 예전 예시 상호가 저장된 브라우저를 한 번만 새 예시로 바꾸기 위한 지문(상호|대표|연락처|사업자번호|주소). */
+var LEGACY_DEMO_SIG = "11cd46e4";
+function companySig(c) {
+  var s = [c && c.name, c && c.owner, c && c.tel, c && c.bizno, c && c.addr].join("|");
+  var h = 2166136261;
+  for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
+  return ("00000000" + h.toString(16)).slice(-8);
+}
 
 function activeQuotes() { return sampleMode ? sampleQuotes : quotes; }
 function toast(msg) {
@@ -1988,14 +1998,27 @@ function loadAll() {
   memVersion = parseInt(readRaw(K.version) || "0", 10);
   if (!isFinite(memVersion)) memVersion = 0;
   migrateLegacy();
-  var sm = parseStore(readRaw(K.sample));
+  var rawSample = readRaw(K.sample);
+  var sampleStamp = "";
+  if (rawSample) {
+    try {
+      var sj = JSON.parse(rawSample);
+      if (sj && typeof sj === "object") sampleStamp = txt(sj.demoTag, 40);
+    } catch (e) { sampleStamp = ""; }
+  }
+  var sm = parseStore(rawSample);
   sampleQuotes = sm.list;
+  if (rawSample && sampleStamp !== SAMPLE_TAG) sampleQuotes = [];
   if (quotes.length === 0 && !settings.sampleDismissed) {
     sampleMode = true;
+    if (rawSample && sampleStamp !== SAMPLE_TAG && settings.company.name && companySig(settings.company) === LEGACY_DEMO_SIG) {
+      settings.company = deep(DEMO_CO);
+      saveSettings();
+    }
     applyDemoCompany();
     if (!sampleQuotes.length) {
       sampleQuotes = buildDemo().slice(0, IS_LITE ? 1 : 3);
-      writeRaw(K.sample, JSON.stringify({ schemaVersion: SCHEMA, quotes: sampleQuotes }));
+      writeRaw(K.sample, JSON.stringify({ schemaVersion: SCHEMA, demoTag: SAMPLE_TAG, quotes: sampleQuotes }));
     }
   }
 }
@@ -2075,7 +2098,7 @@ function saveData(silent) {
   return true;
 }
 function saveSample() {
-  writeRaw(K.sample, JSON.stringify({ schemaVersion: SCHEMA, quotes: sampleQuotes }));
+  writeRaw(K.sample, JSON.stringify({ schemaVersion: SCHEMA, demoTag: SAMPLE_TAG, quotes: sampleQuotes }));
 }
 
 /* =========================================================
