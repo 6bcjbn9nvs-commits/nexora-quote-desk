@@ -126,7 +126,7 @@
   .logo-box .acts{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
 
   /* segmented status */
-  .seg{display:inline-flex;background:#f1f3f6;border:1px solid var(--line);border-radius:10px;padding:2px;gap:2px}
+  .seg{display:inline-flex;background:#f1f3f6;border:1px solid var(--line);border-radius:10px;padding:2px;gap:2px;flex-wrap:wrap}
   .seg label{position:relative;display:block;cursor:pointer}
   .seg input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer}
   .seg span{display:block;padding:5px 11px;border-radius:8px;font-size:12.5px;font-weight:650;color:#5b6472;white-space:nowrap;transition:background .15s,color .15s,box-shadow .15s}
@@ -270,6 +270,7 @@
   .q-notes{flex:1;min-width:0;font-size:10.3px;color:#444;line-height:1.7}
   .q-notes b{display:block;margin-bottom:4px;color:#222;font-size:9px;letter-spacing:.09em;text-transform:uppercase}
   .q-notes span{white-space:pre-line}
+  .sheet .is-ph{color:#9aa7b4; font-weight:500}
   .q-totals{width:45%;min-width:262px;flex:none;border-top:2px solid #0e2a47}
   .q-totals .r{display:flex;justify-content:space-between;gap:16px;padding:7px 8px;font-size:11.3px;border-bottom:1px solid #eef0f3}
   .q-totals .r .v{font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -343,6 +344,9 @@
     .q-notes{font-size:9.6px}
     .sheet-foot{font-size:8.7px}
     tr,td,th{page-break-inside:avoid}
+    /* Empty fields keep their guidance on screen only — nothing but real values prints */
+    .is-ph{visibility:hidden}
+    .q-notes.is-empty{display:none}
   }
   /* ===================== v2.0 — dashboard, lights, floor, signature ===================== */
   .sample-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:linear-gradient(90deg,#fdf3e3 0%,#fffaf1 70%);border-top:1px solid #f3e3c9;padding:8px 24px;font-size:12.5px;color:#7a5a22}
@@ -1910,18 +1914,29 @@ html.nx-locked body > *:not(script):not(.nx-gate){display:none !important}
     if (typeof v2AfterRecalc === "function") v2AfterRecalc(t, rows);
   }
 
+
+  /* Shows the value when there is one; otherwise the guidance text, faded (.is-ph).
+     In print, .is-ph is visibility:hidden so guidance never lands on paper. */
+  function setPreviewText(id, value, fallback) {
+    var el = $(id);
+    if (!el) return;
+    var has = value !== undefined && value !== null && String(value).trim() !== "";
+    el.textContent = has ? value : (fallback || "");
+    el.classList.toggle("is-ph", !has);
+  }
+
   function updatePreview(t, rows) {
     if (!t || !rows) return;
     var c = readCompany();
-    $("pv_cname").textContent = c.name || "Your business name";
-    $("pv_owner_line").textContent = c.owner || "Your name";
-    $("pv_addr").textContent = c.address || "Your address";
+    setPreviewText("pv_cname", c.name, "Your business name");
+    setPreviewText("pv_owner_line", c.owner, "Your name");
+    setPreviewText("pv_addr", c.address, "Your address");
     var contact = [];
     if (c.phone) contact.push(c.phone);
     if (c.email) contact.push(c.email);
-    $("pv_contact_line").textContent = contact.length ? contact.join(" · ") : "Phone · Email";
-    $("pv_license_line").textContent = c.license ? "License " + c.license : "";
-    $("pv_pay").textContent = c.pay || "Payment instructions";
+    setPreviewText("pv_contact_line", contact.join(" · "), "Phone · Email");
+    setPreviewText("pv_license_line", c.license ? "License " + c.license : "", "");
+    setPreviewText("pv_pay", c.pay, "Payment instructions");
     if (company.logo) {
       $("pv_logo").src = company.logo;
       $("pv_logo").hidden = false;
@@ -1930,12 +1945,12 @@ html.nx-locked body > *:not(script):not(.nx-gate){display:none !important}
       $("pv_logo").removeAttribute("src");
     }
 
-    $("pv_no").textContent = $("e_no").value || "—";
-    $("pv_date").textContent = fmtDate($("e_issued").value);
-    $("pv_valid").textContent = fmtDate($("e_valid").value);
-    $("pv_client").textContent = $("e_customer").value.trim() || "Customer name";
-    $("pv_clienttel").textContent = $("e_contact").value.trim() || "—";
-    $("pv_site").textContent = $("e_job").value.trim() || "Job address";
+    setPreviewText("pv_no", $("e_no").value, "—");
+    setPreviewText("pv_date", $("e_issued").value ? fmtDate($("e_issued").value) : "", "—");
+    setPreviewText("pv_valid", $("e_valid").value ? fmtDate($("e_valid").value) : "", "—");
+    setPreviewText("pv_client", $("e_customer").value, "Customer name");
+    setPreviewText("pv_clienttel", $("e_contact").value, "—");
+    setPreviewText("pv_site", $("e_job").value, "Job address");
 
     var body = $("pv_items");
     body.innerHTML = "";
@@ -1974,7 +1989,9 @@ html.nx-locked body > *:not(script):not(.nx-gate){display:none !important}
     $("pv_dep_label").textContent = dep > 0 ? "Deposit due (" + dep + "%)" : "Deposit due";
     $("pv_dep").textContent = money(t.deposit);
     $("pv_bal").textContent = money(t.balance);
-    $("pv_note").textContent = $("e_note").value.trim() || "—";
+    setPreviewText("pv_note", $("e_note").value, "—");
+    var notesEl = $("pv_note");
+    if (notesEl && notesEl.parentNode) notesEl.parentNode.classList.toggle("is-empty", !$("e_note").value.trim());
   }
 
   /* ---------- records ---------- */
