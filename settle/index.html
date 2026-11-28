@@ -21,14 +21,15 @@
 html,body{margin:0;padding:0}
 body{
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Malgun Gothic","Apple SD Gothic Neo",Roboto,sans-serif;
-  background:var(--bg); color:var(--text); font-size:14px; line-height:1.5;
+  background:#e9edf3; color:var(--text); font-size:14px; line-height:1.5;
   -webkit-font-smoothing:antialiased;
 }
 .num{font-variant-numeric:tabular-nums; font-feature-settings:"tnum"}
 button{font-family:inherit}
 
 /* ---------- layout ---------- */
-.app{display:grid; grid-template-columns:232px 1fr; min-height:100vh}
+.app{display:grid; grid-template-columns:232px 1fr; min-height:100vh; max-width:1240px; margin:0 auto;
+  background:var(--bg); box-shadow:0 0 0 1px var(--line),0 12px 40px rgba(16,24,40,.10)}
 .side{
   background:linear-gradient(180deg,#0e2a47 0%,#0d2440 100%); color:#dbe5ef;
   padding:20px 0 18px; display:flex; flex-direction:column; gap:2px;
