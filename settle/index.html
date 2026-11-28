@@ -528,7 +528,7 @@ function renderKPI(){
   document.getElementById('k4').innerHTML = won(t.payout) + '<small>원</small>';
   document.getElementById('k4b').textContent = won(t.tax);
   document.getElementById('k5').innerHTML = won(absDiff) + '<small>원</small>';
-  document.getElementById('k5b').textContent = ''불일치 ' + bad.length + '건 · 차액 합계'';
+  document.getElementById('k5b').textContent = '불일치 ' + bad.length + '건 · 차액 합계';
   document.getElementById('navCnt').textContent = bad.length;
   return t;
 }
@@ -599,7 +599,7 @@ function renderTable(){
         </div>
       </td>
       <td class="num">${won(r.gross)}</td>
-      <td class="num">${won(r.net)}${r.refund?`<span style="color:var(--red);font-size:10.5px;margin-left:4px">−${won(r.refund)}</span>`:''}</td>
+      <td class="num">${won(r.net)}${r.refund ? '<span style="color:var(--red);font-size:10.5px;margin-left:4px">−' + won(r.refund) + '</span>' : ''}</td>
       <td class="num">${pct(r.rate)}</td>
       <td class="num">−${won(r.fee)}</td>
       <td class="num">${won(r.settle)}</td>
