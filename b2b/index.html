@@ -5,7 +5,7 @@
 <script>window.__nxErr=[];window.addEventListener("error",function(e){window.__nxErr.push(String((e&&e.message)||e));});window.addEventListener("unhandledrejection",function(e){window.__nxErr.push("promise:"+String(e&&e.reason));});</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>업무자동화 월 구독 (월 29.9만 원) · 3개월 비구속 사전 조사 | Nexora Labs</title>
-<meta name="description" content="도소매·제조·서비스 소기업의 반복 업무를 표준 템플릿과 자동 계산 도구로 정리하는 월 구독. 월 299,000원(VAT 포함), 3개월 단위, 비구속 의향서. 지금은 결제 없는 6문항 사전 조사만 받습니다.">
+<meta name="description" content="도소매·제조·서비스 소기업의 반복 업무를 표준 템플릿과 자동 계산 도구로 정리하는 월 구독. 월 299,000원(VAT 포함), 3개월 단위, 비구속 의향서. 지금은 결제 없는 7문항 사전 조사만 받습니다.">
 <meta name="robots" content="noindex,nofollow">
 <meta name="author" content="Nexora Labs">
 <meta name="theme-color" content="#0e2a47">
@@ -22,7 +22,7 @@
 <meta property="og:image:alt" content="Nexora Labs 업무자동화 월 구독, 월 299,000원, 3개월 비구속 사전 조사">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="업무자동화 월 구독 · 3개월 비구속 사전 조사">
-<meta name="twitter:description" content="월 299,000원(VAT 포함), 3개월 단위. 지금은 결제 없는 6문항 사전 조사만 받습니다.">
+<meta name="twitter:description" content="월 299,000원(VAT 포함), 3개월 단위. 지금은 결제 없는 7문항 사전 조사만 받습니다.">
 <meta name="twitter:image" content="https://6bcjbn9nvs-commits.github.io/nexora-quote-desk/b2b/og-image-b2b.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230e2a47'/%3E%3Ctext x='32' y='44' font-family='Arial,Helvetica,sans-serif' font-size='34' font-weight='800' fill='%23ffffff' text-anchor='middle'%3EN%3C/text%3E%3C/svg%3E">
 <script type="application/ld+json">
@@ -379,7 +379,7 @@ footer{padding:34px 0 44px}
         <a class="btn primary lg" data-form-link href="https://docs.google.com/forms/d/e/1FAIpQLScTSC359-zVA2sFBBFPOxIxb4WcDmJ2uDETgRWaZEDEN7TPpw/viewform" target="_blank" rel="noopener">1분 사전 조사 참여 <span class="arw" aria-hidden="true">→</span></a>
         <a class="btn lg" href="#scope">제공 범위 보기</a>
       </div>
-      <p class="cta-note">결제·계약 없음 · 6문항 1분 · 상담은 원하실 때만 진행합니다.</p>
+      <p class="cta-note">결제·계약 없음 · 7문항 1분 · 상담은 원하실 때만 진행합니다.</p>
       <ul class="chips">
         <li class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>월 299,000원 (VAT 포함)</li>
         <li class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>3개월 단위</li>
@@ -565,8 +565,8 @@ footer{padding:34px 0 44px}
       <li class="step">
         <span class="sn" aria-hidden="true">1</span>
         <h3>1분 사전 조사</h3>
-        <p>6문항으로 지금 반복 업무와 쓰는 시간·비용을 알려 주세요.</p>
-        <span class="tag">6문항 · 1분</span>
+        <p>7문항으로 지금 반복 업무와 쓰는 시간·비용을 알려 주세요.</p>
+        <span class="tag">7문항 · 1분</span>
       </li>
       <li class="step">
         <span class="sn" aria-hidden="true">2</span>
@@ -656,7 +656,7 @@ footer{padding:34px 0 44px}
     <div class="final">
       <div>
         <p class="eyebrow"><span class="dot" aria-hidden="true"></span>지금은 의향만 받습니다</p>
-        <h2>결제 없이, 6문항으로 시작합니다</h2>
+        <h2>결제 없이, 7문항으로 시작합니다</h2>
         <p>1분이면 끝납니다. 상담을 원하지 않으시면 응답만으로 종료되고, 이후 연락은 14일 뒤 한 번뿐입니다. 응답은 <a href="../privacy/" style="color:inherit;border-bottom:1px solid rgba(255,255,255,.28)">개인정보 처리방침</a>에 따라 처리됩니다.</p>
       </div>
       <div class="cta">
@@ -696,6 +696,14 @@ footer{padding:34px 0 44px}
   "use strict";
   var FORM = "https://docs.google.com/forms/d/e/1FAIpQLScTSC359-zVA2sFBBFPOxIxb4WcDmJ2uDETgRWaZEDEN7TPpw/viewform";
   var KEY = "nx_b2b_src";
+  /* 폼 7번 문항(알게 된 경로·선택)의 entry ID — 2026-11-28 추가 */
+  var ENTRY_SRC = "entry.192695474";
+  var LABEL = {
+    naver_blog: "네이버 블로그", youtube: "유튜브", instagram: "인스타그램", threads: "스레드",
+    naver_ad: "네이버 검색광고", kakao_ad: "카카오 광고", kmong: "크몽", soomgo: "숨고",
+    wishket: "위시켓", email: "이메일", nexora_hub: "사이트", nexora_lite_ko: "사이트",
+    nexora_lite_en: "사이트", direct: "직접 방문"
+  };
 
   function channel() {
     var src = "", med = "", camp = "", cont = "";
@@ -728,6 +736,10 @@ footer{padding:34px 0 44px}
   if (ch.med) { params.push("utm_medium=" + encodeURIComponent(ch.med)); }
   if (ch.camp) { params.push("utm_campaign=" + encodeURIComponent(ch.camp)); }
   if (ch.cont) { params.push("utm_content=" + encodeURIComponent(ch.cont)); }
+  /* 유입경로를 폼 7번 문항에 미리 채운다(사람이 읽을 수 있는 이름 + 캠페인 ID) */
+  var via = LABEL[ch.src] || ch.src;
+  if (ch.camp) { via += " (" + ch.camp + ")"; }
+  params.push(ENTRY_SRC + "=" + encodeURIComponent(via));
   var href = FORM + "?" + params.join("&");
 
   var links = document.querySelectorAll("[data-form-link]");
