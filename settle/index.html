@@ -28,7 +28,7 @@ body{
 button{font-family:inherit}
 
 /* ---------- layout ---------- */
-.app{display:grid; grid-template-columns:232px 1fr; min-height:100vh; max-width:1240px; margin:0 auto;
+.app{display:grid; grid-template-columns:232px 1fr; min-height:100vh; max-width:1320px; margin:0 auto;
   background:var(--bg); box-shadow:0 0 0 1px var(--line),0 12px 40px rgba(16,24,40,.10)}
 .side{
   background:linear-gradient(180deg,#0e2a47 0%,#0d2440 100%); color:#dbe5ef;
@@ -110,14 +110,14 @@ button{font-family:inherit}
 }
 .search::placeholder{color:#b3bcc7}
 .tw{overflow:auto}
-table{width:100%;border-collapse:collapse;font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
 thead th{
-  position:sticky;top:0;background:#f8fafc;color:#5a6674;font-weight:600;font-size:11.5px;
-  text-align:right;padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap;z-index:1
+  position:sticky;top:0;background:#f8fafc;color:#5a6674;font-weight:600;font-size:11px;
+  text-align:right;padding:9px 8px;border-bottom:1px solid var(--line);white-space:nowrap;z-index:1
 }
 thead th:first-child,tbody td:first-child{text-align:left}
 thead th.l{text-align:left}
-tbody td{padding:10px 12px;border-bottom:1px solid #f1f3f7;text-align:right;white-space:nowrap}
+tbody td{padding:10px 8px;border-bottom:1px solid #f1f3f7;text-align:right;white-space:nowrap}
 tbody tr.row{cursor:pointer}
 tbody tr.row:hover{background:#fafcfe}
 tbody tr.row.bad{background:linear-gradient(90deg,#fffdfd,#fff)}
@@ -326,18 +326,17 @@ tr.detail>td{background:#f7fafd;padding:0;border-bottom:1px solid var(--line)}
             <table id="tbl">
               <thead>
                 <tr>
-                  <th class="l" style="width:210px">크리에이터</th>
+                  <th class="l" style="width:172px">크리에이터</th>
                   <th>판매액</th>
-                  <th>반품</th>
                   <th>순매출</th>
-                  <th>수수료율</th>
+                  <th style="width:64px">수수료율</th>
                   <th>수수료</th>
-                  <th>정산액(재계산)</th>
+                  <th>정산액</th>
                   <th>원천세</th>
-                  <th>실지급(재계산)</th>
-                  <th>엑셀 실지급</th>
-                  <th>차액</th>
-                  <th class="l" style="width:150px">검산</th>
+                  <th>실지급 (재계산)</th>
+                  <th>실지급 (엑셀)</th>
+                  <th style="width:88px">차액</th>
+                  <th class="l" style="width:96px">검산</th>
                 </tr>
               </thead>
               <tbody id="tbody"></tbody>
@@ -529,7 +528,7 @@ function renderKPI(){
   document.getElementById('k4').innerHTML = won(t.payout) + '<small>원</small>';
   document.getElementById('k4b').textContent = won(t.tax);
   document.getElementById('k5').innerHTML = won(absDiff) + '<small>원</small>';
-  document.getElementById('k5b').textContent = '불일치 ' + bad.length + '건 · 차액 합계(절대값)';
+  document.getElementById('k5b').textContent = ''불일치 ' + bad.length + '건 · 차액 합계'';
   document.getElementById('navCnt').textContent = bad.length;
   return t;
 }
@@ -568,7 +567,7 @@ function detailHtml(r){
         : `엑셀 기준으로 <b>${won(-r.diff)}원을 적게 지급</b>할 뻔했습니다. 재계산 금액으로 확정하면 ${won(r.payout)}원입니다.`)
     : `엑셀 실지급액과 재계산 금액이 <b>정확히 일치</b>합니다.`;
 
-  return `<tr class="detail"><td colspan="12">
+  return `<tr class="detail"><td colspan="11">
     <div class="calc">
       <div>
         <h4>${r.name} — 계산 근거 (엑셀값과 재계산값 대조)</h4>
@@ -600,8 +599,7 @@ function renderTable(){
         </div>
       </td>
       <td class="num">${won(r.gross)}</td>
-      <td class="num" style="color:${r.refund?'var(--red)':'var(--faint)'}">${r.refund?'−'+won(r.refund):'0'}</td>
-      <td class="num">${won(r.net)}</td>
+      <td class="num">${won(r.net)}${r.refund?`<span style="color:var(--red);font-size:10.5px;margin-left:4px">−${won(r.refund)}</span>`:''}</td>
       <td class="num">${pct(r.rate)}</td>
       <td class="num">−${won(r.fee)}</td>
       <td class="num">${won(r.settle)}</td>
@@ -619,7 +617,6 @@ function renderTable(){
   tfoot.innerHTML = `<tr>
     <td>합계 (${DATA.length}명)</td>
     <td class="num">${won(t.gross)}</td>
-    <td class="num">−${won(t.refund)}</td>
     <td class="num">${won(t.net)}</td>
     <td></td>
     <td class="num">−${won(t.fee)}</td>
