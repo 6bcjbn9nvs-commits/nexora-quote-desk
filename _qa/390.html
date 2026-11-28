@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>[QA] 390px 레이아웃 검수 — Nexora Quote Desk</title>
+<style>
+  body{margin:0;background:#0f1720;color:#dfe8f1;font-family:-apple-system,"Segoe UI",Roboto,"Malgun Gothic",sans-serif}
+  header{padding:14px 18px;border-bottom:1px solid #22303d;font-size:13px;line-height:1.6}
+  header b{color:#fff}
+  #out{margin:10px 18px;font-size:12.5px;line-height:1.7;font-family:ui-monospace,Menlo,Consolas,monospace}
+  .ok{color:#5ad19a}.bad{color:#ff8b7a}
+  .row{display:flex;gap:18px;overflow-x:auto;padding:14px 18px 30px;align-items:flex-start}
+  .col{flex:none;width:390px}
+  .col h2{font-size:12px;font-weight:700;color:#9fb6cc;margin:0 0 8px}
+  iframe{width:390px;height:2600px;border:0;background:#fff;border-radius:10px;box-shadow:0 0 0 1px #22303d}
+</style>
+</head>
+<body>
+<header><b>[내부 QA 전용] 390px 레이아웃 검수</b> — 각 페이지를 폭 390px iframe으로 띄워 가로 넘침(scrollWidth &gt; clientWidth)과 콘솔 오류를 자동 표시합니다. 이 페이지는 색인 대상이 아니며 사이트 어디에서도 링크하지 않습니다.</header>
+<div id="out">측정 중…</div>
+<div class="row">
+  <div class="col"><h2>허브 /</h2><iframe src="../../" title="허브 390px"></iframe></div>
+  <div class="col"><h2>Lite /lite-ko/</h2><iframe src="../../lite-ko/" title="Lite 390px"></iframe></div>
+  <div class="col"><h2>Kit 미리보기 /kit-preview/</h2><iframe src="../../kit-preview/" title="Kit 미리보기 390px"></iframe></div>
+  <div class="col"><h2>B2B /b2b/</h2><iframe src="../../b2b/" title="B2B 390px"></iframe></div>
+  <div class="col"><h2>정산 시연 /settle/</h2><iframe src="../../settle/" title="정산 390px"></iframe></div>
+</div>
+<script>
+(function(){
+  var out = document.getElementById("out");
+  var frames = [].slice.call(document.querySelectorAll("iframe"));
+  function report(){
+    var lines = [];
+    var allOk = true;
+    frames.forEach(function(f){
+      var name = f.getAttribute("title");
+      try{
+        var d = f.contentDocument, w = f.contentWindow;
+        if(!d || !w){ lines.push('<div class="bad">'+name+': 접근 불가</div>'); allOk=false; return; }
+        var de = d.documentElement;
+        var sw = Math.max(de.scrollWidth, d.body ? d.body.scrollWidth : 0);
+        var cw = de.clientWidth;
+        var overflow = sw - cw;
+        var errs = (w.__nxErr || []);
+        var ok = overflow <= 1 && errs.length === 0;
+        if(!ok) allOk = false;
+        lines.push('<div class="'+(ok?'ok':'bad')+'">'+(ok?'PASS':'FAIL')+' · '+name+
+          ' · scrollWidth '+sw+' / clientWidth '+cw+' (넘침 '+Math.max(0,overflow)+'px)'+
+          ' · console 오류 '+errs.length+(errs.length?(' — '+errs.slice(0,3).map(function(e){return String(e).slice(0,80);}).join(' | ')):'')+'</div>');
+        // 넘치는 요소 찾기(있다면)
+        if(overflow > 1 && d.body){
+          var worst = null;
+          [].slice.call(d.body.querySelectorAll("*")).forEach(function(el){
+            var r = el.getBoundingClientRect();
+            if(r.right > cw + 1 && (!worst || r.right > worst.r)) worst = {tag:el.tagName, cls:el.className, r:r.right};
+          });
+          if(worst) lines.push('<div style="color:#9fb6cc">　└ 최우측 요소: '+worst.tag+(worst.cls?('.'+String(worst.cls).split(' ').join('.')):'')+' → right '+Math.round(worst.r)+'px</div>');
+        }
+      }catch(e){
+        allOk=false; lines.push('<div class="bad">'+name+': '+String(e).slice(0,120)+'</div>');
+      }
+    });
+    lines.unshift('<div style="margin-bottom:6px"><b>'+(allOk?'전체 PASS':'FAIL 있음')+'</b> · 측정 시각 '+new Date().toLocaleString("ko-KR")+'</div>');
+    out.innerHTML = lines.join("");
+  }
+  var n = 0;
+  frames.forEach(function(f){ f.addEventListener("load", function(){ if(++n >= frames.length) setTimeout(report, 1200); }); });
+  setTimeout(report, 6000);
+})();
+</script>
+</body>
+</html>

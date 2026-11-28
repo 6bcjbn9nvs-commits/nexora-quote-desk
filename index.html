@@ -329,6 +329,7 @@ footer{background:#0b1826;color:#9fb2c6;padding:38px 0 46px;margin-top:20px}
 .roi-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:26px;margin-top:6px}
 .roi-in{display:grid;gap:12px;align-content:start}
 .roi-row{display:grid;grid-template-columns:minmax(0,1fr) 138px;gap:10px;align-items:center}
+.roi-row-sel{grid-template-columns:minmax(0,1fr) 218px}
 .roi-row label{font-size:13px;font-weight:650;color:#3b4a5a}
 .roi-row input,.roi-row select{width:100%;font-family:inherit;font-size:14px;padding:9px 10px;border:1px solid var(--line-strong);border-radius:9px;background:#fff;color:var(--ink)}
 .roi-row input:focus,.roi-row select:focus{outline:2px solid rgba(23,63,99,.25);outline-offset:1px;border-color:var(--brand2)}
@@ -347,6 +348,7 @@ footer{background:#0b1826;color:#9fb2c6;padding:38px 0 46px;margin-top:20px}
   .roi-card{padding:20px 16px}
   .roi-grid{grid-template-columns:1fr;gap:18px}
   .roi-row{grid-template-columns:1fr 112px}
+  .roi-row-sel{grid-template-columns:1fr;gap:6px}
   .roi-out .v{font-size:19px}
 }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none !important}}
@@ -575,7 +577,7 @@ footer{background:#0b1826;color:#9fb2c6;padding:38px 0 46px;margin-top:20px}
       <div class="roi-card">
         <div class="roi-grid">
           <div class="roi-in">
-            <div class="roi-row"><label for="roiProduct" class="ko">비교할 상품</label><label for="roiProduct" class="en">Product</label>
+            <div class="roi-row roi-row-sel"><label for="roiProduct" class="ko">비교할 상품</label><label for="roiProduct" class="en">Product</label>
               <select id="roiProduct">
                 <option value="39000" selected>Business Kit · 39,000원</option>
                 <option value="19000">Quote Desk Pro · 19,000원</option>
