@@ -52,7 +52,7 @@ button{font-family:inherit}
 .nav button[aria-current="true"]{background:rgba(255,255,255,.13);color:#fff;font-weight:600}
 .nav button .ic{width:16px;height:16px;flex:0 0 16px;opacity:.85}
 .nav .cnt{margin-left:auto;font-size:11px;background:var(--red);color:#fff;border-radius:9px;padding:0 6px;line-height:17px;font-weight:700}
-.side-foot{margin-top:auto;padding:14px 20px 0;border-top:1px solid rgba(255,255,255,.09);font-size:11.5px;color:#8298ae;line-height:1.6}
+.side-foot{margin-top:auto;padding:14px 20px 24px;border-top:1px solid rgba(255,255,255,.09);font-size:11px;color:#8298ae;line-height:1.6}
 .side-foot .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#3ecf8e;margin-right:6px;vertical-align:1px}
 
 .main{min-width:0;display:flex;flex-direction:column}
@@ -258,8 +258,8 @@ tr.detail>td{background:#f7fafd;padding:0;border-bottom:1px solid var(--line);wh
       </button>
     </nav>
     <div class="side-foot">
-      <span class="dot"></span>가상 데이터로 동작하는 시연 화면입니다.<br>
-      실제 정산 파일·개인정보는 포함하지 않습니다.
+      <span class="dot"></span>가상 데이터 시연 화면<br>
+      실제 정산 파일·개인정보 없음
     </div>
   </aside>
 
@@ -625,7 +625,7 @@ function renderTable(){
     <td class="num">${won(t.payout)}</td>
     <td class="num" style="color:#6b7684">${won(t.excel)}</td>
     <td class="num ${t.diff<0?'d-neg':t.diff>0?'d-pos':'d-zero'}">${t.diff>0?'+':''}${won(t.diff)}</td>
-    <td><span class="badge b-bad">불일치 ${DATA.filter(r=>r.bad).length}건</span></td>
+    <td><span class="badge b-bad">${DATA.filter(r=>r.bad).length}건</span></td>
   </tr>`;
 
   tbody.querySelectorAll('tr.row').forEach(tr=>{
