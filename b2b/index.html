@@ -698,26 +698,28 @@ footer{padding:34px 0 44px}
   var KEY = "nx_b2b_src";
 
   function channel() {
-    var src = "", med = "", camp = "";
+    var src = "", med = "", camp = "", cont = "";
     try {
       var q = new URLSearchParams(window.location.search);
       src = (q.get("utm_source") || "").trim();
       med = (q.get("utm_medium") || "").trim();
       camp = (q.get("utm_campaign") || "").trim();
+      cont = (q.get("utm_content") || "").trim();
       if (src) {
-        var payload = src + "|" + med + "|" + camp;
+        var payload = src + "|" + med + "|" + camp + "|" + cont;
         try { window.sessionStorage.setItem(KEY, payload); } catch (e) {}
       } else {
         try {
           var saved = window.sessionStorage.getItem(KEY);
           if (saved) {
             var p = saved.split("|");
-            src = p[0] || ""; med = p[1] || ""; camp = p[2] || "";
+            src = p[0] || ""; med = p[1] || ""; camp = p[2] || ""; cont = p[3] || "";
           }
         } catch (e2) {}
       }
     } catch (e3) {}
-    return { src: src, med: med, camp: camp };
+    if (!src) { src = "direct"; med = med || "none"; }
+    return { src: src, med: med, camp: camp, cont: cont };
   }
 
   var ch = channel();
@@ -725,7 +727,8 @@ footer{padding:34px 0 44px}
   if (ch.src) { params.push("utm_source=" + encodeURIComponent(ch.src)); }
   if (ch.med) { params.push("utm_medium=" + encodeURIComponent(ch.med)); }
   if (ch.camp) { params.push("utm_campaign=" + encodeURIComponent(ch.camp)); }
-  var href = FORM + (params.length ? "?" + params.join("&") : "");
+  if (ch.cont) { params.push("utm_content=" + encodeURIComponent(ch.cont)); }
+  var href = FORM + "?" + params.join("&");
 
   var links = document.querySelectorAll("[data-form-link]");
   for (var i = 0; i < links.length; i++) { links[i].setAttribute("href", href); }
