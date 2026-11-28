@@ -27,6 +27,10 @@
   <div class="col"><h2>B2B /b2b/</h2><iframe src="../b2b/" title="B2B 390px"></iframe></div>
   <div class="col"><h2>정산 시연 /settle/</h2><iframe src="../settle/" title="정산 390px"></iframe></div>
 </div>
+<div class="row">
+  <div class="col"><h2>Kit 게이트(코드 전) 390px — sandbox로 저장소 차단</h2><iframe sandbox="allow-scripts allow-popups allow-forms" src="../kit-ko/" title="Kit 게이트 390px"></iframe></div>
+  <div class="col" style="width:1200px"><h2>Kit 게이트(코드 전) 데스크톱 1200px</h2><iframe sandbox="allow-scripts allow-popups allow-forms" style="width:1200px" src="../kit-ko/" title="Kit 게이트 데스크톱"></iframe></div>
+</div>
 <script>
 (function(){
   var out = document.getElementById("out");
@@ -43,6 +47,7 @@
     var allOk = true;
     frames.forEach(function(f){
       var name = f.getAttribute("title");
+      if (name.indexOf("Kit 게이트") === 0) { lines.push('<div style="color:#9fb6cc">— '+name+': 저장소가 차단된 sandbox 프레임이라 자동 측정 제외(육안 확인용)</div>'); return; }
       try{
         var d = f.contentDocument, w = f.contentWindow;
         if(!d || !w){ lines.push('<div class="bad">'+name+': 접근 불가</div>'); allOk=false; return; }
