@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>정산 검산 콘솔 — 엑셀 정산표 자동 검산·PDF 리포트 (시연)</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="description" content="엑셀로 관리하던 월별 정산표를 웹에서 다시 계산해 차액을 찾아내고, 검산 리포트를 PDF로 출력하는 시연용 웹앱입니다. 데이터는 모두 가상입니다.">
+<style>
+:root{
+  --ink:#0b1220; --text:#1f2937; --muted:#66707d; --faint:#95a1ae;
+  --line:#e6e9ef; --line2:#d7dce4; --bg:#f4f6f9; --card:#fff;
+  --brand:#0e2a47; --brand2:#173f63; --brand-soft:#eaf0f6;
+  --teal:#0d7f75; --teal-soft:#e6f4f1; --teal-line:#bfe3db;
+  --amber:#b45309; --amber-soft:#fdf4e7; --amber-line:#f0dcc0;
+  --red:#b42318; --red-soft:#fdecea; --red-line:#f3cccc;
+  --green:#127a4f; --green-soft:#e7f5ec; --green-line:#bfe4cd;
+  --r:12px; --shadow:0 1px 2px rgba(16,24,40,.04),0 2px 6px rgba(16,24,40,.05);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Malgun Gothic","Apple SD Gothic Neo",Roboto,sans-serif;
+  background:var(--bg); color:var(--text); font-size:14px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+.num{font-variant-numeric:tabular-nums; font-feature-settings:"tnum"}
+button{font-family:inherit}
+
+/* ---------- layout ---------- */
+.app{display:grid; grid-template-columns:232px 1fr; min-height:100vh}
+.side{
+  background:linear-gradient(180deg,#0e2a47 0%,#0d2440 100%); color:#dbe5ef;
+  padding:20px 0 18px; display:flex; flex-direction:column; gap:2px;
+}
+.brand{padding:0 20px 18px; border-bottom:1px solid rgba(255,255,255,.09); margin-bottom:14px}
+.brand .mark{display:flex; align-items:center; gap:9px}
+.brand .logo{
+  width:28px;height:28px;border-radius:8px;background:#fff;color:var(--brand);
+  display:grid;place-items:center;font-weight:800;font-size:13px;letter-spacing:-.5px
+}
+.brand .name{font-weight:700;color:#fff;font-size:15px;letter-spacing:-.2px}
+.brand .sub{margin-top:7px;font-size:11.5px;color:#8fa6bd;letter-spacing:.01em}
+.brand .sub b{color:#bfd4e8;font-weight:600}
+.nav{padding:4px 10px;display:flex;flex-direction:column;gap:2px}
+.nav button{
+  display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+  background:none;border:0;color:#c3d2e2;font-size:13.5px;padding:9px 11px;border-radius:8px;cursor:pointer;
+}
+.nav button:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav button[aria-current="true"]{background:rgba(255,255,255,.13);color:#fff;font-weight:600}
+.nav button .ic{width:16px;height:16px;flex:0 0 16px;opacity:.85}
+.nav .cnt{margin-left:auto;font-size:11px;background:var(--red);color:#fff;border-radius:9px;padding:0 6px;line-height:17px;font-weight:700}
+.side-foot{margin-top:auto;padding:14px 20px 0;border-top:1px solid rgba(255,255,255,.09);font-size:11.5px;color:#8298ae;line-height:1.6}
+.side-foot .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#3ecf8e;margin-right:6px;vertical-align:1px}
+
+.main{min-width:0;display:flex;flex-direction:column}
+.top{
+  height:60px;background:#fff;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:14px;padding:0 22px; position:sticky; top:0; z-index:5
+}
+.crumb{font-size:13px;color:var(--muted)}
+.crumb b{color:var(--ink);font-weight:600;font-size:14.5px;display:block;margin-top:-1px}
+.month{
+  margin-left:6px;display:flex;align-items:center;gap:8px;border:1px solid var(--line2);
+  border-radius:8px;padding:6px 10px;font-size:13px;color:var(--ink);background:#fff
+}
+.month .lbl{color:var(--faint);font-size:11.5px}
+.top .grow{flex:1}
+.btn{
+  border:1px solid var(--line2);background:#fff;color:var(--text);border-radius:8px;
+  padding:7px 12px;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px
+}
+.btn:hover{border-color:#c2cad5;background:#fafbfc}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:600}
+.btn.primary:hover{background:var(--brand2)}
+.btn.ghost{background:transparent}
+.tag-demo{
+  display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--amber);
+  background:var(--amber-soft);border:1px solid var(--amber-line);border-radius:20px;padding:3px 10px;font-weight:600
+}
+.content{padding:20px 22px 40px; min-width:0}
+.view{display:none}
+.view.on{display:block}
+
+/* ---------- KPI ---------- */
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:14px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:14px 15px;box-shadow:var(--shadow)}
+.kpi .k{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.kpi .v{font-size:22px;font-weight:700;color:var(--ink);letter-spacing:-.4px;margin-top:6px}
+.kpi .v small{font-size:12.5px;font-weight:600;color:var(--muted);margin-left:3px}
+.kpi .d{font-size:11.5px;color:var(--faint);margin-top:5px}
+.kpi.warn{border-color:var(--red-line);background:linear-gradient(180deg,#fff 60%,var(--red-soft))}
+.kpi.warn .v{color:var(--red)}
+.kpi.ok{border-color:var(--green-line)}
+.kpi .v.ok{color:var(--green)}
+
+/* ---------- panel / table ---------- */
+.panel{background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.panel-hd{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--line)}
+.panel-hd h2{margin:0;font-size:14.5px;font-weight:700;color:var(--ink)}
+.panel-hd .hint{font-size:12px;color:var(--faint)}
+.panel-hd .grow{flex:1}
+.seg{display:inline-flex;border:1px solid var(--line2);border-radius:8px;overflow:hidden}
+.seg button{border:0;background:#fff;padding:6px 11px;font-size:12.5px;color:var(--muted);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--brand-soft);color:var(--brand);font-weight:700}
+.search{
+  border:1px solid var(--line2);border-radius:8px;padding:6px 10px;font-size:12.5px;width:180px;background:#fff;color:var(--text)
+}
+.search::placeholder{color:#b3bcc7}
+.tw{overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{
+  position:sticky;top:0;background:#f8fafc;color:#5a6674;font-weight:600;font-size:11.5px;
+  text-align:right;padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap;z-index:1
+}
+thead th:first-child,tbody td:first-child{text-align:left}
+thead th.l{text-align:left}
+tbody td{padding:10px 12px;border-bottom:1px solid #f1f3f7;text-align:right;white-space:nowrap}
+tbody tr.row{cursor:pointer}
+tbody tr.row:hover{background:#fafcfe}
+tbody tr.row.bad{background:linear-gradient(90deg,#fffdfd,#fff)}
+tbody tr.row.bad:hover{background:#fff8f7}
+tbody tr.row.open{background:#f7fafd}
+.who{display:flex;align-items:center;gap:9px}
+.av{
+  width:28px;height:28px;border-radius:50%;background:var(--brand-soft);color:var(--brand);
+  display:grid;place-items:center;font-size:11.5px;font-weight:700;flex:0 0 28px;border:1px solid #dbe6f0
+}
+.who .n{font-weight:600;color:var(--ink);display:block;line-height:1.25}
+.who .h{color:var(--faint);font-size:11px;line-height:1.2}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:700;border-radius:20px;padding:2px 9px;border:1px solid}
+.b-ok{color:var(--green);background:var(--green-soft);border-color:var(--green-line)}
+.b-bad{color:var(--red);background:var(--red-soft);border-color:var(--red-line)}
+.d-neg{color:var(--red);font-weight:700}
+.d-pos{color:#1d4ed8;font-weight:700}
+.d-zero{color:var(--faint)}
+.caret{display:inline-block;width:14px;color:#9aa6b4;font-size:10px;transition:transform .15s}
+.row.open .caret{transform:rotate(90deg)}
+tfoot td{padding:11px 12px;background:#f8fafc;font-weight:700;color:var(--ink);border-top:1px solid var(--line2);text-align:right}
+tfoot td:first-child{text-align:left}
+
+/* detail row */
+tr.detail>td{background:#f7fafd;padding:0;border-bottom:1px solid var(--line)}
+.calc{padding:14px 16px 16px;display:grid;grid-template-columns:1fr 300px;gap:18px}
+.calc h4{margin:0 0 9px;font-size:12.5px;color:var(--brand);font-weight:700;letter-spacing:-.1px}
+.steps{display:flex;flex-direction:column;gap:0}
+.step{display:grid;grid-template-columns:150px 1fr 110px 110px 96px;align-items:center;gap:10px;padding:7px 10px;border-radius:7px}
+.step:nth-child(odd){background:#fff}
+.step .sk{color:#5a6674;font-size:12.5px}
+.step .rule{color:var(--faint);font-size:11.5px}
+.step .a,.step .b{text-align:right;font-variant-numeric:tabular-nums;font-size:12.5px}
+.step .a{color:var(--ink);font-weight:600}
+.step .b{color:#7b8794}
+.step .d{text-align:right;font-variant-numeric:tabular-nums;font-size:12.5px;font-weight:700}
+.step.hd{padding:4px 10px}
+.step.hd span{color:var(--faint);font-size:10.5px;font-weight:600;letter-spacing:.02em}
+.step.hd .sk{color:var(--faint)}
+.side-note{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 13px}
+.side-note .t{font-size:12px;color:var(--faint);font-weight:600}
+.side-note .issue{
+  margin-top:7px;font-size:13px;font-weight:700;color:var(--red);line-height:1.45;
+  background:var(--red-soft);border:1px solid var(--red-line);border-radius:8px;padding:9px 10px
+}
+.side-note .fix{margin-top:10px;font-size:12.5px;color:var(--text);line-height:1.55}
+.side-note .fix b{color:var(--teal)}
+
+/* ---------- rules page ---------- */
+.grid2{display:grid;grid-template-columns:1.15fr 1fr;gap:14px}
+.rule-card{background:#fff;border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:16px 18px}
+.rule-card h3{margin:0 0 4px;font-size:14px;color:var(--ink)}
+.rule-card p.desc{margin:0 0 12px;font-size:12.5px;color:var(--muted)}
+.rule-card table{font-size:12.5px}
+.rule-card td,.rule-card th{padding:8px 10px;text-align:left}
+.rule-card th{background:#f8fafc;font-size:11.5px;color:#5a6674;border-bottom:1px solid var(--line)}
+.rule-card td{border-bottom:1px solid #f1f3f7}
+.rule-card tr:last-child td{border-bottom:0}
+.code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;color:var(--brand2);background:var(--brand-soft);border-radius:5px;padding:1px 6px}
+
+/* ---------- report (A4) ---------- */
+.report-bar{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.report-bar .grow{flex:1}
+.paper-wrap{background:#e9edf3;border:1px solid var(--line2);border-radius:12px;padding:22px;display:flex;justify-content:center}
+.paper{
+  width:794px;min-height:1080px;background:#fff;box-shadow:0 4px 18px rgba(16,24,40,.12);
+  padding:56px 60px 46px;color:#111827;font-size:12.5px;line-height:1.62;position:relative
+}
+.paper .ph{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #0e2a47;padding-bottom:14px}
+.paper .ph h1{margin:0;font-size:20px;letter-spacing:-.4px;color:#0e2a47}
+.paper .ph .meta{text-align:right;font-size:11.5px;color:#5b6675;line-height:1.7}
+.paper .ph .meta b{color:#111827}
+.paper h2{font-size:13px;margin:26px 0 8px;color:#0e2a47;display:flex;align-items:center;gap:8px}
+.paper h2:before{content:"";width:3px;height:13px;background:#0e2a47;border-radius:2px;display:inline-block}
+.paper table{font-size:11.8px}
+.paper th{background:#f3f6fa;text-align:right;padding:7px 9px;border-bottom:1px solid #d8dee7;color:#3d4855;font-weight:600}
+.paper th:first-child,.paper td:first-child{text-align:left}
+.paper td{padding:7px 9px;border-bottom:1px solid #eef1f5;text-align:right}
+.paper tfoot td{font-weight:700;background:#f8fafc;border-top:1px solid #d8dee7}
+.paper .sum{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
+.paper .sum div{border:1px solid #e3e8ef;border-radius:8px;padding:10px 12px}
+.paper .sum .k{font-size:10.5px;color:#6b7684}
+.paper .sum .v{font-size:15px;font-weight:700;margin-top:3px;letter-spacing:-.2px}
+.paper .note{margin-top:16px;font-size:11px;color:#5b6675;background:#f7f9fc;border:1px solid #e3e8ef;border-radius:8px;padding:10px 12px}
+.paper .sign{margin-top:34px;display:flex;justify-content:flex-end;gap:26px;font-size:11.5px;color:#4b5563}
+.paper .sign div{border-top:1px solid #b9c2cd;padding-top:6px;width:150px;text-align:center}
+.paper .pfx{position:absolute;bottom:26px;left:60px;right:60px;display:flex;justify-content:space-between;font-size:10px;color:#9aa4b1;border-top:1px solid #eef1f5;padding-top:8px}
+
+/* toast */
+.toast{
+  position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(14px);
+  background:#0e2a47;color:#fff;border-radius:10px;padding:11px 16px;font-size:13px;
+  box-shadow:0 8px 24px rgba(16,24,40,.22);opacity:0;pointer-events:none;transition:.22s;z-index:50;
+  display:flex;align-items:center;gap:9px
+}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast .ok{color:#3ecf8e;font-weight:700}
+
+@media (max-width:1180px){
+  .kpis{grid-template-columns:repeat(3,1fr)}
+  .calc{grid-template-columns:1fr}
+}
+@media print{
+  body{background:#fff}
+  .side,.top,.report-bar,.toast{display:none!important}
+  .app{display:block}
+  .content{padding:0}
+  .paper-wrap{background:#fff;border:0;padding:0;display:block}
+  .paper{box-shadow:none;width:auto;min-height:0;padding:0}
+  .view{display:none!important}
+  .view.on{display:block!important}
+  @page{size:A4;margin:14mm}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand">
+      <div class="mark">
+        <div class="logo">정</div>
+        <div class="name">정산 검산 콘솔</div>
+      </div>
+      <div class="sub"><b>2026-10</b> 정산 회차 · 시연 버전</div>
+    </div>
+    <nav class="nav">
+      <button data-view="check" aria-current="true">
+        <svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4h12M2 8h12M2 12h7"/></svg>
+        검산 결과 <span class="cnt" id="navCnt">3</span>
+      </button>
+      <button data-view="rules">
+        <svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 2h7l3 3v9H3z"/><path d="M10 2v3h3"/></svg>
+        정산 규칙
+      </button>
+      <button data-view="report">
+        <svg class="ic" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 1h5l3 3v11H4z"/><path d="M7 8h4M7 11h4"/></svg>
+        검산 리포트
+      </button>
+    </nav>
+    <div class="side-foot">
+      <span class="dot"></span>가상 데이터로 동작하는 시연 화면입니다.<br>
+      실제 정산 파일·개인정보는 포함하지 않습니다.
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="top">
+      <div class="crumb">정산 관리 / <b>검산 결과</b></div>
+      <div class="month"><span class="lbl">정산월</span> 2026-10</div>
+      <span class="tag-demo">시연용 가상 데이터</span>
+      <div class="grow"></div>
+      <label class="btn" for="csvFile">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 11V3M5 6l3-3 3 3"/><path d="M2 11v2h12v-2"/></svg>
+        정산표 불러오기
+      </label>
+      <input id="csvFile" type="file" accept=".csv,text/csv" hidden>
+      <button class="btn primary" id="recheck">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13.5 8a5.5 5.5 0 1 1-1.8-4.1"/><path d="M13.6 2.4v3.2h-3.2"/></svg>
+        재검산
+      </button>
+    </header>
+
+    <div class="content">
+      <!-- ============ 검산 결과 ============ -->
+      <section class="view on" id="view-check">
+        <div class="kpis">
+          <div class="kpi">
+            <div class="k">정산 대상</div>
+            <div class="v num" id="k1">8<small>명</small></div>
+            <div class="d">2026-10 확정 정산표</div>
+          </div>
+          <div class="kpi">
+            <div class="k">총 판매액</div>
+            <div class="v num" id="k2">0<small>원</small></div>
+            <div class="d">반품 <span class="num" id="k2b">0</span>원 차감 전</div>
+          </div>
+          <div class="kpi">
+            <div class="k">정산액 합계</div>
+            <div class="v num" id="k3">0<small>원</small></div>
+            <div class="d">수수료 <span class="num" id="k3b">0</span>원 공제 후</div>
+          </div>
+          <div class="kpi">
+            <div class="k">실지급액 합계</div>
+            <div class="v num" id="k4">0<small>원</small></div>
+            <div class="d">원천세 <span class="num" id="k4b">0</span>원 공제 후</div>
+          </div>
+          <div class="kpi warn">
+            <div class="k">검산 불일치 <span class="badge b-bad" style="margin-left:2px">차액</span></div>
+            <div class="v num" id="k5">0<small>원</small></div>
+            <div class="d" id="k5b">불일치 0건</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-hd">
+            <h2>2026-10 크리에이터 정산 검산표</h2>
+            <span class="hint">행을 누르면 계산 근거가 펼쳐집니다</span>
+            <div class="grow"></div>
+            <input class="search" id="q" type="search" placeholder="이름·아이디 검색">
+            <div class="seg">
+              <button id="segAll" aria-pressed="true">전체</button>
+              <button id="segBad" aria-pressed="false">불일치만</button>
+            </div>
+          </div>
+          <div class="tw">
+            <table id="tbl">
+              <thead>
+                <tr>
+                  <th class="l" style="width:210px">크리에이터</th>
+                  <th>판매액</th>
+                  <th>반품</th>
+                  <th>순매출</th>
+                  <th>수수료율</th>
+                  <th>수수료</th>
+                  <th>정산액(재계산)</th>
+                  <th>원천세</th>
+                  <th>실지급(재계산)</th>
+                  <th>엑셀 실지급</th>
+                  <th>차액</th>
+                  <th class="l" style="width:150px">검산</th>
+                </tr>
+              </thead>
+              <tbody id="tbody"></tbody>
+              <tfoot id="tfoot"></tfoot>
+            </table>
+          </div>
+        </div>
+        <p style="font-size:11.5px;color:var(--faint);margin:10px 2px 0">
+          차액 = 엑셀에 적힌 실지급액 − 원천세·수수료 구간을 다시 적용한 실지급액. 음수(−)는 엑셀이 적게 지급한 금액, 양수(+)는 많이 지급한 금액입니다.
+        </p>
+      </section>
+
+      <!-- ============ 정산 규칙 ============ -->
+      <section class="view" id="view-rules">
+        <div class="grid2">
+          <div class="rule-card">
+            <h3>수수료율 구간 <span class="badge b-ok" style="vertical-align:2px">순매출 기준</span></h3>
+            <p class="desc">순매출(판매액 − 반품)이 어느 구간에 들어가는지로 요율이 결정됩니다. 구간 경계값은 규칙 표에서만 고치고, 화면 코드에는 숫자를 박지 않습니다.</p>
+            <table>
+              <thead><tr><th>구간</th><th>순매출</th><th>요율</th><th>비고</th></tr></thead>
+              <tbody>
+                <tr><td>A</td><td>1,000,000원 미만</td><td><b>20%</b></td><td>기본</td></tr>
+                <tr><td>B</td><td>1,000,000 ~ 2,999,999원</td><td><b>15%</b></td><td>—</td></tr>
+                <tr><td>C</td><td>3,000,000원 이상</td><td><b>12%</b></td><td>우대</td></tr>
+              </tbody>
+            </table>
+            <p class="desc" style="margin-top:12px">계산식 <span class="code">수수료 = round(순매출 × 요율)</span> · <span class="code">정산액 = 순매출 − 수수료 + 프로모션 지원금</span></p>
+          </div>
+          <div class="rule-card">
+            <h3>원천세·지급</h3>
+            <p class="desc">사업소득 원천징수 3.3%(소득세 3.0% + 지방소득세 0.3%)를 정산액에서 공제하고, 10원 미만은 절사합니다.</p>
+            <table>
+              <thead><tr><th>단계</th><th>계산</th><th>처리</th></tr></thead>
+              <tbody>
+                <tr><td>원천세</td><td>정산액 × 3.3%</td><td>10원 미만 절사</td></tr>
+                <tr><td>실지급</td><td>정산액 − 원천세</td><td>—</td></tr>
+                <tr><td>검산 기준</td><td>엑셀 실지급 vs 재계산 실지급</td><td>차액 0원이면 일치</td></tr>
+              </tbody>
+            </table>
+            <div class="side-note" style="margin-top:14px;background:#f7fafd">
+              <div class="t">이 화면이 하는 일</div>
+              <div class="fix">엑셀에 이미 계산되어 있는 실지급액을 <b>지우지 않고 그대로 옆에 세워</b>, 같은 규칙으로 다시 계산한 금액과 나란히 비교합니다. 차이가 나면 어느 단계에서 어긋났는지(구간·반품·원천세) 바로 위 단계까지 되짚어 표시합니다.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 리포트 ============ -->
+      <section class="view" id="view-report">
+        <div class="report-bar">
+          <div class="crumb" style="font-size:13px;color:var(--muted)">검산 리포트 · A4 인쇄용</div>
+          <div class="grow"></div>
+          <button class="btn" id="printBtn">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 6V2h8v4"/><path d="M4 12H2V7h12v5h-2"/><path d="M4 10h8v4H4z"/></svg>
+            PDF로 인쇄
+          </button>
+        </div>
+        <div class="paper-wrap">
+          <div class="paper" id="paper">
+            <div class="ph">
+              <div>
+                <h1>크리에이터 정산 검산 리포트</h1>
+                <div style="font-size:11.5px;color:#5b6675;margin-top:5px">정산 회차 2026-10 · 검산 기준일 2026-11-05</div>
+              </div>
+              <div class="meta">
+                발행 <b>2026-11-05 14:20</b><br>
+                문서번호 <b>ST-2026-10-0031</b><br>
+                검산 담당 <b>정산팀</b>
+              </div>
+            </div>
+
+            <h2>1. 검산 요약</h2>
+            <div class="sum">
+              <div><div class="k">정산 대상</div><div class="v num" id="r1">8명</div></div>
+              <div><div class="k">정산액 합계</div><div class="v num" id="r2">0원</div></div>
+              <div><div class="k">실지급액 합계</div><div class="v num" id="r3">0원</div></div>
+              <div><div class="k">검산 불일치</div><div class="v num" id="r4" style="color:#b42318">0건</div></div>
+            </div>
+            <p style="margin:12px 0 0;font-size:11.8px;color:#3d4855">
+              엑셀 정산표에 기재된 실지급액과, 정산 규칙(수수료 구간·반품 반영·원천세 3.3%)을 다시 적용해 계산한 실지급액을 대조했습니다.
+              <b id="r5">불일치 3건, 총 차액 248,380원</b>이 확인되어 아래에 내역을 남깁니다.
+            </p>
+
+            <h2>2. 불일치 내역</h2>
+            <table id="rTable">
+              <thead>
+                <tr><th style="width:26%">크리에이터</th><th style="width:34%">원인</th><th>엑셀 실지급</th><th>재계산 실지급</th><th>차액</th></tr>
+              </thead>
+              <tbody id="rBody"></tbody>
+            </table>
+
+            <h2>3. 정산 합계</h2>
+            <table>
+              <thead><tr><th>구분</th><th>금액</th><th>비고</th></tr></thead>
+              <tbody id="rSum"></tbody>
+            </table>
+
+            <div class="note">
+              검산 방식 — ① 정산 규칙 표를 기준으로 순매출·구간 요율·수수료·프로모션·원천세를 순서대로 재계산합니다.
+              ② 재계산 실지급액과 엑셀 실지급액의 차액이 0원이 아닌 건만 불일치로 표시합니다.
+              ③ 차액이 발생한 건은 원인이 된 단계(구간 판정·반품 반영·원천세)를 함께 기록합니다.
+            </div>
+
+            <div class="sign">
+              <div>검산자 서명</div>
+              <div>확인자 서명</div>
+              <div>지급 승인일</div>
+            </div>
+
+            <div class="pfx">
+              <span>본 리포트는 가상 데이터로 제작한 시연물입니다.</span>
+              <span>1 / 1</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span class="ok">✓</span><span id="toastMsg">검산 완료</span></div>
+
+<script>
+const ROWS = [
+  {name:"김서연", handle:"seoyeon.k", gross:3250000, refund:70000, promo:0, excel:{fee:477000, settle:2703000, tax:89190, payout:2613810}, issue:"수수료율 구간 오적용 — 15% 적용(실제 12%)"},
+  {name:"박도현", handle:"dohyun.p", gross:1600000, refund:120000, promo:50000, excel:{fee:240000, settle:1410000, tax:46530, payout:1363470}, issue:"반품 1건(120,000원) 미반영"},
+  {name:"이지우", handle:"jiwoo.lee", gross:2050000, refund:0, promo:0, excel:{fee:307500, settle:1742500, tax:0, payout:1742500}, issue:"원천세(3.3%) 계산 누락"},
+  {name:"최하늘", handle:"haneul", gross:980000, refund:30000, promo:20000, excel:{fee:190000, settle:780000, tax:25740, payout:754260}, issue:"일치"},
+  {name:"정민재", handle:"minjae.j", gross:1240000, refund:0, promo:0, excel:{fee:186000, settle:1054000, tax:34780, payout:1019220}, issue:"일치"},
+  {name:"한소리", handle:"sori.h", gross:3820000, refund:220000, promo:100000, excel:{fee:432000, settle:3268000, tax:107840, payout:3160160}, issue:"일치"},
+  {name:"오세린", handle:"serin.o", gross:640000, refund:0, promo:0, excel:{fee:128000, settle:512000, tax:16890, payout:495110}, issue:"일치"},
+  {name:"윤태경", handle:"taekyung", gross:1910000, refund:60000, promo:30000, excel:{fee:277500, settle:1602500, tax:52880, payout:1549620}, issue:"일치"},
+];
+
+/* ---- 정산 규칙 (화면 코드에 숫자를 흩지 않고 이 표만 고치면 되도록) ---- */
+const RULES = {
+  feeTiers: [ {min:0, rate:0.20}, {min:1000000, rate:0.15}, {min:3000000, rate:0.12} ],
+  taxRate: 0.033,
+  floorUnit: 10
+};
+
+function feeRate(net){
+  let r = RULES.feeTiers[0].rate;
+  for(const t of RULES.feeTiers){ if(net >= t.min) r = t.rate; }
+  return r;
+}
+function floorTo(x, u){ return Math.floor(x / u) * u; }
+
+function computeRow(row){
+  const net = row.gross - row.refund;
+  const rate = feeRate(net);
+  const fee = Math.round(net * rate);
+  const settle = net - fee + row.promo;
+  const tax = floorTo(settle * RULES.taxRate, RULES.floorUnit);
+  const payout = settle - tax;
+  const diff = row.excel.payout - payout;
+  let cause = "일치";
+  if(diff !== 0){
+    if(row.excel.tax === 0 && tax > 0) cause = "원천세 누락";
+    else if(net !== (row.excel.settle + row.excel.fee - row.promo)) cause = "반품 미반영";
+    else if(row.excel.fee !== fee) cause = "수수료 구간 오적용";
+    else cause = "금액 차이";
+  }
+  return {...row, net, rate, fee, settle, tax, payout, diff, cause,
+          bad: diff !== 0, originalIssue: row.issue, excelDetail: row.excelDetail !== false};
+}
+
+let DATA = ROWS.map(computeRow);
+let openIdx = new Set([0]);
+let onlyBad = false;
+let query = "";
+
+const won = n => n.toLocaleString('ko-KR');
+const pct = r => Math.round(r*100) + "%";
+const initials = n => n.slice(0,1);
+
+function renderKPI(){
+  const t = DATA.reduce((a,r)=>({
+    gross:a.gross+r.gross, refund:a.refund+r.refund, net:a.net+r.net, fee:a.fee+r.fee,
+    promo:a.promo+r.promo, settle:a.settle+r.settle, tax:a.tax+r.tax, payout:a.payout+r.payout
+  }),{gross:0,refund:0,net:0,fee:0,promo:0,settle:0,tax:0,payout:0});
+  const bad = DATA.filter(r=>r.bad);
+  const absDiff = bad.reduce((a,r)=>a+Math.abs(r.diff),0);
+  document.getElementById('k1').innerHTML = DATA.length + '<small>명</small>';
+  document.getElementById('k2').innerHTML = won(t.gross) + '<small>원</small>';
+  document.getElementById('k2b').textContent = won(t.refund);
+  document.getElementById('k3').innerHTML = won(t.settle) + '<small>원</small>';
+  document.getElementById('k3b').textContent = won(t.fee);
+  document.getElementById('k4').innerHTML = won(t.payout) + '<small>원</small>';
+  document.getElementById('k4b').textContent = won(t.tax);
+  document.getElementById('k5').innerHTML = won(absDiff) + '<small>원</small>';
+  document.getElementById('k5b').textContent = '불일치 ' + bad.length + '건 · 차액 합계(절대값)';
+  document.getElementById('navCnt').textContent = bad.length;
+  return t;
+}
+
+function stepHtml(label, rule, a, b, d){
+  const cls = d === null ? '' : (d < 0 ? 'd-neg' : d > 0 ? 'd-pos' : 'd-zero');
+  return `<div class="step">
+      <span class="sk">${label}</span>
+      <span class="rule">${rule}</span>
+      <span class="a">${a}</span>
+      <span class="b">${b}</span>
+      <span class="d ${cls}">${d === null ? '' : (d > 0 ? '+' : '') + won(d)}</span>
+    </div>`;
+}
+
+function detailHtml(r){
+  const known = r.excelDetail !== false;
+  const exNet = known ? (r.excel.settle + r.excel.fee - r.promo) : null;
+  const dash = '—';
+  const rows = [];
+  rows.push(`<div class="step hd"><span class="sk">계산 단계</span><span class="rule">적용 규칙</span><span class="a" style="text-align:right;color:var(--faint);font-size:10.5px;font-weight:600">엑셀</span><span class="b" style="color:var(--faint);font-size:10.5px;font-weight:600">재계산</span><span class="d" style="color:var(--faint);font-size:10.5px;font-weight:600">차액</span></div>`);
+  rows.push(stepHtml('판매액', '정산표 합계', won(r.gross), won(r.gross), 0));
+  rows.push(stepHtml('반품 차감', '확정 반품', '−' + won(r.refund), '−' + won(r.refund), 0));
+  rows.push(stepHtml('순매출', '판매액 − 반품', known ? won(exNet) : dash, won(r.net), known ? exNet - r.net : null));
+  rows.push(stepHtml('수수료 구간', '순매출 구간 판정', known ? pct(r.excel.fee / (exNet || 1)) : dash, pct(r.rate), null));
+  rows.push(stepHtml('수수료', 'round(순매출 × 요율)', known ? '−' + won(r.excel.fee) : dash, '−' + won(r.fee), known ? -(r.excel.fee - r.fee) : null));
+  rows.push(stepHtml('프로모션 지원', '정산 가산', won(r.promo), won(r.promo), 0));
+  rows.push(stepHtml('정산액', '순매출 − 수수료 + 지원', known ? won(r.excel.settle) : dash, won(r.settle), known ? r.excel.settle - r.settle : null));
+  rows.push(stepHtml('원천세', '정산액 × 3.3% (10원 절사)', known ? '−' + won(r.excel.tax) : dash, '−' + won(r.tax), known ? -(r.excel.tax - r.tax) : null));
+  rows.push(stepHtml('실지급', '정산액 − 원천세', won(r.excel.payout), won(r.payout), r.diff));
+
+  const issueText = r.bad ? r.originalIssue : '일치';
+  const fix = r.bad
+    ? (r.diff > 0
+        ? `엑셀 기준으로 <b>${won(r.diff)}원을 더 지급</b>할 뻔했습니다. 재계산 금액으로 확정하면 ${won(r.payout)}원입니다.`
+        : `엑셀 기준으로 <b>${won(-r.diff)}원을 적게 지급</b>할 뻔했습니다. 재계산 금액으로 확정하면 ${won(r.payout)}원입니다.`)
+    : `엑셀 실지급액과 재계산 금액이 <b>정확히 일치</b>합니다.`;
+
+  return `<tr class="detail"><td colspan="12">
+    <div class="calc">
+      <div>
+        <h4>${r.name} — 계산 근거 (엑셀값과 재계산값 대조)</h4>
+        <div class="steps">${rows.join('')}</div>
+      </div>
+      <div class="side-note">
+        <div class="t">검산 판정</div>
+        <div class="issue" style="${r.bad?'':'color:var(--green);background:var(--green-soft);border-color:var(--green-line)'}">${issueText}</div>
+        <div class="fix">${fix}</div>
+      </div>
+    </div>
+  </td></tr>`;
+}
+
+function renderTable(){
+  const tbody = document.getElementById('tbody');
+  const tfoot = document.getElementById('tfoot');
+  let list = DATA.map((r,i)=>({r,i}));
+  if(onlyBad) list = list.filter(x=>x.r.bad);
+  if(query) list = list.filter(x=>x.r.name.includes(query) || x.r.handle.toLowerCase().includes(query.toLowerCase()));
+  tbody.innerHTML = list.map(({r,i})=>{
+    const open = openIdx.has(i);
+    const dCls = r.diff < 0 ? 'd-neg' : r.diff > 0 ? 'd-pos' : 'd-zero';
+    return `<tr class="row ${r.bad?'bad':''} ${open?'open':''}" data-i="${i}">
+      <td>
+        <div class="who">
+          <span class="av">${initials(r.name)}</span>
+          <span><span class="n">${r.name}</span><span class="h">@${r.handle}</span></span>
+        </div>
+      </td>
+      <td class="num">${won(r.gross)}</td>
+      <td class="num" style="color:${r.refund?'var(--red)':'var(--faint)'}">${r.refund?'−'+won(r.refund):'0'}</td>
+      <td class="num">${won(r.net)}</td>
+      <td class="num">${pct(r.rate)}</td>
+      <td class="num">−${won(r.fee)}</td>
+      <td class="num">${won(r.settle)}</td>
+      <td class="num">−${won(r.tax)}</td>
+      <td class="num"><b>${won(r.payout)}</b></td>
+      <td class="num" style="color:#6b7684">${won(r.excel.payout)}</td>
+      <td class="num ${dCls}">${r.diff>0?'+':''}${won(r.diff)}</td>
+      <td><span class="badge ${r.bad?'b-bad':'b-ok'}">${r.bad?'불일치':'일치'}</span> <span class="caret">▶</span></td>
+    </tr>` + (open ? detailHtml(r) : '');
+  }).join('');
+
+  const t = DATA.reduce((a,r)=>({gross:a.gross+r.gross, refund:a.refund+r.refund, net:a.net+r.net,
+    fee:a.fee+r.fee, settle:a.settle+r.settle, tax:a.tax+r.tax, payout:a.payout+r.payout,
+    excel:a.excel+r.excel.payout, diff:a.diff+r.diff}),{gross:0,refund:0,net:0,fee:0,settle:0,tax:0,payout:0,excel:0,diff:0});
+  tfoot.innerHTML = `<tr>
+    <td>합계 (${DATA.length}명)</td>
+    <td class="num">${won(t.gross)}</td>
+    <td class="num">−${won(t.refund)}</td>
+    <td class="num">${won(t.net)}</td>
+    <td></td>
+    <td class="num">−${won(t.fee)}</td>
+    <td class="num">${won(t.settle)}</td>
+    <td class="num">−${won(t.tax)}</td>
+    <td class="num">${won(t.payout)}</td>
+    <td class="num" style="color:#6b7684">${won(t.excel)}</td>
+    <td class="num ${t.diff<0?'d-neg':t.diff>0?'d-pos':'d-zero'}">${t.diff>0?'+':''}${won(t.diff)}</td>
+    <td><span class="badge b-bad">불일치 ${DATA.filter(r=>r.bad).length}건</span></td>
+  </tr>`;
+
+  tbody.querySelectorAll('tr.row').forEach(tr=>{
+    tr.addEventListener('click', ()=>{
+      const i = +tr.dataset.i;
+      if(openIdx.has(i)) openIdx.delete(i); else openIdx.add(i);
+      renderTable();
+    });
+  });
+}
+
+function renderReport(){
+  const t = renderKPI();
+  const bad = DATA.filter(r=>r.bad);
+  const absDiff = bad.reduce((a,r)=>a+Math.abs(r.diff),0);
+  document.getElementById('r1').textContent = DATA.length + '명';
+  document.getElementById('r2').textContent = won(t.settle) + '원';
+  document.getElementById('r3').textContent = won(t.payout) + '원';
+  document.getElementById('r4').textContent = bad.length + '건';
+  document.getElementById('r5').textContent = `불일치 ${bad.length}건, 총 차액 ${won(absDiff)}원`;
+  document.getElementById('rBody').innerHTML = bad.map(r=>`<tr>
+      <td><b>${r.name}</b> <span style="color:#8b95a3">@${r.handle}</span></td>
+      <td>${r.originalIssue}</td>
+      <td>${won(r.excel.payout)}</td>
+      <td>${won(r.payout)}</td>
+      <td style="color:${r.diff>0?'#b42318':'#1d4ed8'};font-weight:700">${r.diff>0?'+':''}${won(r.diff)}</td>
+    </tr>`).join('');
+  const sumRows = [
+    ['총 판매액', t.gross, '정산표 합계'],
+    ['반품 차감', -t.refund, '반품 확정분'],
+    ['순매출', t.net, '판매액 − 반품'],
+    ['수수료', -t.fee, '구간 요율 적용'],
+    ['프로모션 지원', t.promo, '정산 가산'],
+    ['정산액', t.settle, '순매출 − 수수료 + 지원'],
+    ['원천세', -t.tax, '3.3% (10원 절사)'],
+    ['실지급액', t.payout, '정산액 − 원천세']
+  ];
+  document.getElementById('rSum').innerHTML = sumRows.map(([k,v,n])=>
+    `<tr><td>${k}</td><td style="font-weight:${k==='실지급액'?'700':'500'}">${v<0?'−':''}${won(Math.abs(v))}</td><td style="text-align:left;color:#6b7684">${n}</td></tr>`
+  ).join('');
+}
+
+/* ---------- views ---------- */
+function show(view){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.getElementById('view-'+view).classList.add('on');
+  document.querySelectorAll('.nav button').forEach(b=>b.setAttribute('aria-current', String(b.dataset.view===view)));
+  window.scrollTo({top:0});
+}
+document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>{
+  show(b.dataset.view);
+  if(b.dataset.view==='report') renderReport();
+}));
+
+document.getElementById('segAll').addEventListener('click',()=>{onlyBad=false;syncSeg();renderTable();});
+document.getElementById('segBad').addEventListener('click',()=>{onlyBad=true;syncSeg();renderTable();});
+function syncSeg(){
+  document.getElementById('segAll').setAttribute('aria-pressed', String(!onlyBad));
+  document.getElementById('segBad').setAttribute('aria-pressed', String(onlyBad));
+}
+document.getElementById('q').addEventListener('input', e=>{ query = e.target.value.trim(); renderTable(); });
+
+/* 재검산 */
+document.getElementById('recheck').addEventListener('click', ()=>{
+  const btn = document.getElementById('recheck');
+  btn.disabled = true; btn.style.opacity = .7;
+  DATA = ROWS.map(computeRow);
+  setTimeout(()=>{
+    renderKPI(); renderTable();
+    btn.disabled = false; btn.style.opacity = 1;
+    toast(`재검산 완료 — ${DATA.filter(r=>r.bad).length}건의 차액을 찾았습니다`);
+  }, 520);
+});
+
+/* CSV 불러오기: 크리에이터,아이디,판매액,반품,프로모션지원,엑셀실지급액 */
+document.getElementById('csvFile').addEventListener('change', e=>{
+  const f = e.target.files[0]; if(!f) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    const lines = String(reader.result).split(/\r?\n/).filter(l=>l.trim());
+    const rows = [];
+    lines.slice(1).forEach(line=>{
+      const c = line.split(',').map(s=>s.trim());
+      if(c.length < 6) return;
+      const n = i => Number(String(c[i]).replace(/[^\d.-]/g,'')) || 0;
+      rows.push({name:c[0], handle:c[1], gross:n(2), refund:n(3), promo:n(4),
+                 excel:{payout:n(5), fee:0, settle:0, tax:0}, issue:"일치", excelDetail:false});
+    });
+    if(!rows.length){ toast('읽을 수 있는 행이 없습니다. 열 구성을 확인해 주세요'); return; }
+    // 엑셀값 중 실지급액만 있으면 차액 비교는 가능하고, 단계 비교는 0으로 표시된다
+    DATA = rows.map(r=>{
+      const c = computeRow(r);
+      return {...c, bad: c.diff !== 0, originalIssue: c.diff !== 0 ? '엑셀 실지급액과 차이' : '일치'};
+    });
+    openIdx = new Set();
+    renderKPI(); renderTable();
+    toast(`${rows.length}명 정산표를 불러와 검산했습니다`);
+  };
+  reader.readAsText(f, 'utf-8');
+  e.target.value = '';
+});
+
+/* toast */
+let toastTimer;
+function toast(msg){
+  const el = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  el.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>el.classList.remove('on'), 2600);
+}
+
+document.getElementById('printBtn').addEventListener('click', ()=>window.print());
+
+/* init */
+renderKPI();
+renderTable();
+renderReport();
+</script>
+</body>
+</html>
