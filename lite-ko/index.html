@@ -533,6 +533,7 @@ input.invalid{border-color:var(--red)!important;background:var(--red-soft)!impor
   thead{display:table-header-group}
   /* 값이 비어 안내 문구만 남은 자리는 종이에 찍지 않는다 */
   .is-ph{visibility:hidden}
+  .q-notes.is-empty{display:none}
 }
 body[data-paper="letter"] #pageRule{}
 
@@ -2122,6 +2123,8 @@ function updatePreview(t) {
   setText("pv_bal", won(t.balance));
   setText("pv_korean", "일금 " + numberToKorean(t.total) + "원정");
   setPreviewText("pv_note", current.note, "-");
+  var notesEl = $("pv_note");
+  if (notesEl && notesEl.parentNode) notesEl.parentNode.classList.toggle("is-empty", !(current.note && current.note.trim()));
   setPreviewText("pv_account", co.account, "입금 계좌를 입력하세요");
   if (IS_PRO) updatePrintSignature();
 }
