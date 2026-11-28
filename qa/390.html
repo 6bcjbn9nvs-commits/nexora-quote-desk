@@ -31,6 +31,13 @@
 (function(){
   var out = document.getElementById("out");
   var frames = [].slice.call(document.querySelectorAll("iframe"));
+  /* 캐시 우회: 검수는 항상 최신 배포본을 기준으로 한다 */
+  var stamp = Date.now();
+  frames.forEach(function(f){
+    var base = f.getAttribute("data-src") || f.getAttribute("src");
+    f.setAttribute("data-src", base);
+    f.setAttribute("src", base + (base.indexOf("?") === -1 ? "?" : "&") + "v=" + stamp);
+  });
   function report(){
     var lines = [];
     var allOk = true;
