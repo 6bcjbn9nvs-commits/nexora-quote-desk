@@ -668,6 +668,10 @@ html.nx-locked body > *:not(script):not(.nx-gate){display:none !important}
 .nx-links{display:flex;justify-content:space-between;gap:10px;margin-top:16px;font-size:12.2px;font-weight:650}
 .nx-links a{color:#3c5a78;text-decoration:none;border-bottom:1px solid #dbe5ef;padding-bottom:1px}
 .nx-links a:hover{color:#0e2a47;border-color:#9fb6cc}
+.nx-preview{margin:0 0 4px}
+.nx-preview a{display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;font-size:13px;font-weight:750;color:#0e2a47;background:#eef4fa;border:1px solid #d5e2ee;border-radius:11px;padding:11px 14px;line-height:1.35}
+.nx-preview a:hover{background:#e6eff8;border-color:#bcd0e2}
+.nx-preview span.s{font-weight:700;color:#4b6b89;font-size:11.8px}
 .nx-help{margin-top:18px;padding-top:16px;border-top:1px solid #eef1f6;font-size:11.8px;color:#8a95a3;line-height:1.65}
 .nx-help a{color:#3c5a78}
 .nx-foot{text-align:center;margin-top:16px;font-size:11px;color:rgba(255,255,255,.42);letter-spacing:.01em}
@@ -693,6 +697,7 @@ html.nx-locked body > *:not(script):not(.nx-gate){display:none !important}
       </div>
       <h1 id="nxGateTitle">Enter your access code</h1>
       <p class="nx-desc" id="nxGateDesc">Your code came with your purchase. Enter it once and this device will remember it.</p>
+      <p class="nx-preview"><a href="../kit-preview/">See the Kit screens first <span class="s">5 real screenshots →</span></a></p>
       <form id="nxForm" novalidate>
         <label class="nx-lbl" for="nxCode">Access code</label>
         <input id="nxCode" class="nx-input" type="text" placeholder="e.g. GUMROAD-KIT-27"

@@ -316,6 +316,39 @@ footer{background:#0b1826;color:#9fb2c6;padding:38px 0 46px;margin-top:20px}
   section{padding:46px 0}
   .hd-nav{display:none}
 }
+/* ---------- buyer trust (구매 전 확인) ---------- */
+.trust{margin-top:15px;display:grid;gap:7px;max-width:540px}
+.trust .t{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:#41505f;line-height:1.55}
+.trust .t svg{width:14px;height:14px;flex:none;margin-top:2px;stroke:var(--brand2);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.trust .t b{font-weight:750;color:var(--ink)}
+.preview-link{display:inline-flex;align-items:center;gap:7px;margin-top:13px;font-size:13px;font-weight:750;color:var(--brand2);border-bottom:1px solid rgba(23,63,99,.3);padding-bottom:1px}
+.preview-link:hover{color:var(--brand)}
+
+/* ---------- ROI calculator ---------- */
+.roi-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:26px}
+.roi-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:26px;margin-top:6px}
+.roi-in{display:grid;gap:12px;align-content:start}
+.roi-row{display:grid;grid-template-columns:minmax(0,1fr) 138px;gap:10px;align-items:center}
+.roi-row label{font-size:13px;font-weight:650;color:#3b4a5a}
+.roi-row input,.roi-row select{width:100%;font-family:inherit;font-size:14px;padding:9px 10px;border:1px solid var(--line-strong);border-radius:9px;background:#fff;color:var(--ink)}
+.roi-row input:focus,.roi-row select:focus{outline:2px solid rgba(23,63,99,.25);outline-offset:1px;border-color:var(--brand2)}
+.roi-out{background:linear-gradient(180deg,#f7fafc,#edf3f9);border:1px solid var(--line);border-radius:14px;padding:18px}
+.roi-out .k{font-size:11.5px;font-weight:700;color:var(--faint);letter-spacing:.02em}
+.roi-out .v{font-size:21px;font-weight:800;color:var(--ink);letter-spacing:-.02em;margin-top:2px}
+.roi-out .v small{font-size:12.5px;font-weight:650;color:var(--muted);margin-left:3px}
+.roi-out .cell{padding:10px 0;border-top:1px dashed var(--line-strong)}
+.roi-out .cell:first-child{border-top:none;padding-top:0}
+.roi-note{margin-top:14px;font-size:11.8px;color:var(--faint);line-height:1.7}
+.checklist{margin:12px 0 0;padding:0;display:grid;gap:9px}
+.checklist li{list-style:none;display:flex;gap:9px;align-items:flex-start;font-size:13px;color:#3b4a5a;line-height:1.6}
+.checklist b{color:var(--ink)}
+.checklist .k{flex:none;width:17px;height:17px;border-radius:50%;background:var(--brand-soft);color:var(--brand2);font-size:10.5px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:2px}
+@media (max-width:760px){
+  .roi-card{padding:20px 16px}
+  .roi-grid{grid-template-columns:1fr;gap:18px}
+  .roi-row{grid-template-columns:1fr 112px}
+  .roi-out .v{font-size:19px}
+}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none !important}}
 </style>
 </head>
@@ -335,6 +368,8 @@ footer{background:#0b1826;color:#9fb2c6;padding:38px 0 46px;margin-top:20px}
       <a href="#apps" class="en">Products</a>
       <a href="#compare" class="ko">Lite vs Kit</a>
       <a href="#compare" class="en">Lite vs Kit</a>
+      <a href="#roi" class="ko">본전 계산</a>
+      <a href="#roi" class="en">Break-even</a>
       <a href="#how" class="ko">사용법</a>
       <a href="#how" class="en">How to use</a>
       <a href="#iphone" class="ko">아이폰 안내</a>
@@ -359,15 +394,22 @@ footer{background:#0b1826;color:#9fb2c6;padding:38px 0 46px;margin-top:20px}
     <div class="hero-in">
       <div>
         <div class="eyebrow"><span class="dot"></span><span class="ko">NEXORA LABS · 인테리어 견적 도구</span><span class="en">NEXORA LABS · INTERIOR ESTIMATING</span></div>
-        <h1 class="ko">링크 하나로,<br>오늘 바로 쓰는 견적 도구</h1>
-        <h1 class="en">One link.<br>A quoting tool you can use today.</h1>
-        <p class="lede ko">파일을 내려받아 열다가 자바스크립트 차단에 막히지 마세요. 설치도, 회원가입도 없이 브라우저에서 바로 열리고, 입력한 견적은 서버가 아닌 <b>내 기기에만</b> 저장됩니다.</p>
-        <p class="lede en">No downloads to wrestle with, no JavaScript blocked by your file viewer. It opens right in the browser, and your estimates are stored <b>only on your device</b> — never on a server.</p>
+        <h1 class="ko">인테리어·시공 견적서,<br>링크 하나로 오늘 바로</h1>
+        <h1 class="en">Estimates for interior<br>&amp; construction crews</h1>
+        <p class="lede ko">원가와 목표 마진을 넣으면 판매 단가와 <b>얼마까지 깎아도 되는지</b> 바닥선이 같이 계산되고, A4 견적서로 인쇄·PDF 저장까지 됩니다. 설치·회원가입 없이 지금 브라우저에서 열리고, 입력한 견적은 서버가 아닌 <b>내 기기에만</b> 저장됩니다.</p>
+        <p class="lede en">Enter your cost and target margin — the selling price and the lowest price you can discount to are worked out together, then print or save a one-page estimate as PDF. No install, no sign-up, and your estimates stay <b>on your device</b>, never on a server.</p>
         <div class="cta">
           <a class="btn teal lg ko" href="lite-ko/">무료 Lite 바로 시작</a>
           <a class="btn teal lg en" href="lite-en/">Start free Lite</a>
           <a class="btn primary lg ko" href="https://nexoralabs112.gumroad.com/l/business-kit?utm_source=nexora_hub&amp;utm_medium=cta&amp;utm_campaign=quote_desk_kit&amp;utm_content=hub_hero" target="_blank" rel="noopener">Business Kit 39,000원 구매</a>
           <a class="btn primary lg en" href="https://nexoralabs112.gumroad.com/l/business-kit?utm_source=nexora_hub&amp;utm_medium=cta&amp;utm_campaign=quote_desk_kit&amp;utm_content=hub_hero" target="_blank" rel="noopener">Buy Business Kit · $27</a>
+        </div>
+        <a class="preview-link ko" href="kit-preview/">구매 전에 Kit 화면 먼저 보기 (실제 화면 5장) →</a>
+        <a class="preview-link en" href="kit-preview/#en">See the Kit screens before you buy (5 real screenshots) →</a>
+        <div class="trust">
+          <div class="t"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="ko"><b>설치 불필요</b> · 데이터는 내 기기 · JSON 언제든 내보내기</span><span class="en"><b>Nothing to install</b> · data stays on your device · export to JSON anytime</span></div>
+          <div class="t"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="ko">기본 제공 기능의 <b>오류 수정 지원</b> · 개별 맞춤 제작은 별도</span><span class="en"><b>Bug fixes</b> for what the product ships with · custom work is separate</span></div>
+          <div class="t"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="ko"><b>환불</b>: 파일 전달 전 전액, 전달 후 제한 — 파일 오류·설명 불일치는 확인 후 교환·환불 (<a href="#refund" style="color:var(--brand2);text-decoration:underline">자세히</a>)</span><span class="en"><b>Refunds</b>: full before the file is delivered; limited after. Broken or not-as-described files are exchanged or refunded after we check (<a href="#refund" style="color:var(--brand2);text-decoration:underline">details</a>)</span></div>
         </div>
         <p class="cta-note ko">이미 구매하셨다면 <a href="kit-ko/">액세스 코드로 바로 열기 →</a> · 해외 결제 $27은 카드사 환율로 원화 청구됩니다.</p>
         <p class="cta-note en">Already bought the Kit? <a href="kit-en/">Open it with your access code →</a></p>
@@ -520,6 +562,47 @@ footer{background:#0b1826;color:#9fb2c6;padding:38px 0 46px;margin-top:20px}
     </div>
   </section>
 
+  <!-- ================= ROI (구매자 본전 계산) ================= -->
+  <section id="roi" class="tight" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow"><span class="dot"></span><span class="ko">본전 계산</span><span class="en">BREAK-EVEN</span></div>
+        <h2 class="ko">내 업무 기준으로 본전을 계산해 보세요</h2>
+        <h2 class="en">Work out the break-even on your own numbers</h2>
+        <p class="ko">아래 숫자는 모두 <b>내가 넣는 가정</b>입니다. 우리가 측정한 절감 성과가 아니고, 줄어든 시간이 현금 수익으로 이어진다는 보장도 없습니다. 숫자를 바꿔 보면 구매비용을 회수하는 데 시간이 얼마나 필요한지 스스로 판단하실 수 있습니다.</p>
+        <p class="en">Every number below is <b>your own assumption</b> — not a saving we measured, and saved time is not guaranteed to become cash. Change the numbers to judge for yourself how much time the price has to buy back.</p>
+      </div>
+      <div class="roi-card">
+        <div class="roi-grid">
+          <div class="roi-in">
+            <div class="roi-row"><label for="roiProduct" class="ko">비교할 상품</label><label for="roiProduct" class="en">Product</label>
+              <select id="roiProduct">
+                <option value="39000" selected>Business Kit · 39,000원</option>
+                <option value="19000">Quote Desk Pro · 19,000원</option>
+                <option value="20000">Pro → Kit 차액 · 20,000원</option>
+                <option value="0">Quote Lite · 0원</option>
+              </select>
+            </div>
+            <div class="roi-row"><label for="roiRate" class="ko">내 업무시간 1시간의 가치 (원)</label><label for="roiRate" class="en">Value of one hour of my time (KRW)</label>
+              <input id="roiRate" type="number" inputmode="numeric" min="0" step="1000" value="20000"></div>
+            <div class="roi-row"><label for="roiCount" class="ko">한 달 견적 건수</label><label for="roiCount" class="en">Estimates per month</label>
+              <input id="roiCount" type="number" inputmode="numeric" min="0" step="1" value="10"></div>
+            <div class="roi-row"><label for="roiSave" class="ko">건당 줄어들 것 같은 시간 (분)</label><label for="roiSave" class="en">Minutes saved per estimate</label>
+              <input id="roiSave" type="number" inputmode="numeric" min="0" step="1" value="5"></div>
+          </div>
+          <div class="roi-out" aria-live="polite">
+            <div class="cell"><div class="k ko">월 가정 절감 시간</div><div class="k en">Assumed saving per month</div><div class="v" id="roiMinutes">—</div></div>
+            <div class="cell"><div class="k ko">본전까지 필요한 총 절약 시간</div><div class="k en">Total time the price has to buy back</div><div class="v" id="roiBreak">—</div></div>
+            <div class="cell"><div class="k ko">가정상 회수 기간</div><div class="k en">Assumed payback period</div><div class="v" id="roiMonths">—</div></div>
+            <div class="cell"><div class="k ko">1개월 절감 가치 (가정)</div><div class="k en">Value assumed per month</div><div class="v" id="roiValue">—</div></div>
+          </div>
+        </div>
+        <p class="roi-note ko">표시 가격 기준 단순 계산입니다. 결제 수수료, 초기 설정·학습 시간, 유지 비용은 포함하지 않습니다. Lite는 0원이라 본전 계산이 필요 없습니다. 숫자는 이 화면 안에서만 계산되며 어디에도 전송·저장되지 않습니다.</p>
+        <p class="roi-note en">A plain calculation on the listed price. Payment fees, setup and learning time, and running costs are not included. The free Lite needs no break-even. The numbers are calculated in this page only — never sent or stored.</p>
+      </div>
+    </div>
+  </section>
+
   <!-- ================= HOW ================= -->
   <section id="how" class="tight" style="background:#eef2f7">
     <div class="wrap">
@@ -653,6 +736,18 @@ footer{background:#0b1826;color:#9fb2c6;padding:38px 0 46px;margin-top:20px}
       </div>
       <p class="cmp-note ko" style="margin-top:14px">결제는 Gumroad 카드 결제로 진행되며 해외 결제($27)는 카드사 환율로 원화 청구됩니다. 결제 후 받은 액세스 코드를 <a href="kit-ko/" style="color:var(--brand2);font-weight:700">Business Kit 페이지</a>에 입력하세요.</p>
       <p class="cmp-note en" style="margin-top:14px">Payment is a card payment on Gumroad; $27 is billed in KRW at your card issuer's rate. Enter the access code from your receipt on the <a href="kit-en/" style="color:var(--brand2);font-weight:700">Business Kit page</a>.</p>
+
+      <div class="roi-card" id="refund" style="margin-top:20px">
+        <h3 class="ko" style="font-size:16px">구매 전에 확인하실 것</h3>
+        <h3 class="en" style="font-size:16px">Before you buy</h3>
+        <ul class="checklist">
+          <li><span class="k">1</span><span class="ko"><b>먼저 무료로 확인</b> — Lite로 같은 계산·견적서 출력을 지금 해보실 수 있습니다. Kit은 구매 전에 <a href="kit-preview/" style="color:var(--brand2);font-weight:700">화면 미리보기</a>로 제공되는 화면을 먼저 보실 수 있습니다.</span><span class="en"><b>Try before paying</b> — the Lite does the same calculation and estimate printing today. The Kit comes with a <a href="kit-preview/#en" style="color:var(--brand2);font-weight:700">screen preview</a> you can open before buying.</span></li>
+          <li><span class="k">2</span><span class="ko"><b>데이터는 인질이 아닙니다</b> — 견적은 이 브라우저(내 기기)에만 저장되고, Kit은 전체 백업과 JSON 내보내기를 언제든 할 수 있습니다.</span><span class="en"><b>Your data is not hostage</b> — estimates stay in this browser on your device, and the Kit can export a full backup or JSON at any time.</span></li>
+          <li><span class="k">3</span><span class="ko"><b>지원 범위</b> — 기본 제공 기능이 설명과 다르게 작동할 때 오류 수정을 지원합니다. 업종·서식에 맞춘 개별 제작, 새 기능 추가는 별도(맞춤 제작)입니다.</span><span class="en"><b>What support covers</b> — bug fixes when a shipped feature does not work as described. Custom work or new features for your trade or form are a separate engagement.</span></li>
+          <li><span class="k">4</span><span class="ko"><b>환불</b> — 파일을 받기 전에는 전액 환불, 받은 뒤에는 디지털 상품 특성상 제한됩니다. 다만 파일이 열리지 않거나 설명과 다르게 작동하면 확인 후 교환·환불해 드립니다. 크몽·Gumroad 각 판매처의 환불 정책이 우선합니다.</span><span class="en"><b>Refunds</b> — full refund before the file is delivered; limited after, as is usual for digital files. If the file does not open or does not work as described, we check and exchange or refund. The marketplace's own policy (Gumroad, KMONG) applies first.</span></li>
+          <li><span class="k">5</span><span class="ko"><b>이용 환경</b> — Windows·Mac의 Chrome·Edge·Safari에서 동작합니다. 아이폰·아이패드는 견적 작성과 PDF 저장까지 지원하며, 큰 표 편집은 PC를 권합니다. 시크릿 모드에서는 저장이 되지 않을 수 있습니다.</span><span class="en"><b>Where it runs</b> — Chrome, Edge and Safari on Windows and Mac. iPhone and iPad can write estimates and save PDFs; wide tables are easier on a PC. Private browsing may block saving.</span></li>
+        </ul>
+      </div>
     </div>
   </section>
 
@@ -731,6 +826,39 @@ footer{background:#0b1826;color:#9fb2c6;padding:38px 0 46px;margin-top:20px}
   btn.addEventListener("click", function(){
     apply(document.body.getAttribute("data-lang") === "ko" ? "en" : "ko");
   });
+})();
+</script>
+<script>
+(function(){
+  var p=document.getElementById("roiProduct"), r=document.getElementById("roiRate"),
+      c=document.getElementById("roiCount"), s=document.getElementById("roiSave"),
+      oM=document.getElementById("roiMinutes"), oB=document.getElementById("roiBreak"),
+      oP=document.getElementById("roiMonths"), oV=document.getElementById("roiValue");
+  if(!p||!r||!c||!s||!oM||!oB||!oP||!oV) return;
+  var nf=new Intl.NumberFormat("ko-KR");
+  function num(el){ var v=parseFloat(String(el.value).replace(/[^0-9.]/g,"")); return (isFinite(v)&&v>=0)?v:0; }
+  function fmt(min){
+    var m=Math.round(min);
+    if(m<60) return nf.format(m)+"<small>분</small>";
+    var h=Math.floor(m/60), mm=m%60;
+    return nf.format(h)+"<small>시간</small>"+(mm?(" "+nf.format(mm)+"<small>분</small>"):"");
+  }
+  function calc(){
+    var price=parseFloat(p.value)||0, rate=num(r), cnt=num(c), save=num(s);
+    var perMonth=cnt*save, monthValue=perMonth/60*rate;
+    oM.innerHTML=fmt(perMonth);
+    oV.innerHTML=nf.format(Math.round(monthValue))+"<small>원</small>";
+    if(price<=0){ oB.innerHTML="—"; oP.textContent="무료 상품 — 본전 계산 없음"; return; }
+    var breakMin=(rate>0)?(price/rate*60):null;
+    oB.innerHTML=(breakMin===null)?"—":fmt(breakMin);
+    if(breakMin===null||perMonth<=0){ oP.textContent="입력값을 넣으면 계산됩니다"; return; }
+    var months=breakMin/perMonth;
+    oP.innerHTML=(months>=1)
+      ? nf.format(Math.round(months*10)/10)+"<small>개월</small>"
+      : nf.format(Math.round(months*30*10)/10)+"<small>일</small>";
+  }
+  [p,r,c,s].forEach(function(el){ el.addEventListener("input",calc); el.addEventListener("change",calc); });
+  calc();
 })();
 </script>
 </body>
