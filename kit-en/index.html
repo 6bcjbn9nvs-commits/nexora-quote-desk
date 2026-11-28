@@ -96,11 +96,21 @@
   .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
   .field{display:flex;flex-direction:column;gap:5px;min-width:0}
   .field > label{font-size:12px;color:#5b6472;font-weight:650}
+  .fld-head{display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap}
+  .fld-head label{font-size:12px; color:#5b6472; font-weight:650}
+  .linkbtn{appearance:none; border:0; background:transparent; padding:0; font-family:inherit; font-size:11.8px; font-weight:650; color:#3c5a78; cursor:pointer; text-decoration:underline; text-underline-offset:2px}
+  .linkbtn:hover{color:#0e2a47}
+  .linkbtn:focus-visible{outline:2px solid #173f63; outline-offset:2px; border-radius:3px}
   .field input,.field select,.field textarea{width:100%;padding:10px 11px;border:1px solid var(--line-strong);border-radius:10px;font-family:inherit;font-size:14px;color:var(--ink);background:#fff;min-width:0;transition:border-color .15s,box-shadow .15s}
   .field input::placeholder,.field textarea::placeholder{color:#aeb6c2}
   .field input:hover,.field select:hover,.field textarea:hover{border-color:#c2cbd6}
   .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:#5c7f9f;box-shadow:0 0 0 3.5px rgba(23,63,99,.1)}
-  .field input[type=date]{font-variant-numeric:tabular-nums}
+  /* iOS Safari draws date inputs as menu buttons, forcing content-box and a native
+     min-width, which pushed the field past the card edge. appearance:none cancels that
+     adjustment; the iOS date picker still opens on tap. */
+  .field input[type=date]{-webkit-appearance:none;appearance:none;display:block;box-sizing:border-box;width:100%;max-width:100%;min-width:0;font-variant-numeric:tabular-nums;text-align:left;line-height:1.3}
+  .field input[type=date]::-webkit-date-and-time-value{margin:0;text-align:left;min-height:1.2em;min-height:1lh}
+  .field input[type=date]::-webkit-datetime-edit{padding:0}
   .field textarea{resize:vertical;line-height:1.55}
   .span2{grid-column:span 2}
   .span3{grid-column:span 3}
@@ -969,10 +979,11 @@ html.nx-locked body > *:not(script):not(.nx-gate){display:none !important}
             <input id="e_job" type="text" placeholder="1204 Cedar Bend Dr, Austin, TX 78758 — living room &amp; kitchen refresh" maxlength="180">
           </div>
           <div class="field span4">
-            <label for="e_note">Notes &amp; terms (shown to the customer)</label>
-            <textarea id="e_note" rows="4" maxlength="2000">Scope: Work and materials as listed above.
-Exclusions: Permits, HOA fees, hazardous material removal, and any work not listed above are not included.
-Terms: This estimate is valid until the date shown. The deposit is due to schedule the work; the balance is due on completion. Change orders require written approval.</textarea>
+            <div class="fld-head">
+              <label for="e_note">Notes &amp; terms (shown to the customer)</label>
+              <button class="linkbtn" type="button" id="btnDefaultNote">Insert standard terms</button>
+            </div>
+            <textarea id="e_note" rows="4" maxlength="2000" placeholder="Scope: Work and materials as listed above.&#10;Exclusions: Permits, HOA fees, hazardous material removal...&#10;Terms: This estimate is valid until the date shown. The deposit is due to schedule the work."></textarea>
           </div>
         </div>
 
@@ -2064,7 +2075,7 @@ Terms: This estimate is valid until the date shown. The deposit is due to schedu
     $("e_customer").value = r ? r.customer : "";
     $("e_contact").value = r ? r.contact : "";
     $("e_job").value = r ? r.job : "";
-    $("e_note").value = r ? r.note : DEFAULT_NOTE;
+    $("e_note").value = r ? r.note : "";
     $("e_tax").value = r ? r.taxRate : (company.taxRate || 0);
     $("e_deposit").value = r ? r.depositPct : (company.depositPct === undefined ? 30 : company.depositPct);
     $("e_discount").value = r ? r.discount : 0;
@@ -2563,6 +2574,13 @@ Terms: This estimate is valid until the date shown. The deposit is due to schedu
     toast("New estimate started.");
   });
   $("btnSave").addEventListener("click", save);
+  $("btnDefaultNote").addEventListener("click", function () {
+    if (($("e_note").value || "").trim() && !window.confirm("Replace the notes you typed with the standard terms?")) return;
+    $("e_note").value = DEFAULT_NOTE;
+    markChanged();
+    recalc();
+    toast("Standard terms inserted. Delete any line you do not need.");
+  });
 
   $("btnSample").addEventListener("click", function () {
     if (!canLeave()) return;
@@ -2583,6 +2601,7 @@ Terms: This estimate is valid until the date shown. The deposit is due to schedu
     $("e_no").value = "EST-20261126-104";
     $("e_tax").value = 8.25;
     $("e_deposit").value = 30;
+    $("e_note").value = DEFAULT_NOTE;
     rowsEl.innerHTML = "";
     [
       { desc: "Interior repaint — walls & ceilings (2 coats)", cat: "labor", qty: 1180, unit: "sq ft", cost: 1.40, taxable: false },
@@ -4105,13 +4124,9 @@ Terms: This estimate is valid until the date shown. The deposit is due to schedu
     seenVersion = parseInt(storeGet(KEY_VERSION) || "0", 10) || 0;
     settings.firstRunDone = true;
     saveSettings();
-    if (!records.length && !settings.sampleDismissed) {
-      enterSample(true);
-    } else {
-      sampleMode = false;
-      $("sampleBar").hidden = true;
-      updateSampleUi();
-    }
+    sampleMode = false;
+    $("sampleBar").hidden = true;
+    updateSampleUi();
     paintSettings();
     bindSettings();
     bindTabs();

@@ -123,11 +123,21 @@
   .grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:13px}
   .field{display:flex; flex-direction:column; gap:5px; min-width:0}
   .field > label{font-size:12px; color:#5b6472; font-weight:650}
+  .fld-head{display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap}
+  .fld-head label{font-size:12px; color:#5b6472; font-weight:650}
+  .linkbtn{appearance:none; border:0; background:transparent; padding:0; font-family:inherit; font-size:11.8px; font-weight:650; color:#3c5a78; cursor:pointer; text-decoration:underline; text-underline-offset:2px}
+  .linkbtn:hover{color:#0e2a47}
+  .linkbtn:focus-visible{outline:2px solid #173f63; outline-offset:2px; border-radius:3px}
   .field input,.field select,.field textarea{width:100%; padding:10px 11px; border:1px solid var(--line-strong); border-radius:10px; font-family:inherit; font-size:14px; color:var(--ink); background:#fff; min-width:0; transition:border-color .15s,box-shadow .15s,background .15s}
   .field input::placeholder,.field textarea::placeholder{color:#aeb6c2}
   .field input:hover,.field select:hover,.field textarea:hover{border-color:#c2cbd6}
   .field input:focus,.field select:focus,.field textarea:focus{outline:none; border-color:#5c7f9f; box-shadow:0 0 0 3.5px rgba(23,63,99,.1)}
-  .field input[type=date]{font-variant-numeric:tabular-nums}
+  /* iOS Safari draws date inputs as menu buttons, forcing content-box and a native
+     min-width, which pushed the field past the card edge. appearance:none cancels that
+     adjustment; the iOS date picker still opens on tap. */
+  .field input[type=date]{-webkit-appearance:none;appearance:none;display:block;box-sizing:border-box;width:100%;max-width:100%;min-width:0;font-variant-numeric:tabular-nums;text-align:left;line-height:1.3}
+  .field input[type=date]::-webkit-date-and-time-value{margin:0;text-align:left;min-height:1.2em;min-height:1lh}
+  .field input[type=date]::-webkit-datetime-edit{padding:0}
   .field textarea{resize:vertical; line-height:1.55}
   .span2{grid-column:span 2}
   .suffix{position:relative}
@@ -601,10 +611,11 @@
             <div class="suffix"><input id="q_deposit" type="number" min="0" max="100" step="1" value="30" inputmode="numeric"><span class="sx">%</span></div>
           </div>
           <div class="field span2">
-            <label for="q_note">Notes &amp; terms</label>
-            <textarea id="q_note" rows="4">Scope: Work and materials as listed above.
-Exclusions: Permits, HOA fees, hazardous material removal, and any work not listed above are not included.
-Terms: This estimate is valid until the date shown. The deposit is due to schedule the work; the balance is due on completion. Change orders require written approval.</textarea>
+            <div class="fld-head">
+              <label for="q_note">Notes &amp; terms</label>
+              <button class="linkbtn" type="button" id="btnDefaultNote">Insert standard terms</button>
+            </div>
+            <textarea id="q_note" rows="4" placeholder="Scope: Work and materials as listed above.&#10;Exclusions: Permits, HOA fees, hazardous material removal...&#10;Terms: This estimate is valid until the date shown. The deposit is due to schedule the work."></textarea>
           </div>
         </div>
       </section>
@@ -1843,7 +1854,7 @@ Terms: This estimate is valid until the date shown. The deposit is due to schedu
     ["c_name", "c_owner", "c_tel", "c_email", "c_addr", "c_license", "c_pay", "q_client", "q_tel", "q_site"].forEach(function (id) {
       $(id).value = "";
     });
-    $("q_note").value = DEFAULT_NOTE;
+    $("q_note").value = "";
     $("q_no").value = estimateNumber();
     $("q_date").value = todayISO(0);
     $("q_valid").value = todayISO(14);
@@ -2083,18 +2094,12 @@ Terms: This estimate is valid until the date shown. The deposit is due to schedu
     sampleDismissed = settings.sampleDismissed === true;
 
     var restored = lparse(lstoreGet(LKEY.draft));
-    var sample = lparse(lstoreGet(LKEY.sample));
-    if (sample && sample.estimate && !sampleDismissed) {
-      applyEstimate(sample.estimate);
-      sampleActive = true;
-      $("sampleBar").hidden = false;
-      $("sampleBadge").hidden = false;
-    } else if (restored && restored.estimate) {
+    /* Open blank (empty fields + faint placeholder examples); the sample only
+       appears when the customer presses [Sample]. */
+    if (restored && restored.estimate) {
       applyEstimate(restored.estimate);
       draft.savedAt = restored.savedAt || "";
       toast("Draft restored from your last visit.");
-    } else if (!sampleDismissed) {
-      openSample();
     }
     paintDraftHint();
     paintLight(lastTotalsLite);
@@ -2112,6 +2117,12 @@ Terms: This estimate is valid until the date shown. The deposit is due to schedu
 
   function bindV2() {
     $("sampleClear").addEventListener("click", clearSample);
+    $("btnDefaultNote").addEventListener("click", function () {
+      if (($("q_note").value || "").trim() && !window.confirm("Replace the notes you typed with the standard terms?")) return;
+      $("q_note").value = DEFAULT_NOTE;
+      recalc();
+      toast("Standard terms inserted. Delete any line you do not need.");
+    });
     $("abPrint").addEventListener("click", function () { $("btnPrint").click(); });
     $("btnDraftDiscard").addEventListener("click", function () {
       discardDraft();

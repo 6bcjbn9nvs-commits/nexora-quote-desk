@@ -95,6 +95,10 @@ body[data-tier="lite"] .brand-tag{background:var(--teal-soft);color:var(--teal);
 .chip .dot{width:6px;height:6px;border-radius:50%;background:var(--teal)}
 .chip.warnchip{color:var(--amber);border-color:var(--amber-line);background:var(--amber-soft)}
 .chip.warnchip .dot{background:var(--amber)}
+.chip.push{cursor:pointer;font-family:inherit;color:#173f63;background:#f2f7fc;border-color:#cbdae8}
+.chip.push:hover{background:#e7f0f8;border-color:#aac3d9}
+.chip.push:focus-visible{outline:2px solid #173f63;outline-offset:2px}
+.sheet .is-ph{color:#9aa7b4;font-weight:500}
 
 .layout{display:grid;grid-template-columns:minmax(0,1fr) 386px;gap:18px;align-items:start}
 .layout > div,.layout > aside{min-width:0}
@@ -110,11 +114,27 @@ body[data-tier="lite"] .brand-tag{background:var(--teal-soft);color:var(--teal);
 .grid.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
 .field{display:flex;flex-direction:column;gap:5px;min-width:0}
 .field > label{font-size:12px;color:#5b6472;font-weight:650}
+.fld-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.fld-head label{font-size:12px;color:#5b6472;font-weight:650}
+.linkbtn{appearance:none;border:0;background:transparent;padding:0;font-family:inherit;font-size:11.8px;font-weight:650;color:#3c5a78;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.linkbtn:hover{color:#0e2a47}
+.linkbtn:focus-visible{outline:2px solid #173f63;outline-offset:2px;border-radius:3px}
 .field input,.field select,.field textarea{width:100%;padding:10px 11px;border:1px solid var(--line-strong);border-radius:10px;font-family:inherit;font-size:14px;color:var(--ink);background:#fff;min-width:0;transition:border-color .15s,box-shadow .15s}
 .field input::placeholder,.field textarea::placeholder{color:#aeb6c2}
 .field input:hover,.field select:hover,.field textarea:hover{border-color:#c2cbd6}
 .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:#5c7f9f;box-shadow:0 0 0 3.5px rgba(23,63,99,.1)}
-.field input[type=date]{font-variant-numeric:tabular-nums}
+.field input[type=date]{
+  /* iOS Safari는 date 입력을 메뉴 버튼으로 그리면서 box-sizing을 content-box로,
+     최소 폭을 네이티브 폭으로 강제한다. 그래서 카드 오른쪽 밖으로 넘쳤다.
+     appearance:none으로 그 보정을 끄고 폭·정렬을 직접 지정한다.
+     (탭하면 iOS 날짜 선택기는 그대로 열린다) */
+  -webkit-appearance:none;appearance:none;
+  display:block;box-sizing:border-box;
+  width:100%;max-width:100%;min-width:0;
+  font-variant-numeric:tabular-nums;text-align:left;line-height:1.3;
+}
+.field input[type=date]::-webkit-date-and-time-value{margin:0;text-align:left;min-height:1.2em;min-height:1lh}
+.field input[type=date]::-webkit-datetime-edit{padding:0}
 .field textarea{resize:vertical;line-height:1.55}
 .span2{grid-column:span 2}
 .span3{grid-column:span 3}
@@ -491,6 +511,8 @@ input.invalid{border-color:var(--red)!important;background:var(--red-soft)!impor
   .sheet-accept .sig-img svg{height:52px}
   tr,td,th{page-break-inside:avoid}
   thead{display:table-header-group}
+  /* 값이 비어 안내 문구만 남은 자리는 종이에 찍지 않는다 */
+  .is-ph{visibility:hidden}
 }
 body[data-paper="letter"] #pageRule{}
 
@@ -728,6 +750,7 @@ html.nx-locked body > *:not(script):not(.nx-gate){display:none !important}
       <span class="chip"><span class="dot"></span><span id="headState">새 견적</span></span>
       <span class="chip" id="headSigChip" hidden><span class="dot"></span><span id="headSigText">서명 완료</span></span>
       <span class="chip" id="headCountChip">저장 0건</span>
+      <button class="chip push" type="button" id="btnSampleTry" title="예시 값이 채워진 샘플 견적을 열어 화면 구성을 먼저 봅니다">샘플 견적 보기</button>
     </div>
   </div>
 
@@ -774,8 +797,11 @@ html.nx-locked body > *:not(script):not(.nx-gate){display:none !important}
           <div class="field"><label for="q_follow">후속 연락일 (선택)</label><input id="q_follow" type="date"></div>
           
           <div class="field span4">
-            <label for="q_note">비고 — 고객에게 보이는 안내문</label>
-            <textarea id="q_note" rows="4" maxlength="2000"></textarea>
+            <div class="fld-head">
+              <label for="q_note">비고 — 고객에게 보이는 안내문</label>
+              <button class="linkbtn" type="button" id="btnDefaultNote">기본 안내문 넣기</button>
+            </div>
+            <textarea id="q_note" rows="4" maxlength="2000" placeholder="예: · 본 견적은 위 유효기간 내 계약 시 적용됩니다.&#10;· 자재·시공 범위가 변경되면 금액이 조정될 수 있습니다.&#10;· 공사 일정은 계약금 입금 후 확정됩니다."></textarea>
           </div>
         </div>
         
@@ -1728,7 +1754,7 @@ function newQuote() {
     id: uid(), no: "", revision: 1, status: "draft",
     createdAt: nowISO(), updatedAt: nowISO(), issuedAt: todayISO(0), validUntil: todayISO(14),
     wonAt: "", followUp: "",
-    customer: "", contact: "", site: "", note: DEFAULT_NOTE,
+    customer: "", contact: "", site: "", note: "",
     vatMode: settings.vatMode, taxRate: settings.tax, discount: 0,
     marginTarget: settings.target, autoMargin: true, depositRate: settings.deposit,
     items: [newItem()], statusHistory: [], signature: null
@@ -2009,16 +2035,14 @@ function loadAll() {
   var sm = parseStore(rawSample);
   sampleQuotes = sm.list;
   if (rawSample && sampleStamp !== SAMPLE_TAG) sampleQuotes = [];
-  if (quotes.length === 0 && !settings.sampleDismissed) {
-    sampleMode = true;
-    if (rawSample && sampleStamp !== SAMPLE_TAG && settings.company.name && companySig(settings.company) === LEGACY_DEMO_SIG) {
-      settings.company = deep(DEMO_CO);
+  /* 첫 방문이라도 샘플을 자동으로 채우지 않는다.
+     빈 칸 + 반투명 예시(placeholder)로 시작하고, 샘플은 [샘플 견적 보기]를 눌렀을 때만 연다. */
+  if (settings.company.name) {
+    var coSig = companySig(settings.company);
+    if (coSig === LEGACY_DEMO_SIG || coSig === companySig(DEMO_CO)) {
+      /* 예전 버전이 자동으로 채워 둔 데모 업체 정보는 지운다 (저장된 견적은 건드리지 않는다) */
+      settings.company = defaultSettings().company;
       saveSettings();
-    }
-    applyDemoCompany();
-    if (!sampleQuotes.length) {
-      sampleQuotes = buildDemo().slice(0, IS_LITE ? 1 : 3);
-      writeRaw(K.sample, JSON.stringify({ schemaVersion: SCHEMA, demoTag: SAMPLE_TAG, quotes: sampleQuotes }));
     }
   }
 }
@@ -2526,22 +2550,29 @@ function updateHeadChips(t) {
 }
 
 /* ---------------- preview ---------------- */
+function setPreviewText(id, value, fallback) {
+  var el = $(id);
+  if (!el) return;
+  var has = value !== undefined && value !== null && String(value).trim() !== "";
+  el.textContent = has ? value : (fallback || "");
+  el.classList.toggle("is-ph", !has);
+}
 function updatePreview(t) {
   var co = settings.company;
-  setText("pv_cname", co.name || "상호를 입력하세요");
-  setText("pv_owner_line", "대표자 " + (co.owner || "-"));
-  setText("pv_addr", co.addr || "주소를 입력하세요");
-  setText("pv_contact_line", (co.tel ? "연락처 " + co.tel : "연락처 -") + (co.email ? " · " + co.email : ""));
-  setText("pv_bizno_line", co.bizno ? "사업자등록번호 " + co.bizno : "");
+  setPreviewText("pv_cname", co.name, "상호를 입력하세요");
+  setPreviewText("pv_owner_line", co.owner ? "대표자 " + co.owner : "", "대표자 -");
+  setPreviewText("pv_addr", co.addr, "주소를 입력하세요");
+  setPreviewText("pv_contact_line", (co.tel ? "연락처 " + co.tel : "") + (co.email ? (co.tel ? " · " : "연락처 ") + co.email : ""), "연락처 -");
+  setPreviewText("pv_bizno_line", co.bizno ? "사업자등록번호 " + co.bizno : "");
   var logo = $("pv_logo");
   if (co.logo) { logo.src = co.logo; logo.hidden = false; } else { logo.removeAttribute("src"); logo.hidden = true; }
 
-  setText("pv_no", current.no || "-");
-  setText("pv_date", shortDate(current.issuedAt));
-  setText("pv_valid", shortDate(current.validUntil));
-  setText("pv_client", current.customer || "고객명");
-  setText("pv_clienttel", current.contact || "-");
-  setText("pv_site", current.site || "현장 주소 / 공사명");
+  setPreviewText("pv_no", current.no, "-");
+  setPreviewText("pv_date", isDate(current.issuedAt) ? shortDate(current.issuedAt) : "", "-");
+  setPreviewText("pv_valid", isDate(current.validUntil) ? shortDate(current.validUntil) : "", "-");
+  setPreviewText("pv_client", current.customer, "고객명");
+  setPreviewText("pv_clienttel", current.contact, "-");
+  setPreviewText("pv_site", current.site, "현장 주소 / 공사명");
 
   var body = $("pv_items");
   body.replaceChildren();
@@ -2576,8 +2607,8 @@ function updatePreview(t) {
   setText("pv_dep", won(t.deposit));
   setText("pv_bal", won(t.balance));
   setText("pv_korean", "일금 " + numberToKorean(t.total) + "원정");
-  setText("pv_note", current.note || "-");
-  setText("pv_account", co.account || "입금 계좌를 입력하세요");
+  setPreviewText("pv_note", current.note, "-");
+  setPreviewText("pv_account", co.account, "입금 계좌를 입력하세요");
   if (IS_PRO) updatePrintSignature();
 }
 
@@ -2902,6 +2933,7 @@ function exitSampleMode(showToast) {
   settings.sampleDismissed = true;
   saveSettings();
   $("sampleBar").hidden = true;
+  if ($("btnSampleTry")) $("btnSampleTry").hidden = quotes.length > 0;
   if (showToast) toast("샘플을 비웠습니다. 이제 실제 견적을 작성하세요.");
   updateHeadChips(calcQuote(current || newQuote()));
 }
@@ -2913,6 +2945,7 @@ function enterSampleMode() {
   settings.sampleDismissed = false;
   saveSettings();
   $("sampleBar").hidden = false;
+  if ($("btnSampleTry")) $("btnSampleTry").hidden = true;
   loadQuote(sampleQuotes[0], { toast: sampleQuotes.length > 1 ? "샘플 3건으로 대시보드와 서명을 살펴보세요." : "샘플 견적을 열었습니다." });
   showView("write");
 }
@@ -3616,6 +3649,7 @@ function renderSettings() {
    ========================================================= */
 function refreshBanners() {
   $("sampleBar").hidden = !sampleMode;
+  if ($("btnSampleTry")) $("btnSampleTry").hidden = sampleMode || quotes.length > 0;
   if (IS_PRO) {
     var show = false, msg = "";
     if (quotes.length > 0 && backupMeta.lastExportAt) {
@@ -3815,6 +3849,19 @@ function bindEvents() {
   $("dashPeriod").addEventListener("change", renderDash);
   $("btnEmptyNew").addEventListener("click", function () { showView("write"); startNewQuote(); });
   $("btnEmptySample").addEventListener("click", enterSampleMode);
+  if ($("btnSampleTry")) $("btnSampleTry").addEventListener("click", function () {
+    if (dirty && !confirm("지금 화면의 견적은 그대로 둔 채 샘플 견적을 엽니다. 저장하지 않은 내용은 샘플을 닫을 때 사라질 수 있습니다. 계속할까요?")) return;
+    enterSampleMode();
+    showView("write");
+  });
+  $("btnDefaultNote").addEventListener("click", function () {
+    syncForm();
+    if (current.note && current.note.trim() && !confirm("지금 쓰고 있는 비고가 있습니다. 기본 안내문으로 바꿀까요?")) return;
+    current.note = DEFAULT_NOTE;
+    setValue("q_note", DEFAULT_NOTE);
+    touch();
+    toast("기본 안내문을 넣었습니다. 필요 없는 줄은 지우세요.");
+  });
   $("btnImpCancel").addEventListener("click", function () { $("importDialog").close(); pendingImport = null; });
   $("btnImpGo").addEventListener("click", function () {
     if (!pendingImport) { $("importDialog").close(); return; }
@@ -4158,6 +4205,8 @@ function startupQuote() {
       var d = JSON.parse(draftRaw);
       if (d && d.schemaVersion === SCHEMA && d.quote && typeof d.quote === "object" && !d.sample && !sampleMode) {
         var q = lenientQuote(d.quote);
+        /* 예전 버전이 샘플을 임시저장해 둔 경우는 빈 칸으로 시작한다 */
+        if (q && (q.isSample || /^DEMO-/.test(q.no || ""))) { removeRaw(K.draft); q = null; }
         if (q) {
           setTimeout(function () { toast("작업 중이던 견적을 복원했습니다. [저장]을 눌러 보관하세요."); }, 500);
           return q;
