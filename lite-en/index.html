@@ -2178,5 +2178,28 @@ Terms: This estimate is valid until the date shown. The deposit is due to schedu
   init();
 })();
 </script>
+<script>
+/* 유입 채널 보존: 블로그·검색광고 UTM으로 들어온 방문이 Gumroad/숨고로 나갈 때
+   첫 유입 채널을 utm_content에 덧붙입니다. 쿠키·추적 픽셀·외부 요청은 없습니다. */
+(function () {
+  try {
+    var q = new URLSearchParams(window.location.search);
+    function clean(v, max) { return (v || "").trim().toLowerCase().replace(/[^a-z0-9_\-]/g, "").slice(0, max || 24); }
+    var src = clean(q.get("utm_source")), camp = clean(q.get("utm_campaign"));
+    if (!src || src === "nexora_lite_ko" || src === "nexora_lite_en") return;
+    var tag = src + (camp ? "_" + camp : "");
+    var links = document.querySelectorAll('a[href*="gumroad.com"],a[href*="soomgo.com"]');
+    for (var i = 0; i < links.length; i++) {
+      try {
+        var u = new URL(links[i].href);
+        var base = u.searchParams.get("utm_content") || "link";
+        u.searchParams.set("utm_content", base + "__via_" + tag);
+        links[i].href = u.toString();
+      } catch (e1) {}
+    }
+  } catch (e2) {}
+})();
+</script>
 </body>
+
 </html>
